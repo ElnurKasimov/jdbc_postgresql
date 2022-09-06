@@ -1,4 +1,4 @@
-package service.converter;
+package model.service.converter;
 
 import model.dao.DeveloperDao;
 import model.dto.DeveloperDto;

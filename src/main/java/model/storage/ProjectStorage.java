@@ -1,27 +1,27 @@
-package storage;
+package model.storage;
 
-import model.dao.CompanyDao;
+import model.dao.ProjectDao;
 
 import java.util.List;
 
-public class CompanyStorage implements  Storage<CompanyDao> {
+public class ProjectStorage implements Storage<ProjectDao> {
     @Override
-    public CompanyDao save(CompanyDao entity) {
+    public ProjectDao save(ProjectDao entity) {
         return null;
     }
 
     @Override
-    public CompanyDao findById(long id) {
+    public ProjectDao findById(long id) {
         return null;
     }
 
     @Override
-    public CompanyDao findByName(String name) {
+    public ProjectDao findByName(String name) {
         return null;
     }
 
     @Override
-    public List<CompanyDao> findAll() {
+    public List<ProjectDao> findAll() {
         return null;
     }
 
@@ -36,12 +36,12 @@ public class CompanyStorage implements  Storage<CompanyDao> {
     }
 
     @Override
-    public CompanyDao update(CompanyDao entity) {
+    public ProjectDao update(ProjectDao entity) {
         return null;
     }
 
     @Override
-    public void delete(CompanyDao entity) {
+    public void delete(ProjectDao entity) {
 
     }
 }

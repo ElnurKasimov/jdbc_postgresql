@@ -1,9 +1,7 @@
-package service.converter;
+package model.service.converter;
 
 import model.dao.CompanyDao;
-import model.dao.ProjectDao;
 import model.dto.CompanyDto;
-import model.dto.ProjectDto;
 
 public class CompanyConverter implements Converter<CompanyDto, CompanyDao>{
 

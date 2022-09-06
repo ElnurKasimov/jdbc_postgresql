@@ -1,4 +1,4 @@
-package service.converter;
+package model.service.converter;
 
 public interface Converter <E,T>{
     public E from (T entity);

@@ -1,15 +1,32 @@
 
-import View.Output;
+import model.config.DatabaseManagerConnector;
+import model.config.PropertiesConfig;
+import model.dao.DeveloperDao;
+import model.service.DeveloperService;
+import model.storage.DeveloperStorage;
+import view.Output;
 import controller.MenuService;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws SQLException, InterruptedException {
 
         MenuService menuService = new MenuService();
+        String dbPassword = System.getenv("dbPassword");
+        String dbUsername = System.getenv("dbusername");
+        PropertiesConfig propertiesConfig = new PropertiesConfig();
+        Properties properties = propertiesConfig.loadProperties("application.properties");
+
+        DatabaseManagerConnector manager = new DatabaseManagerConnector(properties, dbUsername, dbPassword);
+
+        DeveloperStorage developerStorage = new DeveloperStorage(manager);
+        for(DeveloperDao developer : developerStorage.getDeveloperDaoList()) {
+            System.out.println(developer);
+        }
+
         Output output = new Output();
 
 

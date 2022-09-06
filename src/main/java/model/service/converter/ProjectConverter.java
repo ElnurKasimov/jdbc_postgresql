@@ -1,8 +1,6 @@
-package service.converter;
+package model.service.converter;
 
-import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
-import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
 
 public class ProjectConverter implements Converter<ProjectDto, ProjectDao>{
