@@ -1,4 +1,5 @@
 
+import View.Output;
 import controller.MenuService;
 
 import java.sql.SQLException;
@@ -9,8 +10,10 @@ public class App {
     public static void main(String[] args) throws SQLException, InterruptedException {
 
         MenuService menuService = new MenuService();
-        menuService.create();
+        Output output = new Output();
 
+
+        menuService.create();
         int choice;
         do {
             menuService.get("Main").printMenu();
