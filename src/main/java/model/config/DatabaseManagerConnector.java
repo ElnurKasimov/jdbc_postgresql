@@ -1,12 +1,16 @@
 package model.config;
 
+import lombok.Getter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseManagerConnector {
+    @Getter
     private String url;
+    @Getter
     private Properties properties;
 
     public DatabaseManagerConnector(Properties properties, String username, String password) {

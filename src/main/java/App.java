@@ -1,5 +1,6 @@
 
 import model.config.DatabaseManagerConnector;
+import model.config.Migration;
 import model.config.PropertiesConfig;
 import model.dao.DeveloperDao;
 import model.service.DeveloperService;
@@ -20,7 +21,9 @@ public class App {
         PropertiesConfig propertiesConfig = new PropertiesConfig();
         Properties properties = propertiesConfig.loadProperties("application.properties");
 
+
         DatabaseManagerConnector manager = new DatabaseManagerConnector(properties, dbUsername, dbPassword);
+        new Migration(manager).initDb();
 
         DeveloperStorage developerStorage = new DeveloperStorage(manager);
         for(DeveloperDao developer : developerStorage.getDeveloperDaoList()) {
