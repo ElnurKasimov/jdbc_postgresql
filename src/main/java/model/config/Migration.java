@@ -15,10 +15,6 @@ public class Migration {
     public void initDb() {
         try {
             Connection connection = manager.getConnection();
-
-        System.out.println(manager.getUrl());
-        System.out.println(System.getenv("dbusername"));
-        System.out.println(System.getenv("dbPassword"));
         Flyway flyway = Flyway
                 .configure()
                 .dataSource(manager.getUrl(), System.getenv("dbusername"), System.getenv("dbPassword"))

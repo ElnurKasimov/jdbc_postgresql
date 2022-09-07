@@ -12,5 +12,13 @@ import java.util.List;
 
 public class DeveloperService {
 
+    public List<String> getAllNames() {
+        List<String> result = new ArrayList<>();
+
+
+
+    return result;
+    }
 
 }
+

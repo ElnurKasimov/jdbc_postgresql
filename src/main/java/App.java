@@ -1,9 +1,11 @@
 
+import controller.DeveloperMenuHandler;
 import model.config.DatabaseManagerConnector;
 import model.config.Migration;
 import model.config.PropertiesConfig;
 import model.dao.DeveloperDao;
 import model.service.DeveloperService;
+import model.service.converter.DeveloperConverter;
 import model.storage.DeveloperStorage;
 import view.Output;
 import controller.MenuService;
@@ -15,22 +17,21 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) throws SQLException, InterruptedException {
 
-        MenuService menuService = new MenuService();
         String dbPassword = System.getenv("dbPassword");
         String dbUsername = System.getenv("dbusername");
         PropertiesConfig propertiesConfig = new PropertiesConfig();
         Properties properties = propertiesConfig.loadProperties("application.properties");
-
-
         DatabaseManagerConnector manager = new DatabaseManagerConnector(properties, dbUsername, dbPassword);
         new Migration(manager).initDb();
 
-        DeveloperStorage developerStorage = new DeveloperStorage(manager);
-        for(DeveloperDao developer : developerStorage.getDeveloperDaoList()) {
-            System.out.println(developer);
-        }
 
-        Output output = new Output();
+        MenuService menuService = new MenuService();
+
+        DeveloperStorage developerStorage = new DeveloperStorage(manager);
+        DeveloperService developerService = new DeveloperService();
+        DeveloperConverter developerConverter = new DeveloperConverter();
+        DeveloperMenuHandler developerMenuHandler = new DeveloperMenuHandler(
+                developerService, developerStorage, developerConverter);
 
 
         menuService.create();
@@ -46,7 +47,7 @@ public class App {
                         choiceDevelopers = menuService.get("Developers").makeChoice();
                         switch (choiceDevelopers) {
                             case 1:
-                                //developerDaoService.getAllNames();
+                                developerMenuHandler.getAllgNames();
                                 break;
                             case 2:
                                 System.out.print("\tВведите фамилию : ");

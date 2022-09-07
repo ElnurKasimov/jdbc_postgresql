@@ -14,8 +14,8 @@ public class FillerContentMenu {
                 contentMenu.put(5, "Выйти из программы");
                 break;
             case "Developers":
-                contentMenu.put(1, "вывести всех разработчиков по фамилии");
-                contentMenu.put(2, "по фамилии и имени разработчика получить по нему все данные " );
+                contentMenu.put(1, "вывести всех разработчиков");
+                contentMenu.put(2, "по фамилии и имени разработчика получить по нему все данные" );
                 contentMenu.put(3, "специальный вопрос - сколько всех Java - разработчиков");
                 contentMenu.put(4, "специальный вопрос - список всех middle - разработчиков");
                 contentMenu.put(5, "добавить разработчика");

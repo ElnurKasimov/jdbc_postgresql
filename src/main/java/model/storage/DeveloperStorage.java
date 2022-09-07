@@ -15,8 +15,6 @@ import java.util.List;
 @Data
 public class DeveloperStorage implements Storage<DeveloperDao>{
     public DatabaseManagerConnector manager;
-    @Getter
-    public List<DeveloperDao> developerDaoList = new ArrayList<>();
 
     private PreparedStatement getAllInfoSt;
 
@@ -31,25 +29,11 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         }
         {
             getAllInfoSt = connection.prepareStatement("SELECT * FROM developer");
+
         }
 
-        try (ResultSet rs = getAllInfoSt.executeQuery()) {
 
-            while (rs.next()) {
-                DeveloperDao developerDao = new DeveloperDao();
-                developerDao.setDeveloper_id(rs.getLong("developer_id"));
-                developerDao.setLastName(rs.getString("lastName"));
-                if (rs.getString("firstName") != null) {
-                    developerDao.setFirstName(rs.getString("firstName"));
-                }
-                developerDao.setAge(rs.getInt("age"));
-                developerDao.setCompany_id(rs.getInt("company_id"));
-                developerDao.setSalary(rs.getInt("salary"));
-                developerDaoList.add(developerDao);
-            }
-        }
     }
-
 
 
 
@@ -71,7 +55,28 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
 
     @Override
     public List<DeveloperDao> findAll() {
-        return null;
+        List<DeveloperDao> developerDaoList = new ArrayList<>();
+        try {
+            Connection connection = manager.getConnection();
+            try (ResultSet rs = getAllInfoSt.executeQuery()) {
+                while (rs.next()) {
+                    DeveloperDao developerDao = new DeveloperDao();
+                    developerDao.setDeveloper_id(rs.getLong("developer_id"));
+                    developerDao.setLastName(rs.getString("lastName"));
+                    if (rs.getString("firstName") != null) {
+                        developerDao.setFirstName(rs.getString("firstName"));
+                    }
+                    developerDao.setAge(rs.getInt("age"));
+                    developerDao.setCompany_id(rs.getInt("company_id"));
+                    developerDao.setSalary(rs.getInt("salary"));
+                    developerDaoList.add(developerDao);
+                }
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    return developerDaoList;
     }
 
     @Override
