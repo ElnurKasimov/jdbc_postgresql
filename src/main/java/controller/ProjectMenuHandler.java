@@ -30,7 +30,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
         List<ProjectDao> projectDaoList = projectStorage.findAll();
         List<String> result = new ArrayList<>();
         for (ProjectDao projectDao : projectDaoList) {
-            result.add(String.format("%d. %s, бюджет -  %d, запущен %s",
+            result.add(String.format("%d. %s, бюджет - %d, запущен %s",
                     projectDao.getProject_id(),
                     projectDao.getProject_name(),
                     projectDao.getCost(),
