@@ -10,7 +10,7 @@ public class CompanyConverter implements Converter<CompanyDto, CompanyDao>{
         CompanyDto companyDto = new CompanyDto();
         companyDto.setCompany_id(entity.getCompany_id());
         companyDto.setCompany_name(entity.getCompany_name());
-        companyDto.setRating(entity.getRating());
+        companyDto.setRating(CompanyDto.Rating.valueOf(entity.getRating().toString()));
         return companyDto;
     }
 
@@ -19,7 +19,7 @@ public class CompanyConverter implements Converter<CompanyDto, CompanyDao>{
         CompanyDao companyDao = new CompanyDao();
         companyDao.setCompany_id(entity.getCompany_id());
         companyDao.setCompany_name(entity.getCompany_name());
-        companyDao.setRating(entity.getRating());
+        companyDao.setRating(CompanyDao.Rating.valueOf(entity.getRating().toString()));
         return companyDao;
     }
 }

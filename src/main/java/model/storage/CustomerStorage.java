@@ -2,7 +2,7 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
-import model.dao.DeveloperDao;
+import model.dao.CustomerDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,13 +11,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompanyStorage implements Storage<CompanyDao> {
+public class CustomerStorage implements Storage<CustomerDao> {
     public DatabaseManagerConnector manager;
 
     private PreparedStatement getAllInfoSt;
 
 
-    public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
+    public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
         Connection connection = null;
         try {
@@ -27,7 +27,7 @@ public class CompanyStorage implements Storage<CompanyDao> {
         }
 
         {
-            getAllInfoSt = connection.prepareStatement("SELECT * FROM company");
+            getAllInfoSt = connection.prepareStatement("SELECT * FROM customer");
 
         }
 
@@ -35,46 +35,40 @@ public class CompanyStorage implements Storage<CompanyDao> {
     }
 
 
-
-
-
-
-
-
     @Override
-    public CompanyDao save(CompanyDao entity) {
+    public CustomerDao save(CustomerDao entity) {
         return null;
     }
 
     @Override
-    public CompanyDao findById(long id) {
+    public CustomerDao findById(long id) {
         return null;
     }
 
     @Override
-    public CompanyDao findByName(String name) {
+    public CustomerDao findByName(String name) {
         return null;
     }
 
     @Override
-    public List<CompanyDao> findAll() {
-        List<CompanyDao> companyDaoList = new ArrayList<>();
+    public List<CustomerDao> findAll() {
+        List<CustomerDao> customerDaoList = new ArrayList<>();
         try {
             Connection connection = manager.getConnection();
             try (ResultSet rs = getAllInfoSt.executeQuery()) {
                 while (rs.next()) {
-                    CompanyDao companyDao = new CompanyDao();
-                    companyDao.setCompany_id(rs.getLong("company_id"));
-                    companyDao.setCompany_name(rs.getString("company_name"));
-                    companyDao.setRating(CompanyDao.Rating.valueOf(rs.getString("rating")));
-                    companyDaoList.add(companyDao);
+                    CustomerDao customerDao = new CustomerDao();
+                    customerDao.setCustomer_id(rs.getLong("customer_id"));
+                    customerDao.setCustomer_name(rs.getString("customer_name"));
+                    customerDao.setReputation(CustomerDao.Reputation.valueOf(rs.getString("reputation")));
+                    customerDaoList.add(customerDao);
                 }
             }
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return companyDaoList;
+        return customerDaoList;
     }
 
     @Override
@@ -88,12 +82,12 @@ public class CompanyStorage implements Storage<CompanyDao> {
     }
 
     @Override
-    public CompanyDao update(CompanyDao entity) {
+    public CustomerDao update(CustomerDao entity) {
         return null;
     }
 
     @Override
-    public void delete(CompanyDao entity) {
+    public void delete(CustomerDao entity) {
 
     }
 }

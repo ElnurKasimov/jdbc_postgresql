@@ -8,7 +8,7 @@ public class MenuService {
     private Map<String, Menu> elementsMenu = new HashMap<String, Menu>();
 
     public void create() {
-        FillerContentMenu fillerMenuContent = new FillerContentMenu();
+        ContentMenuFiller fillerMenuContent = new ContentMenuFiller();
 
         Menu mainMenu = new Menu("Main");
         mainMenu.setContentMenu(fillerMenuContent.fill("Main"));

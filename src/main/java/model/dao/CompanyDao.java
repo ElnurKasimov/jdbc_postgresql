@@ -7,7 +7,7 @@ import model.dto.CompanyDto;
 public class CompanyDao {
     private long company_id;
     private String company_name;
-    private CompanyDto.Rating rating;
+    private Rating rating;
 
     public enum Rating {
         high,
@@ -15,7 +15,7 @@ public class CompanyDao {
         low
     }
 
-    public CompanyDao (String company_name, CompanyDto.Rating rating) {
+    public CompanyDao (String company_name, Rating rating) {
         this.company_name=company_name;
         this.rating=rating;
     }

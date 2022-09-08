@@ -5,9 +5,11 @@ import model.dao.DeveloperDao;
 import model.dto.DeveloperDto;
 import model.service.DeveloperService;
 import model.service.converter.DeveloperConverter;
+import model.storage.CompanyStorage;
 import model.storage.DeveloperStorage;
 import view.Output;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +27,9 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
 }
 
 
-
-
     public void getAllNames() {
         List<DeveloperDao> developerDaoList = developerStorage.findAll();
-             List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         for (DeveloperDao developerDao : developerDaoList) {
             result.add(String.format("%d. %s %s, возраст %d лет, зарплата %d",
                     developerDao.getDeveloper_id(),

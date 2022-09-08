@@ -7,7 +7,7 @@ import model.dto.CustomerDto;
 public class CustomerDao {
     private long customer_id;
     private String customer_name;
-    private CustomerDto.Reputation reputation;
+    private Reputation reputation;
 
     public enum Reputation {
         respectable,
@@ -15,7 +15,7 @@ public class CustomerDao {
         insolvent
     }
 
-    public CustomerDao (String customer_name, CustomerDto.Reputation reputation) {
+    public CustomerDao (String customer_name, Reputation reputation) {
         this.customer_name = customer_name;
         this.reputation = reputation;
     }

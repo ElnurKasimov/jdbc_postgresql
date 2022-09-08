@@ -10,7 +10,7 @@ public class CustomerConverter implements Converter<CustomerDto, CustomerDao>{
         CustomerDto customerDto = new CustomerDto();
         customerDto.setCustomer_id(entity.getCustomer_id());
         customerDto.setCustomer_name(entity.getCustomer_name());
-        customerDto.setReputation(entity.getReputation());
+        customerDto.setReputation(CustomerDto.Reputation.valueOf(entity.getReputation().toString()));
         return customerDto;
     }
 
@@ -19,7 +19,7 @@ public class CustomerConverter implements Converter<CustomerDto, CustomerDao>{
         CustomerDao customerDao = new CustomerDao();
         customerDao.setCustomer_id(entity.getCustomer_id());
         customerDao.setCustomer_name(entity.getCustomer_name());
-        customerDao.setReputation(entity.getReputation());
+        customerDao.setReputation(CustomerDao.Reputation.valueOf(entity.getReputation().toString()));
         return customerDao;
     }
 }

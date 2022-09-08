@@ -1,14 +1,22 @@
 
-import controller.DeveloperMenuHandler;
+import controller.*;
 import model.config.DatabaseManagerConnector;
 import model.config.Migration;
 import model.config.PropertiesConfig;
 import model.dao.DeveloperDao;
+import model.service.CompanyService;
+import model.service.CustomerService;
 import model.service.DeveloperService;
+import model.service.ProjectService;
+import model.service.converter.CompanyConverter;
+import model.service.converter.CustomerConverter;
 import model.service.converter.DeveloperConverter;
+import model.service.converter.ProjectConverter;
+import model.storage.CompanyStorage;
+import model.storage.CustomerStorage;
 import model.storage.DeveloperStorage;
+import model.storage.ProjectStorage;
 import view.Output;
-import controller.MenuService;
 
 import java.sql.SQLException;
 import java.util.Properties;
@@ -24,15 +32,27 @@ public class App {
         DatabaseManagerConnector manager = new DatabaseManagerConnector(properties, dbUsername, dbPassword);
         new Migration(manager).initDb();
 
-
         MenuService menuService = new MenuService();
-
         DeveloperStorage developerStorage = new DeveloperStorage(manager);
         DeveloperService developerService = new DeveloperService();
         DeveloperConverter developerConverter = new DeveloperConverter();
         DeveloperMenuHandler developerMenuHandler = new DeveloperMenuHandler(
                 developerService, developerStorage, developerConverter);
-
+        CompanyStorage companyStorage = new CompanyStorage(manager);
+        CompanyService companyService = new CompanyService();
+        CompanyConverter companyConverter = new CompanyConverter();
+        CompanyMenuHandler companyMenuHandler = new CompanyMenuHandler(
+                companyService, companyStorage, companyConverter);
+        CustomerStorage customerStorage = new CustomerStorage(manager);
+        CustomerService customerService = new CustomerService();
+        CustomerConverter customerConverter = new CustomerConverter();
+        CustomerMenuHandler customerMenuHandler = new CustomerMenuHandler(
+                customerService,customerStorage,customerConverter);
+        ProjectStorage projectStorage = new ProjectStorage(manager);
+        ProjectService projectService = new ProjectService();
+        ProjectConverter projectConverter = new ProjectConverter();
+        ProjectMenuHandler projectMenuHandler = new ProjectMenuHandler(
+                projectService,projectStorage,projectConverter);
 
         menuService.create();
         int choice;
@@ -47,7 +67,7 @@ public class App {
                         choiceDevelopers = menuService.get("Developers").makeChoice();
                         switch (choiceDevelopers) {
                             case 1:
-                                developerMenuHandler.getAllgNames();
+                                developerMenuHandler.getAllNames();
                                 break;
                             case 2:
                                 System.out.print("\tВведите фамилию : ");
@@ -110,7 +130,7 @@ public class App {
                         choiceProjects = menuService.get("Projects").makeChoice();
                         switch (choiceProjects) {
                             case 1:
-                               // projectDaoService.getAllNames();
+                                projectMenuHandler.getAllNames();
                                 break;
                             case 2:
                                 System.out.print("Введите название проекта : ");
@@ -172,7 +192,7 @@ public class App {
                         choiceCompanies = menuService.get("Companies").makeChoice();
                         switch (choiceCompanies) {
                             case 1:
-                                //companyDaoService.getAllNames();
+                                companyMenuHandler.getAllNames();
                                 break;
                             case 2:
                                 //companyDaoService.addCompany();
@@ -204,7 +224,7 @@ public class App {
                         choiceCustomers = menuService.get("Customers").makeChoice();
                         switch (choiceCustomers) {
                             case 1:
-                               // customerDaoService.getAllNames();
+                                customerMenuHandler.getAllNames();
                                 break;
                             case 2:
                                // customerDaoService.addCustomer();

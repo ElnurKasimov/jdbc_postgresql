@@ -27,6 +27,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         {
             getAllInfoSt = connection.prepareStatement("SELECT * FROM developer");
 
