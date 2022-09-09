@@ -74,12 +74,12 @@ public class App {
         String dbUsername = System.getenv("dbusername");
         PropertiesConfig propertiesConfig = new PropertiesConfig();
         Properties properties = propertiesConfig.loadProperties("application.properties");
-        DatabaseManagerConnector manager = new DatabaseManagerConnector(properties, dbUsername, dbPassword);
+        manager = new DatabaseManagerConnector(properties, dbUsername, dbPassword);
         new Migration(manager).initDb();
     }
 
     private static void initAllServiceStorageConverterClasses() {
-        MenuService menuService = new MenuService();
+        menuService = new MenuService();
         try {
             developerStorage = new DeveloperStorage(manager);
             developerService = new DeveloperService();
