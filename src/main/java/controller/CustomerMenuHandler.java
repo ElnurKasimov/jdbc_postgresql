@@ -1,12 +1,8 @@
 package controller;
 
-import model.dao.CompanyDao;
 import model.dao.CustomerDao;
-import model.service.CompanyService;
 import model.service.CustomerService;
-import model.service.converter.CompanyConverter;
 import model.service.converter.CustomerConverter;
-import model.storage.CompanyStorage;
 import model.storage.CustomerStorage;
 import view.Output;
 
@@ -20,7 +16,7 @@ public class CustomerMenuHandler {
     private CustomerStorage customerStorage;
     private CustomerConverter customerConverter;
     private MenuService menuService;
-    private static final int EXIT_FROM_CUSTOMER_NENU = 4;
+    private static final int EXIT_FROM_CUSTOMER_MENU = 4;
 
 public CustomerMenuHandler(CustomerService customerService, CustomerStorage customerStorage,
                            CustomerConverter customerConverter, MenuService menuService) {
@@ -59,7 +55,7 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
                                 */
                     break;
             }
-        } while (choiceCustomers != EXIT_FROM_CUSTOMER_NENU);
+        } while (choiceCustomers != EXIT_FROM_CUSTOMER_MENU);
     }
     public void getAllNames() {
         List<CustomerDao> customerDaoList = customerStorage.findAll();

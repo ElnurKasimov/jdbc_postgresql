@@ -10,11 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CustomerStorage implements Storage<CustomerDao> {
     public DatabaseManagerConnector manager;
 
-    private PreparedStatement getAllInfoSt;
+    private final PreparedStatement getAllInfoSt;
 
 
     public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
@@ -41,12 +42,12 @@ public class CustomerStorage implements Storage<CustomerDao> {
     }
 
     @Override
-    public CustomerDao findById(long id) {
+    public Optional<CustomerDao> findById(long id) {
         return null;
     }
 
     @Override
-    public CustomerDao findByName(String name) {
+    public Optional<CustomerDao> findByName(String name) {
         return null;
     }
 

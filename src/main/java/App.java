@@ -82,17 +82,17 @@ public class App {
         menuService = new MenuService();
         try {
             developerStorage = new DeveloperStorage(manager);
-            developerService = new DeveloperService();
             developerConverter = new DeveloperConverter();
+            developerService = new DeveloperService(developerStorage, developerConverter);
             companyStorage = new CompanyStorage(manager);
-            companyService = new CompanyService();
             companyConverter = new CompanyConverter();
+            companyService = new CompanyService(companyStorage, companyConverter);
             customerStorage = new CustomerStorage(manager);
-            customerService = new CustomerService();
             customerConverter = new CustomerConverter();
+            customerService = new CustomerService(customerStorage, customerConverter);
             projectStorage = new ProjectStorage(manager);
-            projectService = new ProjectService();
             projectConverter = new ProjectConverter();
+            projectService = new ProjectService(projectStorage, projectConverter);
         } catch (SQLException e) {
             e.printStackTrace();
         }

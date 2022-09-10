@@ -1,12 +1,8 @@
 package controller;
 
-import model.dao.CompanyDao;
 import model.dao.ProjectDao;
-import model.service.CompanyService;
 import model.service.ProjectService;
-import model.service.converter.CompanyConverter;
 import model.service.converter.ProjectConverter;
-import model.storage.CompanyStorage;
 import model.storage.ProjectStorage;
 import view.Output;
 
@@ -20,7 +16,7 @@ public class ProjectMenuHandler {
     private ProjectStorage projectStorage;
     private ProjectConverter projectConverter;
     private MenuService menuService;
-    private static final int EXIT_FROM_PROJECT_NENU = 9;
+    private static final int EXIT_FROM_PROJECT_MENU = 9;
 
 public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectStorage,
                           ProjectConverter projectConverter, MenuService menuService) {
@@ -90,7 +86,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
                     // projectDaoService.deleteProject(nameInput8);
                     break;
             }
-        } while (choiceProjects != EXIT_FROM_PROJECT_NENU);
+        } while (choiceProjects != EXIT_FROM_PROJECT_MENU);
     }
 
     public void getAllNames() {

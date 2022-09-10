@@ -10,12 +10,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CompanyStorage implements Storage<CompanyDao> {
     public DatabaseManagerConnector manager;
 
     private PreparedStatement getAllInfoSt;
-
+    private PreparedStatement findByNameSt;
 
     public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
@@ -28,16 +29,12 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
         {
             getAllInfoSt = connection.prepareStatement("SELECT * FROM company");
+            findByNameSt = connection.prepareStatement("SELECT * FROM company WHERE   company_name  LIKE  ?");
 
         }
 
 
     }
-
-
-
-
-
 
 
 
@@ -47,13 +44,22 @@ public class CompanyStorage implements Storage<CompanyDao> {
     }
 
     @Override
-    public CompanyDao findById(long id) {
+    public Optional<CompanyDao> findById(long id) {
         return null;
     }
 
     @Override
-    public CompanyDao findByName(String name) {
-        return null;
+    public Optional<CompanyDao>  findByName(String name) {
+        try (Connection connection = manager.getConnection()) {
+            findByNameSt.setString(1, "%" + name + "%");
+            ResultSet resultSet = findByNameSt.executeQuery();
+            CompanyDao companyDao = mapCompanyDao(resultSet);
+            return Optional.ofNullable(companyDao);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -95,5 +101,16 @@ public class CompanyStorage implements Storage<CompanyDao> {
     @Override
     public void delete(CompanyDao entity) {
 
+    }
+
+    private CompanyDao mapCompanyDao(ResultSet resultSet) throws SQLException {
+        CompanyDao companyDao = null;
+        while (resultSet.next()) {
+            companyDao = new CompanyDao();
+            companyDao.setCompany_id(resultSet.getLong("company_id"));
+            companyDao.setCompany_name(resultSet.getString("company_name"));
+            companyDao.setRating(CompanyDao.Rating.valueOf(resultSet.getString("rating")));
+        }
+        return companyDao;
     }
 }

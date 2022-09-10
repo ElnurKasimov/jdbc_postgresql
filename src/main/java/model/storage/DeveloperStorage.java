@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 public class DeveloperStorage implements Storage<DeveloperDao>{
@@ -45,12 +46,12 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
     @Override
-    public DeveloperDao findById(long id) {
+    public Optional<DeveloperDao> findById(long id) {
         return null;
     }
 
     @Override
-    public DeveloperDao findByName(String name) {
+    public Optional<DeveloperDao> findByName(String name) {
         return null;
     }
 

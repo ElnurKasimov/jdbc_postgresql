@@ -1,15 +1,11 @@
 package controller;
 
-import lombok.Data;
 import model.dao.DeveloperDao;
-import model.dto.DeveloperDto;
 import model.service.DeveloperService;
 import model.service.converter.DeveloperConverter;
-import model.storage.CompanyStorage;
 import model.storage.DeveloperStorage;
 import view.Output;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -20,7 +16,7 @@ public class DeveloperMenuHandler {
     private DeveloperStorage developerStorage;
     private DeveloperConverter developerConverter;
     private MenuService menuService;
-    private static final int EXIT_FROM_DEVELOPER_NENU = 8;
+    private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
 public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage developerStorage,
                              DeveloperConverter developerConverter, MenuService menuService) {
@@ -92,7 +88,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
                     //developerDaoService.deleteDeveloper(lastNameInput7, firstNameInput7);
                     break;
             }
-        } while (choiceDevelopers != EXIT_FROM_DEVELOPER_NENU);
+        } while (choiceDevelopers != EXIT_FROM_DEVELOPER_MENU);
     }
 
     public void getAllNames() {

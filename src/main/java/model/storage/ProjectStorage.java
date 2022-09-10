@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectStorage implements Storage<ProjectDao> {
 
     public DatabaseManagerConnector manager;
 
-    private PreparedStatement getAllInfoSt;
+    private final PreparedStatement getAllInfoSt;
 
 
     public ProjectStorage (DatabaseManagerConnector manager) throws SQLException {
@@ -46,12 +47,12 @@ public class ProjectStorage implements Storage<ProjectDao> {
     }
 
     @Override
-    public ProjectDao findById(long id) {
+    public Optional<ProjectDao> findById(long id) {
         return null;
     }
 
     @Override
-    public ProjectDao findByName(String name) {
+    public Optional<ProjectDao> findByName(String name) {
         return null;
     }
 

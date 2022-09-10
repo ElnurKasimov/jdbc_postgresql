@@ -1,15 +1,13 @@
 package controller;
 
 import model.dao.CompanyDao;
-import model.dao.DeveloperDao;
+import model.dto.CompanyDto;
 import model.service.CompanyService;
-import model.service.DeveloperService;
 import model.service.converter.CompanyConverter;
-import model.service.converter.DeveloperConverter;
 import model.storage.CompanyStorage;
-import model.storage.DeveloperStorage;
 import view.Output;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -20,7 +18,7 @@ public class CompanyMenuHandler {
     private CompanyStorage companyStorage;
     private CompanyConverter companyConverter;
     private MenuService menuService;
-    private static final int EXIT_FROM_COMPANY_NENU = 4;
+    private static final int EXIT_FROM_COMPANY_MENU = 4;
 
 public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyStorage,
                           CompanyConverter companyConverter, MenuService menuService) {
@@ -41,7 +39,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
                     getAllNames();
                     break;
                 case 2:
-                    //companyDaoService.addCompany();
+                    createCompany();
                     break;
                 case 3:
                     System.out.print("Внесите название компании, которую вы хотите удалить :");
@@ -61,9 +59,10 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
                                  */
                     break;
             }
-        } while (choiceCompanies != EXIT_FROM_COMPANY_NENU);
+        } while (choiceCompanies != EXIT_FROM_COMPANY_MENU);
     }
-    public void getAllNames() {
+
+    private  void getAllNames() {
         List<CompanyDao> companyDaoList = companyStorage.findAll();
         List<String> result = new ArrayList<>();
         for (CompanyDao companyDao : companyDaoList) {
@@ -75,4 +74,33 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         Output.getInstance().print(result);
     }
 
+    private  void createCompany() {
+        System.out.print("Введите название компании : ");
+        Scanner sc = new Scanner(System.in);
+        String newCompanyName = sc.nextLine();
+        System.out.print("Введите рейтинг компании (high, middle, low) : ");
+        String newCompanyRating = sc.nextLine();
+        CompanyDto newCompanyDto = new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
+
+        companyService.save(newCompanyDto);
+/*
+        addCompanySt.setLong(1, newCompanyId);
+        addCompanySt.setString(2, newCompanyName);
+        addCompanySt.setString(3, newCompanyRating);
+        Company company = new Company();
+
+        company.setCompany_id(newCompanyId);
+        company.setCompany_name(newCompanyName);
+        company.setRating(Company.Rating.valueOf(newCompanyRating));
+
+        addCompanySt.executeUpdate();
+
+        if (existsCompany(newCompanyId)) {System.out.println("Компания успешно добавлена");}
+        else System.out.println("Что-то пошло не так и компания не была  добавлен в базу данных");
+
+ */
+
+        List<String> result = new ArrayList<>();
+        Output.getInstance().print(result);
+    }
 }

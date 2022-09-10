@@ -1,16 +1,24 @@
 package model.service;
 
-import model.config.DatabaseManagerConnector;
-import model.dao.DeveloperDao;
+import lombok.Data;
+import model.service.converter.DeveloperConverter;
+import model.storage.DeveloperStorage;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class DeveloperService {
+    private DeveloperStorage developerStorage;
+    private DeveloperConverter developerConverter;
+
+
+public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter developerConverter) {
+    this.developerStorage = developerStorage;
+    this.developerConverter = developerConverter;
+}
+
+
 
     public List<String> getAllNames() {
         List<String> result = new ArrayList<>();
