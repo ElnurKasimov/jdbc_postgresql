@@ -2,12 +2,12 @@ package controller;
 
 import model.dao.CompanyDao;
 import model.dto.CompanyDto;
+import model.exeptions.CompanyAlreadyExistException;
 import model.service.CompanyService;
 import model.service.converter.CompanyConverter;
 import model.storage.CompanyStorage;
 import view.Output;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -81,26 +81,13 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         System.out.print("Введите рейтинг компании (high, middle, low) : ");
         String newCompanyRating = sc.nextLine();
         CompanyDto newCompanyDto = new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
-
-        companyService.save(newCompanyDto);
-/*
-        addCompanySt.setLong(1, newCompanyId);
-        addCompanySt.setString(2, newCompanyName);
-        addCompanySt.setString(3, newCompanyRating);
-        Company company = new Company();
-
-        company.setCompany_id(newCompanyId);
-        company.setCompany_name(newCompanyName);
-        company.setRating(Company.Rating.valueOf(newCompanyRating));
-
-        addCompanySt.executeUpdate();
-
-        if (existsCompany(newCompanyId)) {System.out.println("Компания успешно добавлена");}
-        else System.out.println("Что-то пошло не так и компания не была  добавлен в базу данных");
-
- */
-
         List<String> result = new ArrayList<>();
+        try {companyService.saveWithValidationByName(newCompanyDto);
+            result.add("Компания успешно сохранена");}
+        catch (CompanyAlreadyExistException extension) {
+            result.add(extension.getMessage());
+            result.add("Повторите попытку");
+        }
         Output.getInstance().print(result);
     }
 }

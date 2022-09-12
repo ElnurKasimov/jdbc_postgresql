@@ -1,7 +1,7 @@
 CREATE TABLE company (
 company_id SERIAL PRIMARY KEY,
-company_name VARCHAR(100),
-rating VARCHAR(50) NOT NULL,
+company_name VARCHAR(100) NOT NULL,
+rating VARCHAR(50),
 CHECK (rating IN ('low', 'middle', 'high'))
 );
 
@@ -31,7 +31,7 @@ FOREIGN KEY (skill_id) REFERENCES skill (skill_id)
 
 CREATE TABLE customer (
 customer_id SERIAL PRIMARY KEY,
-customer_name VARCHAR(100),
+customer_name VARCHAR(100) NOT NULL,
 reputation VARCHAR(50) CHECK (reputation IN ('insolvent', 'trustworthy', 'respectable'))
 );
 

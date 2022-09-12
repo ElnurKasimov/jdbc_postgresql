@@ -3,10 +3,7 @@ package model.storage;
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +13,7 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
     private final String GET_ALL_INFO = "SELECT * FROM company";
     private final String FIND_BY_NAME = "SELECT * FROM company WHERE   company_name  LIKE  ?";
-
+    private final String INSERT = "INSERT INTO company(company_name, rating) VALUES (?, ?)";
 
 
     public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
@@ -27,7 +24,24 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
     @Override
     public CompanyDao save(CompanyDao entity) {
-        return null;
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, entity.getCompany_name());
+            statement.setString(2, entity.getRating().toString());
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    entity.setCompany_id(generatedKeys.getInt(1));
+                }
+                else {
+                    throw new SQLException("сохранение компании не удалось, ID не получен.");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Компания не создана");
+        }
+        return entity;
     }
 
     @Override
@@ -36,9 +50,10 @@ public class CompanyStorage implements Storage<CompanyDao> {
     }
 
     @Override
-    public Optional<CompanyDao>  findByName(String name) {
+    public Optional<CompanyDao> findByName(String name) {
         try(Connection connection = manager.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
+            statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             CompanyDao companyDao = mapCompanyDao(resultSet);
             return Optional.ofNullable(companyDao);
