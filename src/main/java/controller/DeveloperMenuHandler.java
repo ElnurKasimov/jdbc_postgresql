@@ -2,7 +2,6 @@ package controller;
 
 import model.dao.DeveloperDao;
 import model.service.DeveloperService;
-import model.service.converter.DeveloperConverter;
 import model.storage.DeveloperStorage;
 import view.Output;
 
@@ -14,20 +13,18 @@ import java.util.Scanner;
 public class DeveloperMenuHandler {
     private DeveloperService developerService;
     private DeveloperStorage developerStorage;
-    private DeveloperConverter developerConverter;
     private MenuService menuService;
     private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
 public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage developerStorage,
-                             DeveloperConverter developerConverter, MenuService menuService) {
+                             MenuService menuService) {
     this.developerService = developerService;
     this.developerStorage = developerStorage;
-    this.developerConverter = developerConverter;
     this.menuService = menuService;
 }
 
 
-    public void launchCoreModule() {
+    public void launch() {
         int choiceDevelopers;
         do {
             menuService.get("Developers").printMenu();
@@ -95,7 +92,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         List<DeveloperDao> developerDaoList = developerStorage.findAll();
         List<String> result = new ArrayList<>();
         for (DeveloperDao developerDao : developerDaoList) {
-            result.add(String.format("%d. %s %s, возраст %d лет, зарплата %d",
+            result.add(String.format("\t%d. %s %s, age %d, salary %d",
                     developerDao.getDeveloper_id(),
                     developerDao.getLastName(), developerDao.getFirstName(),
                     developerDao.getAge(), developerDao.getSalary()));

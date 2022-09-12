@@ -2,7 +2,6 @@ package controller;
 
 import model.dao.ProjectDao;
 import model.service.ProjectService;
-import model.service.converter.ProjectConverter;
 import model.storage.ProjectStorage;
 import view.Output;
 
@@ -14,19 +13,17 @@ import java.util.Scanner;
 public class ProjectMenuHandler {
     private ProjectService projectService;
     private ProjectStorage projectStorage;
-    private ProjectConverter projectConverter;
     private MenuService menuService;
     private static final int EXIT_FROM_PROJECT_MENU = 9;
 
 public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectStorage,
-                          ProjectConverter projectConverter, MenuService menuService) {
+                          MenuService menuService) {
     this.projectService = projectService;
     this.projectStorage = projectStorage;
-    this.projectConverter = projectConverter;
     this.menuService = menuService;
 }
 
-    public void launchCoreModule() {
+    public void launch() {
         int choiceProjects;
         do {
             menuService.get("Projects").printMenu();
@@ -93,7 +90,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
         List<ProjectDao> projectDaoList = projectStorage.findAll();
         List<String> result = new ArrayList<>();
         for (ProjectDao projectDao : projectDaoList) {
-            result.add(String.format("%d. %s, бюджет - %d, запущен %s",
+            result.add(String.format("\t%d. %s, budget - %d, launched  %s",
                     projectDao.getProject_id(),
                     projectDao.getProject_name(),
                     projectDao.getCost(),

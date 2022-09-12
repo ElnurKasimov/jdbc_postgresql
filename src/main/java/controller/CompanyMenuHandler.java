@@ -2,9 +2,7 @@ package controller;
 
 import model.dao.CompanyDao;
 import model.dto.CompanyDto;
-import model.exeptions.CompanyAlreadyExistException;
 import model.service.CompanyService;
-import model.service.converter.CompanyConverter;
 import model.storage.CompanyStorage;
 import view.Output;
 
@@ -16,20 +14,18 @@ import java.util.Scanner;
 public class CompanyMenuHandler {
     private CompanyService companyService;
     private CompanyStorage companyStorage;
-    private CompanyConverter companyConverter;
     private MenuService menuService;
     private static final int EXIT_FROM_COMPANY_MENU = 4;
 
 public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyStorage,
-                          CompanyConverter companyConverter, MenuService menuService) {
+                           MenuService menuService) {
     this.companyService = companyService;
     this.companyStorage = companyStorage;
-    this.companyConverter = companyConverter;
     this.menuService = menuService;
 }
 
 
-    public void launchCoreModule() {
+    public void launch() {
         int choiceCompanies;
         do {
             menuService.get("Companies").printMenu();
@@ -66,7 +62,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         List<CompanyDao> companyDaoList = companyStorage.findAll();
         List<String> result = new ArrayList<>();
         for (CompanyDao companyDao : companyDaoList) {
-            result.add(String.format("%d. %s, рейтинг -  %s",
+            result.add(String.format("\t%d. %s, rating -  %s",
                     companyDao.getCompany_id(),
                     companyDao.getCompany_name(),
                     companyDao.getRating()));
@@ -75,19 +71,15 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
     }
 
     private  void createCompany() {
-        System.out.print("Введите название компании : ");
+        System.out.print("Enter company name : ");
         Scanner sc = new Scanner(System.in);
         String newCompanyName = sc.nextLine();
-        System.out.print("Введите рейтинг компании (high, middle, low) : ");
+        System.out.print("Enter company rating (high, middle, low) : ");
         String newCompanyRating = sc.nextLine();
         CompanyDto newCompanyDto = new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
-        List<String> result = new ArrayList<>();
-        try {companyService.saveWithValidationByName(newCompanyDto);
-            result.add("Компания успешно сохранена");}
-        catch (CompanyAlreadyExistException extension) {
-            result.add(extension.getMessage());
-            result.add("Повторите попытку");
-        }
+        List<String> result = companyService.save(newCompanyDto);
         Output.getInstance().print(result);
     }
+
+
 }

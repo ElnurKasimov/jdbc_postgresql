@@ -34,12 +34,12 @@ public class CompanyStorage implements Storage<CompanyDao> {
                     entity.setCompany_id(generatedKeys.getInt(1));
                 }
                 else {
-                    throw new SQLException("сохранение компании не удалось, ID не получен.");
+                    throw new SQLException("Company saving was interrupted, ID has not been obtained.");
                 }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new RuntimeException("Компания не создана");
+            throw new RuntimeException("The company was not created");
         }
         return entity;
     }

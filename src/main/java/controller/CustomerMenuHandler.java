@@ -1,8 +1,9 @@
 package controller;
 
 import model.dao.CustomerDao;
+import model.dto.CompanyDto;
+import model.dto.CustomerDto;
 import model.service.CustomerService;
-import model.service.converter.CustomerConverter;
 import model.storage.CustomerStorage;
 import view.Output;
 
@@ -14,19 +15,17 @@ import java.util.Scanner;
 public class CustomerMenuHandler {
     private CustomerService customerService;
     private CustomerStorage customerStorage;
-    private CustomerConverter customerConverter;
     private MenuService menuService;
     private static final int EXIT_FROM_CUSTOMER_MENU = 4;
 
 public CustomerMenuHandler(CustomerService customerService, CustomerStorage customerStorage,
-                           CustomerConverter customerConverter, MenuService menuService) {
+                            MenuService menuService) {
     this.customerService = customerService;
     this.customerStorage = customerStorage;
-    this.customerConverter = customerConverter;
     this.menuService = menuService;
 }
 
-    public void launchCoreModule() {
+    public void launch() {
         int choiceCustomers;
         do {
             menuService.get("Customers").printMenu();
@@ -36,7 +35,7 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
                     getAllNames();
                     break;
                 case 2:
-                    // customerDaoService.addCustomer();
+                    createCustomer();
                     break;
                 case 3:
                     System.out.print("Внесите название заказчика, которого вы хотите удалить :");
@@ -61,7 +60,7 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
         List<CustomerDao> customerDaoList = customerStorage.findAll();
         List<String> result = new ArrayList<>();
         for (CustomerDao customerDao : customerDaoList) {
-            result.add(String.format("%d. %s, репутация -  %s",
+            result.add(String.format("\t%d. %s, reputation -  %s",
                     customerDao.getCustomer_id(),
                     customerDao.getCustomer_name(),
                     customerDao.getReputation()));
@@ -69,4 +68,14 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
         Output.getInstance().print(result);
     }
 
+    private  void createCustomer() {
+        System.out.print("Enter customer name : ");
+        Scanner sc = new Scanner(System.in);
+        String newCustomerName = sc.nextLine();
+        System.out.print("Enter customer reputation (respectable, trustworthy, insolvent) : ");
+        String newCustomerReputation = sc.nextLine();
+        CustomerDto newCustomerDto = new CustomerDto(newCustomerName, CustomerDto.Reputation.valueOf(newCustomerReputation));
+        List<String> result = customerService.save(newCustomerDto);
+        Output.getInstance().print(result);
+    }
 }

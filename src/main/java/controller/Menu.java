@@ -17,12 +17,12 @@ public class Menu {
     }
 
     public void printMenu () {
-        if(name.equals("Main")) {System.out.println("\tВ данной БД вы можете работать с такими таблицами:");}
-        else {System.out.println("\tВ данной таблице вы можете работать с такими данными:");}
+        if(name.equals("Main")) {System.out.println("\tYou can manage  such tables in the DB :");}
+        else {System.out.println("\tYou can operate such data in the table:");}
         for (Map.Entry<Integer, String> element : contentMenu.entrySet()) {
             System.out.println(element.getKey() + " - " + element.getValue());
         }
-        System.out.print("Сделайте свой выбор (1,2,3 и т.д.) : ");
+        System.out.print("Make Your choice (1,2,3 etc.) : ");
     }
 
     public int makeChoice() {
@@ -30,7 +30,12 @@ public class Menu {
         boolean isRightChoice = true;
         Scanner sc = new Scanner(System.in);
         do {
-            result = sc.nextInt();
+            try{
+                result = Integer.parseInt(sc.nextLine());
+            }
+            catch (NumberFormatException e) {
+                System.out.println("\tInvalid value. Use digits.");
+            }
             isRightChoice = checkChoice(result);
         } while (!isRightChoice);
         return result;
@@ -45,7 +50,7 @@ public class Menu {
         }
         if (result) return result;
         else {
-            System.out.print("\tВы сделали невозможный выбор, пожалуйста повторите :");
+            System.out.print("\tYour choice isn't correct, repeat please :");
             return result;
         }
     }

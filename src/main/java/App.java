@@ -3,7 +3,6 @@ import controller.*;
 import model.config.DatabaseManagerConnector;
 import model.config.Migration;
 import model.config.PropertiesConfig;
-import model.dao.DeveloperDao;
 import model.service.CompanyService;
 import model.service.CustomerService;
 import model.service.DeveloperService;
@@ -16,11 +15,9 @@ import model.storage.CompanyStorage;
 import model.storage.CustomerStorage;
 import model.storage.DeveloperStorage;
 import model.storage.ProjectStorage;
-import view.Output;
 
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.Scanner;
 
 public class App {
     private static DatabaseManagerConnector manager;
@@ -37,7 +34,7 @@ public class App {
     private static ProjectStorage projectStorage;
     private static ProjectService projectService;
     private static ProjectConverter projectConverter;
-    private static final int EXIT_FROM_MAIN_NENU = 5;
+    private static final int EXIT_FROM_MAIN_MENU = 5;
 
     public static void main(String[] args) {
         initDbAndMigrations();
@@ -49,23 +46,19 @@ public class App {
             choice = menuService.get("Main").makeChoice();
             switch (choice) {
                 case 1:
-                    new DeveloperMenuHandler(developerService, developerStorage,
-                            developerConverter, menuService).launchCoreModule();
+                    new DeveloperMenuHandler(developerService, developerStorage, menuService).launch();
                     break;
                 case 2:
-                    new ProjectMenuHandler(projectService, projectStorage,
-                            projectConverter, menuService).launchCoreModule();
+                    new ProjectMenuHandler(projectService, projectStorage, menuService).launch();
                     break;
                 case 3:
-                    new CompanyMenuHandler(companyService, companyStorage,
-                            companyConverter, menuService).launchCoreModule();
+                    new CompanyMenuHandler(companyService, companyStorage, menuService).launch();
                     break;
                 case 4:
-                    new CustomerMenuHandler(customerService, customerStorage,
-                            customerConverter, menuService).launchCoreModule();
+                    new CustomerMenuHandler(customerService, customerStorage, menuService).launch();
                     break;
             }
-        } while (choice != EXIT_FROM_MAIN_NENU);
+        } while (choice != EXIT_FROM_MAIN_MENU);
     }
 
 

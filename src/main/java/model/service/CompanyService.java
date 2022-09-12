@@ -2,10 +2,11 @@ package model.service;
 
 import model.dao.CompanyDao;
 import model.dto.CompanyDto;
-import model.exeptions.CompanyAlreadyExistException;
 import model.service.converter.CompanyConverter;
 import model.storage.CompanyStorage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -19,24 +20,24 @@ public  CompanyService (CompanyStorage companyStorage, CompanyConverter companyC
 }
 
 
-/*    public CompanyDto save (CompanyDto companyDto) {
-        CompanyDao companyDao = companyStorage.save(companyConverter.to(companyDto));
-        return companyConverter.from(companyDao);
+public List<String> save (CompanyDto companyDto) {
+    List<String> result = new ArrayList<>();
+    Optional<CompanyDao> companyFromDb = companyStorage.findByName(companyDto.getCompany_name());
+    if (companyFromDb.isPresent()) {
+        result.add(validateByName(companyDto, companyConverter.from(companyFromDb.get())));
+    } else {
+        companyStorage.save(companyConverter.to(companyDto));
+        result.add("\tCompany successfully added to the database");
+    };
+    return result;
+}
+
+    public String  validateByName(CompanyDto companyDto, CompanyDto companyFromDb) {
+        if (!companyDto.getRating().toString().equals(companyFromDb.getRating().toString())) {
+            return String.format("\tCompany with name '%s' already exist with different " +
+                    "rating '%s'. Please enter correct data",
+                    companyDto.getCompany_name(), companyFromDb.getRating().toString());
+        } else return "\tCompany successfully added to the database";
     }
 
- */
-
-    public Optional<CompanyDto> findByName(String companyName) {
-        Optional<CompanyDao> companyByName = companyStorage.findByName(companyName);
-        return companyByName.map(companyDao -> companyConverter.from(companyDao));
-    }
-
-    public void saveWithValidationByName(CompanyDto companyDto) {
-        CompanyDao companyDao = companyStorage.findByName(companyDto.getCompany_name())
-                .orElseGet(() -> companyStorage.save(companyConverter.to(companyDto)));
-        if(!companyDao.getRating().toString().equals(companyDto.getRating().toString())) {
-            throw new CompanyAlreadyExistException(String.format("Company with name '%s' already exist with different " +
-                    "rating '%s'" , companyDto.getCompany_name(), companyDao.getRating().toString()));
-        }
-    }
 }

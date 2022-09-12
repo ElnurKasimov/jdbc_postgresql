@@ -41,7 +41,7 @@ public class MenuService {
         if (optionalResult.isPresent() ) {
             result = optionalResult.get();
         } else {
-            System.out.println("Меню с таким названием не найдено");
+            System.out.println("There is no menu with such name");
         }
         return result;
     }
