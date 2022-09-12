@@ -2,7 +2,6 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
-import model.dao.DeveloperDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,25 +14,13 @@ import java.util.Optional;
 public class CompanyStorage implements Storage<CompanyDao> {
     public DatabaseManagerConnector manager;
 
-    private PreparedStatement getAllInfoSt;
-    private PreparedStatement findByNameSt;
+    private final String GET_ALL_INFO = "SELECT * FROM company";
+    private final String FIND_BY_NAME = "SELECT * FROM company WHERE   company_name  LIKE  ?";
+
+
 
     public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
-        Connection connection = null;
-        try {
-            connection = manager.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        {
-            getAllInfoSt = connection.prepareStatement("SELECT * FROM company");
-            findByNameSt = connection.prepareStatement("SELECT * FROM company WHERE   company_name  LIKE  ?");
-
-        }
-
-
     }
 
 
@@ -50,9 +37,9 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
     @Override
     public Optional<CompanyDao>  findByName(String name) {
-        try (Connection connection = manager.getConnection()) {
-            findByNameSt.setString(1, "%" + name + "%");
-            ResultSet resultSet = findByNameSt.executeQuery();
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
+            ResultSet resultSet = statement.executeQuery();
             CompanyDao companyDao = mapCompanyDao(resultSet);
             return Optional.ofNullable(companyDao);
         }
@@ -65,9 +52,8 @@ public class CompanyStorage implements Storage<CompanyDao> {
     @Override
     public List<CompanyDao> findAll() {
         List<CompanyDao> companyDaoList = new ArrayList<>();
-        try {
-            Connection connection = manager.getConnection();
-            try (ResultSet rs = getAllInfoSt.executeQuery()) {
+        try (Connection connection = manager.getConnection();
+            ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
                     CompanyDao companyDao = new CompanyDao();
                     companyDao.setCompany_id(rs.getLong("company_id"));
@@ -76,9 +62,8 @@ public class CompanyStorage implements Storage<CompanyDao> {
                     companyDaoList.add(companyDao);
                 }
             }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        catch (SQLException exception) {
+            exception.printStackTrace();
         }
         return companyDaoList;
     }

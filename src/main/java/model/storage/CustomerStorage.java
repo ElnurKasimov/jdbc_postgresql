@@ -15,24 +15,11 @@ import java.util.Optional;
 public class CustomerStorage implements Storage<CustomerDao> {
     public DatabaseManagerConnector manager;
 
-    private final PreparedStatement getAllInfoSt;
+    private final String GET_ALL_INFO = "SELECT * FROM customer";
 
 
     public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
-        Connection connection = null;
-        try {
-            connection = manager.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        {
-            getAllInfoSt = connection.prepareStatement("SELECT * FROM customer");
-
-        }
-
-
     }
 
 
@@ -54,9 +41,8 @@ public class CustomerStorage implements Storage<CustomerDao> {
     @Override
     public List<CustomerDao> findAll() {
         List<CustomerDao> customerDaoList = new ArrayList<>();
-        try {
-            Connection connection = manager.getConnection();
-            try (ResultSet rs = getAllInfoSt.executeQuery()) {
+        try (Connection connection = manager.getConnection();
+            ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
                     CustomerDao customerDao = new CustomerDao();
                     customerDao.setCustomer_id(rs.getLong("customer_id"));
@@ -65,9 +51,8 @@ public class CustomerStorage implements Storage<CustomerDao> {
                     customerDaoList.add(customerDao);
                 }
             }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        catch (SQLException exception) {
+            exception.printStackTrace();
         }
         return customerDaoList;
     }

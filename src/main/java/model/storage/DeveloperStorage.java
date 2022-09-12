@@ -17,24 +17,11 @@ import java.util.Optional;
 public class DeveloperStorage implements Storage<DeveloperDao>{
     public DatabaseManagerConnector manager;
 
-    private PreparedStatement getAllInfoSt;
+    private final String GET_ALL_INFO = "SELECT * FROM developer";
 
 
     public DeveloperStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
-        Connection connection = null;
-        try {
-            connection = manager.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        {
-            getAllInfoSt = connection.prepareStatement("SELECT * FROM developer");
-
-        }
-
-
     }
 
 
@@ -58,9 +45,8 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     @Override
     public List<DeveloperDao> findAll() {
         List<DeveloperDao> developerDaoList = new ArrayList<>();
-        try {
-            Connection connection = manager.getConnection();
-            try (ResultSet rs = getAllInfoSt.executeQuery()) {
+        try (Connection connection = manager.getConnection();
+            ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
                     DeveloperDao developerDao = new DeveloperDao();
                     developerDao.setDeveloper_id(rs.getLong("developer_id"));
@@ -74,9 +60,8 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                     developerDaoList.add(developerDao);
                 }
             }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        catch (SQLException exception) {
+            exception.printStackTrace();
         }
     return developerDaoList;
     }

@@ -19,24 +19,11 @@ public class ProjectStorage implements Storage<ProjectDao> {
 
     public DatabaseManagerConnector manager;
 
-    private final PreparedStatement getAllInfoSt;
+    private final String GET_ALL_INFO = "SELECT * FROM project";
 
 
     public ProjectStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
-        Connection connection = null;
-        try {
-            connection = manager.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        {
-            getAllInfoSt = connection.prepareStatement("SELECT * FROM project");
-
-        }
-
-
     }
 
 
@@ -59,9 +46,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
     @Override
     public List<ProjectDao> findAll() {
         List<ProjectDao> projectDaoList = new ArrayList<>();
-        try {
-            Connection connection = manager.getConnection();
-            try (ResultSet rs = getAllInfoSt.executeQuery()) {
+        try (Connection connection = manager.getConnection();
+            ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
                     ProjectDao projectDao = new ProjectDao();
                     projectDao.setProject_id(rs.getLong("project_id"));
@@ -69,17 +55,11 @@ public class ProjectStorage implements Storage<ProjectDao> {
                     projectDao.setCost(rs.getInt("cost"));
                     projectDao.setStart_date(LocalDate.parse(rs.getString("start_date"),
                             DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                    /*
-                    String str = "2016-03-04 11:30";
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                    LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
-                    */
                     projectDaoList.add(projectDao);
                 }
             }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        catch (SQLException exception) {
+            exception.printStackTrace();
         }
         return projectDaoList;
     }
