@@ -8,6 +8,7 @@ import model.storage.CompanyStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 
 public class CompanyService {
@@ -40,4 +41,22 @@ public List<String> save (CompanyDto companyDto) {
         } else return "\tCompany successfully added to the database";
     }
 
+    public Optional<CompanyDto> findById(long id) {
+    Optional<CompanyDao> companyDaoFromDb = companyStorage.findById(id);
+    return companyDaoFromDb.map(companyDao -> companyConverter.from(companyDao));
+    }
+
+    public Optional<CompanyDto> findByName(String name) {
+        Optional<CompanyDao> companyDaoFromDb = companyStorage.findByName(name);
+        return companyDaoFromDb.map(companyDao -> companyConverter.from(companyDao));
+    }
+
+    public CompanyDto createCompany() {
+        System.out.print("Enter company name : ");
+        Scanner sc = new Scanner(System.in);
+        String newCompanyName = sc.nextLine();
+        System.out.print("Enter company rating (high, middle, low) : ");
+        String newCompanyRating = sc.nextLine();
+        return new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
+    }
 }

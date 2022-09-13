@@ -12,7 +12,8 @@ public class CompanyStorage implements Storage<CompanyDao> {
     public DatabaseManagerConnector manager;
 
     private final String GET_ALL_INFO = "SELECT * FROM company";
-    private final String FIND_BY_NAME = "SELECT * FROM company WHERE   company_name  LIKE  ?";
+    private final String FIND_BY_NAME = "SELECT * FROM company WHERE company_name  LIKE  ?";
+    private final String FIND_BY_ID = "SELECT * FROM company WHERE company_id = ?";
     private final String INSERT = "INSERT INTO company(company_name, rating) VALUES (?, ?)";
 
 
@@ -46,7 +47,17 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
     @Override
     public Optional<CompanyDao> findById(long id) {
-        return null;
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            CompanyDao companyDao = mapCompanyDao(resultSet);
+            return Optional.ofNullable(companyDao);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override

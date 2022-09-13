@@ -35,7 +35,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
                     getAllNames();
                     break;
                 case 2:
-                    createCompany();
+                    addCompanyToDb();
                     break;
                 case 3:
                     System.out.print("Внесите название компании, которую вы хотите удалить :");
@@ -70,13 +70,8 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         Output.getInstance().print(result);
     }
 
-    private  void createCompany() {
-        System.out.print("Enter company name : ");
-        Scanner sc = new Scanner(System.in);
-        String newCompanyName = sc.nextLine();
-        System.out.print("Enter company rating (high, middle, low) : ");
-        String newCompanyRating = sc.nextLine();
-        CompanyDto newCompanyDto = new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
+    private  void addCompanyToDb() {
+        CompanyDto newCompanyDto = companyService.createCompany();
         List<String> result = companyService.save(newCompanyDto);
         Output.getInstance().print(result);
     }

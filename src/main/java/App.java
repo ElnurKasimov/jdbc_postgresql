@@ -37,7 +37,7 @@ public class App {
     private static final int EXIT_FROM_MAIN_MENU = 5;
 
     public static void main(String[] args) {
-        initDbAndMigrations();
+        initDatabaseAndMigrations();
         initAllServiceStorageConverterClasses();
         menuService.create();
         int choice;
@@ -46,7 +46,7 @@ public class App {
             choice = menuService.get("Main").makeChoice();
             switch (choice) {
                 case 1:
-                    new DeveloperMenuHandler(developerService, developerStorage, menuService).launch();
+                    new DeveloperMenuHandler(developerService, developerStorage, menuService, companyService).launch();
                     break;
                 case 2:
                     new ProjectMenuHandler(projectService, projectStorage, menuService).launch();
@@ -62,7 +62,7 @@ public class App {
     }
 
 
-    private static void initDbAndMigrations() {
+    private static void initDatabaseAndMigrations() {
         String dbPassword = System.getenv("dbPassword");
         String dbUsername = System.getenv("dbusername");
         PropertiesConfig propertiesConfig = new PropertiesConfig();

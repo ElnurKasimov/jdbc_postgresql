@@ -1,6 +1,10 @@
 package controller;
 
 import model.dao.DeveloperDao;
+import model.dto.CompanyDto;
+import model.dto.DeveloperDto;
+import model.service.CompanyService;
+import model.service.CustomerService;
 import model.service.DeveloperService;
 import model.storage.DeveloperStorage;
 import view.Output;
@@ -14,13 +18,15 @@ public class DeveloperMenuHandler {
     private DeveloperService developerService;
     private DeveloperStorage developerStorage;
     private MenuService menuService;
+    private CompanyService companyService;
     private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
 public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage developerStorage,
-                             MenuService menuService) {
+                             MenuService menuService, CompanyService companyService) {
     this.developerService = developerService;
     this.developerStorage = developerStorage;
     this.menuService = menuService;
+    this.companyService = companyService;
 }
 
 
@@ -48,14 +54,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
                     //developerDaoService.getListMiddleDevelopers();
                     break;
                 case 5:
-                    System.out.println("\tВведите, пожалуйста следующие данные по разработчику");
-                    Scanner sc15 = new Scanner(System.in);
-                    System.out.print("\tВведите фамилию : ");
-                    String lastNameInput5 = sc15.nextLine();
-                    System.out.print("\tВведите имя : ");
-                    String firstNameInput5 = sc15.nextLine();
-                    //int add = developerDaoService.addDeveloper(lastNameInput5, firstNameInput5);
-
+                    createDeveloper();
                     break;
                 case 6:
                     System.out.println("Для внесения изменения хоть в одно поле данных необходимо обновить все поля");
@@ -99,5 +98,32 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         }
         Output.getInstance().print(result);
     }
+
+    private void createDeveloper() {
+        System.out.println("\tEnter, please, such data for developer.");
+        Scanner sc = new Scanner(System.in);
+        System.out.print("\tLast name : ");
+        String lastName = sc.nextLine();
+        System.out.print("\tFirst name : ");
+        String firstName = sc.nextLine();
+        System.out.print("\tAge (only digits): ");
+        int age = Integer.parseInt(sc.nextLine());
+        System.out.print("\tSalary (only digits): ");
+        int salary = Integer.parseInt(sc.nextLine());
+        System.out.print("\tCompany where he works: ");
+        String companyName = sc.nextLine();
+
+        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age,
+                companyService.findByName(companyName).map(CompanyDto::getCompany_id).get(), salary);
+        List<String> result = developerService.save(newDeveloperDto);
+
+
+
+
+        Output.getInstance().print(result);
+
+        //int add = developerDaoService.addDeveloper(lastNameInput5, firstNameInput5);
+    }
+
 
 }

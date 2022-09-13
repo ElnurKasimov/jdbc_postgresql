@@ -3,7 +3,9 @@ package model.storage;
 import lombok.Data;
 import lombok.Getter;
 import model.config.DatabaseManagerConnector;
+import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
+import model.dao.ProjectDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +20,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     public DatabaseManagerConnector manager;
 
     private final String GET_ALL_INFO = "SELECT * FROM developer";
-
+    private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
 
     public DeveloperStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
@@ -37,9 +39,25 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         return null;
     }
 
-    @Override
-    public Optional<DeveloperDao> findByName(String name) {
-        return null;
+   @Override
+   public Optional<DeveloperDao> findByName(String name) {
+       return null;
+   }
+
+
+    public Optional<DeveloperDao> findByName(String lastName, String firstName) {
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
+            statement.setString(1, lastName);
+            statement.setString(2, firstName);
+            ResultSet resultSet = statement.executeQuery();
+            DeveloperDao developerDao = mapDeveloperDao(resultSet);
+            return Optional.ofNullable(developerDao);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -83,6 +101,20 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
 
     @Override
     public void delete(DeveloperDao entity) {
-
     }
+
+    private DeveloperDao mapDeveloperDao(ResultSet resultSet) throws SQLException {
+        DeveloperDao developerDao = null;
+        while (resultSet.next()) {
+            developerDao = new DeveloperDao();
+            developerDao.setCompany_id(resultSet.getLong("developer_id"));
+            developerDao.setLastName(resultSet.getString("lastName"));
+            developerDao.setFirstName(resultSet.getString("firstName"));
+            developerDao.setAge(resultSet.getInt("age"));
+            developerDao.setSalary(resultSet.getInt("salary"));
+            developerDao.setCompany_id(resultSet.getLong("company_id"));
+        }
+        return developerDao;
+    }
+
 }
