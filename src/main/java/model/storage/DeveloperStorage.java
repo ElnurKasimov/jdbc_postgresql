@@ -7,10 +7,7 @@ import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,17 +18,36 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
 
     private final String GET_ALL_INFO = "SELECT * FROM developer";
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
+    private final String INSERT = "INSERT INTO developer(lastName, firstName, age, company_id, salary) VALUES (?, ?, ?, ?, ?)";
+
 
     public DeveloperStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
     }
 
-
-
-
     @Override
     public DeveloperDao save(DeveloperDao entity) {
-        return null;
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, entity.getLastName());
+            statement.setString(2, entity.getFirstName());
+            statement.setInt(3, entity.getAge());
+            statement.setLong(4, entity.getCompany_id());
+            statement.setInt(5, entity.getSalary());
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    entity.setDeveloper_id(generatedKeys.getInt(1));
+                }
+                else {
+                    throw new SQLException("Developer saving was interrupted, ID has not been obtained.");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("The developer was not created");
+        }
+        return entity;
     }
 
     @Override

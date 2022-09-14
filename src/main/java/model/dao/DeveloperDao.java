@@ -9,7 +9,7 @@ public class DeveloperDao {
     private String firstName;
     private int age;
     private long company_id;
-    private  int salary;
+    private int salary;
 
     public DeveloperDao (String lastName, String firstName, int age, long company_id, int salary) {
         this.lastName = lastName;

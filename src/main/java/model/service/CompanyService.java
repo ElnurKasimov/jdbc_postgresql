@@ -28,7 +28,7 @@ public List<String> save (CompanyDto companyDto) {
         result.add(validateByName(companyDto, companyConverter.from(companyFromDb.get())));
     } else {
         companyStorage.save(companyConverter.to(companyDto));
-        result.add("\tCompany successfully added to the database");
+        result.add("\tCompany " + companyDto.getCompany_name() + " successfully added to the database");
     };
     return result;
 }
@@ -58,5 +58,17 @@ public List<String> save (CompanyDto companyDto) {
         System.out.print("Enter company rating (high, middle, low) : ");
         String newCompanyRating = sc.nextLine();
         return new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
+    }
+
+    public long getIdByName (String name) {
+        long id;
+        Optional<CompanyDto> checkedCompany = findByName(name);
+        if(checkedCompany.isPresent()) {return checkedCompany.get().getCompany_id();}
+        else {
+            System.out.println(" According to the fact that there is no company with such name in the database," +
+                    "please enter full information about this company.");
+            CompanyDto newCompanyDto = createCompany();
+            return companyConverter.from(companyStorage.save(companyConverter.to(newCompanyDto))).getCompany_id();
+        }
     }
 }

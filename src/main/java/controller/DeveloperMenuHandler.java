@@ -112,9 +112,8 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         int salary = Integer.parseInt(sc.nextLine());
         System.out.print("\tCompany where he works: ");
         String companyName = sc.nextLine();
-
-        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age,
-                companyService.findByName(companyName).map(CompanyDto::getCompany_id).get(), salary);
+        long companyId = companyService.getIdByName(companyName);
+        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyId, salary);
         List<String> result = developerService.save(newDeveloperDto);
 
 
