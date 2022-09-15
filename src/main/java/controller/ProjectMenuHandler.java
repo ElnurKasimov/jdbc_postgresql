@@ -1,6 +1,7 @@
 package controller;
 
 import model.dao.ProjectDao;
+import model.dto.DeveloperDto;
 import model.service.ProjectService;
 import model.storage.ProjectStorage;
 import view.Output;
@@ -99,4 +100,24 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
         Output.getInstance().print(result);
     }
 
+    private void createProject() {
+        System.out.println("\tEnter, please, such data for project.");
+        Scanner sc = new Scanner(System.in);
+        System.out.print("\tProject name : ");
+        System.out.print("\tThe company which develops the project: ");
+        String companyName = sc.nextLine();
+        System.out.print("\tThe customer who ordered the development of the project: ");
+        String customerName = sc.nextLine();
+        System.out.print("\tBudget of the project (only digits): ");
+        int salary = Integer.parseInt(sc.nextLine());
+        System.out.print("\tStart date of the project (in format yyyy-mm-dd): ");
+        String startDate = sc.nextLine();
+/*
+        long companyId = companyService.getIdByName(companyName);
+        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyId, salary);
+        List<String> result = developerService.save(newDeveloperDto);
+        Output.getInstance().print(result);
+
+ */
+    }
 }

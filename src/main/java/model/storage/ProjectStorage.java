@@ -2,14 +2,12 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
+import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,15 @@ public class ProjectStorage implements Storage<ProjectDao> {
     public DatabaseManagerConnector manager;
 
     private final String GET_ALL_INFO = "SELECT * FROM project";
+    private final String GET_COMPANY_PROJECTS =
+     "SELECT * FROM project JOIN company ON project.company_id = company.company_id WHERE company_name LIKE ?";
+    private final String GET_ID_BY_NAME =
+     "SELECT project_id FROM project WHERE project_name LIKE ?";
+    private final String INSERT_PROJECT_DEVELOPER =
+     "INSERT INTO project_developer(project_id, developer_id) VALUES (?, ?)";
+
+
+
 
 
     public ProjectStorage (DatabaseManagerConnector manager) throws SQLException {
@@ -35,12 +42,12 @@ public class ProjectStorage implements Storage<ProjectDao> {
 
     @Override
     public Optional<ProjectDao> findById(long id) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<ProjectDao> findByName(String name) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -81,6 +88,54 @@ public class ProjectStorage implements Storage<ProjectDao> {
 
     @Override
     public void delete(ProjectDao entity) {
-
     }
+
+    public List<ProjectDao> getCompanyProjects (String companyName) {
+        List<ProjectDao> companyProjectList = new ArrayList<>();
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_COMPANY_PROJECTS)) {
+            statement.setString(1, companyName);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                ProjectDao projectDao = new ProjectDao();
+                projectDao.setProject_id(rs.getLong("project_id"));
+                projectDao.setProject_name(rs.getString("project_name"));
+                projectDao.setCost(rs.getInt("cost"));
+                projectDao.setStart_date(LocalDate.parse(rs.getString("start_date"),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                companyProjectList.add(projectDao);
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return companyProjectList;
+    }
+
+    public Optional<Long> getIdByName (String name) {
+        Optional<Long> id = Optional.empty();
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_ID_BY_NAME)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                id = Optional.of(rs.getLong("project_id"));
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return id;
+    }
+
+    public void saveProjectDeveloperRelation(ProjectDao projectDao, DeveloperDao developerDao) {
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(INSERT_PROJECT_DEVELOPER)){
+            statement.setLong(1, projectDao.getProject_id());
+            statement.setLong(2, developerDao.getDeveloper_id());
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    };
 }

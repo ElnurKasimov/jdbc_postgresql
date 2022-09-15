@@ -9,6 +9,7 @@ import model.service.converter.CompanyConverter;
 import model.service.converter.DeveloperConverter;
 import model.storage.CompanyStorage;
 import model.storage.DeveloperStorage;
+import view.Output;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +38,20 @@ public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter d
 
  */
 
-    public List<String> save (DeveloperDto developerDto) {
+    public DeveloperDto save (DeveloperDto developerDto) {
         List<String> result = new ArrayList<>();
         Optional<DeveloperDao> developerFromDb =
                 developerStorage.findByName(developerDto.getLastName(), developerDto.getFirstName());
+        DeveloperDao savedDeveloperWithId = new DeveloperDao();
         if(developerFromDb.isPresent()) {
             result.add(validateByName(developerDto, developerConverter.from(developerFromDb.get())));
         } else {
-            developerStorage.save(developerConverter.to(developerDto));
+            savedDeveloperWithId = developerStorage.save(developerConverter.to(developerDto));
             result.add("\tDeveloper " + developerDto.getLastName() + " " +
                     developerDto.getFirstName() + " successfully added to the database");
         };
-        return result;
+        Output.getInstance().print(result);
+        return developerConverter.from(savedDeveloperWithId);
     }
 
     public String validateByName(DeveloperDto developerDto, DeveloperDto developerFromDb) {

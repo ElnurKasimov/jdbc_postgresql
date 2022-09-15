@@ -3,12 +3,12 @@ package controller;
 import model.dao.DeveloperDao;
 import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
-import model.service.CompanyService;
-import model.service.CustomerService;
-import model.service.DeveloperService;
+import model.dto.ProjectDto;
+import model.service.*;
 import model.storage.DeveloperStorage;
 import view.Output;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,14 +19,19 @@ public class DeveloperMenuHandler {
     private DeveloperStorage developerStorage;
     private MenuService menuService;
     private CompanyService companyService;
+    private ProjectService projectService;
+    private SkillService skillService;
     private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
 public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage developerStorage,
-                             MenuService menuService, CompanyService companyService) {
+                             MenuService menuService, CompanyService companyService,
+                             ProjectService projectService, SkillService skillService) {
     this.developerService = developerService;
     this.developerStorage = developerStorage;
     this.menuService = menuService;
     this.companyService = companyService;
+    this.projectService = projectService;
+    this.skillService = skillService;
 }
 
 
@@ -113,16 +118,49 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         System.out.print("\tCompany where he works: ");
         String companyName = sc.nextLine();
         long companyId = companyService.getIdByName(companyName);
+
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyId, salary);
-        List<String> result = developerService.save(newDeveloperDto);
+
+        System.out.print("\tThis company develops such projects : ");
+        List<ProjectDto> projectDtoList = projectService.getCompanyProjects(companyName);
+        for (ProjectDto projectDto : projectDtoList) {
+            System.out.print(projectDto.getProject_name() + ", ");
+        }
+
+
+        long projectId;
+        String projectName;
+        while(true) {
+            System.out.print("\n\tPlease choose one the developers participate in : ");
+            projectName = sc.nextLine();
+            projectId = projectService.getIdByName(projectName);
+            if(projectId != 0) break;
+        }
+
+        System.out.print("\tКаким языком владеет (Java, JS, C++, PHP) : ");
+        String language = sc.nextLine();
+        if(language.equals("")) language= sc.nextLine();
+        System.out.print("\tУровень знания языка (junior, middle, senior) : ");
+        String level = sc.nextLine();
+
+        skillService.getIdSkillByLanguageAndLevel(language, level);
 
 
 
 
-        Output.getInstance().print(result);
 
-        //int add = developerDaoService.addDeveloper(lastNameInput5, firstNameInput5);
+
+
+        ProjectDto partialProjectDto = new ProjectDto(projectId,projectName);
+
+        DeveloperDto newDeveloperDtoWithId = developerService.save(newDeveloperDto);
+
+        projectService.saveProjectDeveloperRelation(partialProjectDto,newDeveloperDtoWithId);
+
+
+
     }
+
 
 
 }

@@ -3,18 +3,9 @@ import controller.*;
 import model.config.DatabaseManagerConnector;
 import model.config.Migration;
 import model.config.PropertiesConfig;
-import model.service.CompanyService;
-import model.service.CustomerService;
-import model.service.DeveloperService;
-import model.service.ProjectService;
-import model.service.converter.CompanyConverter;
-import model.service.converter.CustomerConverter;
-import model.service.converter.DeveloperConverter;
-import model.service.converter.ProjectConverter;
-import model.storage.CompanyStorage;
-import model.storage.CustomerStorage;
-import model.storage.DeveloperStorage;
-import model.storage.ProjectStorage;
+import model.service.*;
+import model.service.converter.*;
+import model.storage.*;
 
 import java.sql.SQLException;
 import java.util.Properties;
@@ -34,6 +25,11 @@ public class App {
     private static ProjectStorage projectStorage;
     private static ProjectService projectService;
     private static ProjectConverter projectConverter;
+    private static ProjectConverterIdName projectConverterIdName;
+
+    private static SkillService skillService;
+    private  static SkillStorage skillStorage;
+    private static SkillConverter skillConverter;
     private static final int EXIT_FROM_MAIN_MENU = 5;
 
     public static void main(String[] args) {
@@ -46,7 +42,8 @@ public class App {
             choice = menuService.get("Main").makeChoice();
             switch (choice) {
                 case 1:
-                    new DeveloperMenuHandler(developerService, developerStorage, menuService, companyService).launch();
+                    new DeveloperMenuHandler(developerService, developerStorage, menuService,
+                            companyService, projectService, skillService).launch();
                     break;
                 case 2:
                     new ProjectMenuHandler(projectService, projectStorage, menuService).launch();
@@ -85,7 +82,11 @@ public class App {
             customerService = new CustomerService(customerStorage, customerConverter);
             projectStorage = new ProjectStorage(manager);
             projectConverter = new ProjectConverter();
-            projectService = new ProjectService(projectStorage, projectConverter);
+            projectConverterIdName = new ProjectConverterIdName();
+            projectService = new ProjectService(projectStorage, projectConverter, developerConverter);
+            skillStorage = new SkillStorage(manager);
+            skillConverter = new SkillConverter();
+            skillService = new SkillService(skillStorage);
         } catch (SQLException e) {
             e.printStackTrace();
         }

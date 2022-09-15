@@ -21,6 +21,10 @@ public class ProjectDto {
         this.start_date=start_date;
     }
 
+    public ProjectDto (long project_id, String project_name) {
+        this.project_id = project_id;
+        this.project_name=project_name;
+    }
     public ProjectDto () {
     }
 }
