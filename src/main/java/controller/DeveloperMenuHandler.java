@@ -4,14 +4,13 @@ import model.dao.DeveloperDao;
 import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
+import model.dto.SkillDto;
 import model.service.*;
 import model.storage.DeveloperStorage;
 import view.Output;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class DeveloperMenuHandler {
@@ -117,6 +116,9 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         int salary = Integer.parseInt(sc.nextLine());
         System.out.print("\tCompany where he works: ");
         String companyName = sc.nextLine();
+        // TODO
+        // refactor field  of Developer from  company_id  to CompanyDto
+        // thus  -  from getIdByName to findByName
         long companyId = companyService.getIdByName(companyName);
 
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyId, salary);
@@ -126,8 +128,6 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         for (ProjectDto projectDto : projectDtoList) {
             System.out.print(projectDto.getProject_name() + ", ");
         }
-
-
         long projectId;
         String projectName;
         while(true) {
@@ -136,26 +136,43 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
             projectId = projectService.getIdByName(projectName);
             if(projectId != 0) break;
         }
+        ProjectDto projectDto = new ProjectDto(projectId,projectName);
 
-        System.out.print("\tКаким языком владеет (Java, JS, C++, PHP) : ");
-        String language = sc.nextLine();
-        if(language.equals("")) language= sc.nextLine();
-        System.out.print("\tУровень знания языка (junior, middle, senior) : ");
-        String level = sc.nextLine();
+        Set<SkillDto> skills = new HashSet<>();
+        while(true) {
+            System.out.print("\tLanguage the developer operated : ");
+            String language = sc.nextLine();
+            if (language.equals("")) language = sc.nextLine();
+            System.out.print("\tLevel knowledge of the language (junior, middle, senior) : ");
+            String level = sc.nextLine();
 
-        skillService.getIdSkillByLanguageAndLevel(language, level);
+            //todo
+            /*{
+             1.  check is this pair exist in DB
+                 if  not - add this pair  to  table Skill and return id the pair
+                 if yes - return id the pair
+            */
+
+                 skillService.getIdSkillByLanguageAndLevel(language, level);
+
+                 skillService.save(skillDto);
+
+            skills.add(skillDto);
+            System.out.print("One more language? (yes/no) : ");
+            String anotherLanguage = sc.nextLine();
+            if(anotherLanguage.equalsIgnoreCase("no")) break;
+        }
 
 
 
 
+        newDeveloperDto = developerService.save(newDeveloperDto);
+        newDeveloperDto.setSkills(skills);
+        newDeveloperDto.setProjectDto(projectDto);
 
 
 
-        ProjectDto partialProjectDto = new ProjectDto(projectId,projectName);
-
-        DeveloperDto newDeveloperDtoWithId = developerService.save(newDeveloperDto);
-
-        projectService.saveProjectDeveloperRelation(partialProjectDto,newDeveloperDtoWithId);
+        projectService.saveProjectDeveloperRelation(projectDto,newDeveloperDto);
 
 
 
