@@ -71,9 +71,9 @@ public class App {
     private static void initAllServiceStorageConverterClasses() {
         menuService = new MenuService();
         try {
-            developerStorage = new DeveloperStorage(manager);
-            developerConverter = new DeveloperConverter();
-            developerService = new DeveloperService(developerStorage, developerConverter);
+            skillStorage = new SkillStorage(manager);
+            skillConverter = new SkillConverter();
+            skillService = new SkillService(skillStorage);
             companyStorage = new CompanyStorage(manager);
             companyConverter = new CompanyConverter();
             companyService = new CompanyService(companyStorage, companyConverter);
@@ -84,9 +84,9 @@ public class App {
             projectConverter = new ProjectConverter();
             projectConverterIdName = new ProjectConverterIdName();
             projectService = new ProjectService(projectStorage, projectConverter, developerConverter);
-            skillStorage = new SkillStorage(manager);
-            skillConverter = new SkillConverter();
-            skillService = new SkillService(skillStorage);
+            developerStorage = new DeveloperStorage(manager);
+            developerService = new DeveloperService(developerStorage, developerConverter);
+            developerConverter = new DeveloperConverter(companyConverter, projectConverter, skillConverter);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -10,35 +10,35 @@ public class DeveloperDto {
     private String lastName;
     private String firstName;
     private int age;
-    private long company_id;
+    private CompanyDto companyDto;
     private  int salary;
     private Set<SkillDto> skills;
     private ProjectDto projectDto;
 
-    public DeveloperDto(String lastName, String firstName, int age, long company_id, int salary, Set<SkillDto> skills, ProjectDto projectDto) {
+    public DeveloperDto(String lastName, String firstName, int age, CompanyDto companyDto, int salary, Set<SkillDto> skills, ProjectDto projectDto) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.age = age;
-        this.company_id = company_id;
+        this.companyDto = companyDto;
         this.salary = salary;
         this.skills = skills;
         this.projectDto = projectDto;
     }
 
-    public DeveloperDto(String lastName, String firstName, int age, long company_id, int salary, Set<SkillDto> skills) {
+    public DeveloperDto(String lastName, String firstName, int age, CompanyDto companyDto, int salary, Set<SkillDto> skills) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.age = age;
-        this.company_id = company_id;
+        this.companyDto = companyDto;
         this.salary = salary;
         this.skills = skills;
     }
 
-    public DeveloperDto(String lastName, String firstName, int age, long company_id, int salary) {
+    public DeveloperDto(String lastName, String firstName, int age, CompanyDto companyDto, int salary) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.age = age;
-        this.company_id = company_id;
+        this.companyDto = companyDto;
         this.salary = salary;
     }
 

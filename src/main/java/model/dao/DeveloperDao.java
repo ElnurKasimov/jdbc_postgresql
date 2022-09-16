@@ -11,17 +11,20 @@ public class DeveloperDao {
     private String lastName;
     private String firstName;
     private int age;
-    private long company_id;
+    private CompanyDao companyDao;
     private int salary;
     private Set<SkillDao> skills;
+    private ProjectDao projectDao;
 
-    public DeveloperDao (String lastName, String firstName, int age, long company_id, int salary, Set<SkillDao>  skills) {
+    public DeveloperDao (String lastName, String firstName, int age, CompanyDao companyDao, int salary,
+                         Set<SkillDao> skills, ProjectDao projectDao) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.age = age;
-        this.company_id=company_id;
+        this.companyDao = companyDao;
         this.salary=salary;
         this.skills = skills;
+        this.projectDao = projectDao;
     }
 
      public DeveloperDao () {

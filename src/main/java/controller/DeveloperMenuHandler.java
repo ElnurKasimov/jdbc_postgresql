@@ -119,9 +119,9 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         // TODO
         // refactor field  of Developer from  company_id  to CompanyDto
         // thus  -  from getIdByName to findByName
-        long companyId = companyService.getIdByName(companyName);
+        CompanyDto companyDto = companyService.findByName(companyName);
 
-        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyId, salary);
+        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyDto, salary);
 
         System.out.print("\tThis company develops such projects : ");
         List<ProjectDto> projectDtoList = projectService.getCompanyProjects(companyName);
