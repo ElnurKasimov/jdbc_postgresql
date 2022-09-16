@@ -15,14 +15,16 @@ import java.util.Optional;
 @Data
 public class DeveloperStorage implements Storage<DeveloperDao>{
     public DatabaseManagerConnector manager;
+    public CompanyStorage companyStorage;
 
     private final String GET_ALL_INFO = "SELECT * FROM developer";
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
     private final String INSERT = "INSERT INTO developer(lastName, firstName, age, company_id, salary) VALUES (?, ?, ?, ?, ?)";
 
 
-    public DeveloperStorage (DatabaseManagerConnector manager) throws SQLException {
+    public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage) throws SQLException {
         this.manager = manager;
+        this.companyStorage = companyStorage;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
             statement.setString(1, entity.getLastName());
             statement.setString(2, entity.getFirstName());
             statement.setInt(3, entity.getAge());
-            statement.setLong(4, entity.getCompany_id());
+            statement.setLong(4, entity.getCompanyDao().getCompany_id());
             statement.setInt(5, entity.getSalary());
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -89,7 +91,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                         developerDao.setFirstName(rs.getString("firstName"));
                     }
                     developerDao.setAge(rs.getInt("age"));
-                    developerDao.setCompany_id(rs.getInt("company_id"));
+                    developerDao.setCompanyDao(companyStorage.findById(rs.getInt("company_id")).get());
                     developerDao.setSalary(rs.getInt("salary"));
                     developerDaoList.add(developerDao);
                 }
@@ -123,12 +125,12 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         DeveloperDao developerDao = null;
         while (resultSet.next()) {
             developerDao = new DeveloperDao();
-            developerDao.setCompany_id(resultSet.getLong("developer_id"));
+            developerDao.setDeveloper_id(resultSet.getLong("developer_id"));
             developerDao.setLastName(resultSet.getString("lastName"));
             developerDao.setFirstName(resultSet.getString("firstName"));
             developerDao.setAge(resultSet.getInt("age"));
             developerDao.setSalary(resultSet.getInt("salary"));
-            developerDao.setCompany_id(resultSet.getLong("company_id"));
+            developerDao.setCompanyDao(companyStorage.findById(resultSet.getLong("company_id")).get());
         }
         return developerDao;
     }

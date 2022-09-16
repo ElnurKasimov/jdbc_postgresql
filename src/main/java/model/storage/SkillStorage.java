@@ -1,14 +1,12 @@
 package model.storage;
 
 import model.config.DatabaseManagerConnector;
+import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
 import model.dao.SkillDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,27 +17,34 @@ public class SkillStorage implements Storage<SkillDao> {
 
     public DatabaseManagerConnector manager;
 
-    private final String GET_ALL_INFO = "SELECT * FROM project";
-    private final String GET_COMPANY_PROJECTS =
-     "SELECT * FROM project JOIN company ON project.company_id = company.company_id WHERE company_name LIKE ?";
-    private final String GET_ID_BY_NAME =
-     "SELECT project_id FROM project WHERE project_name LIKE ?";
-    private final String INSERT_PROJECT_DEVELOPER =
-     "INSERT INTO project_developer(project_id, developer_id) VALUES (?, ?)";
-
-
-
+    private final String GET_ID_BY_LANGUAGE_NAME = "SELECT skill_id FROM skills WHERE language LIKE ? AND level LIKE ?";
+    private final String INSERT = "INSERT INTO skill(language, level) VALUES (?, ?)";
 
 
     public SkillStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
     }
 
-
-
     @Override
     public SkillDao save(SkillDao entity) {
-        return null;
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, entity.getLanguage());
+            statement.setString(2, entity.getLevel());
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    entity.setSkill_id(generatedKeys.getInt(1));
+                }
+                else {
+                    throw new SQLException("Skill saving was interrupted, ID has not been obtained.");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("The skill was not created");
+        }
+        return entity;
     }
 
     @Override
@@ -77,18 +82,18 @@ public class SkillStorage implements Storage<SkillDao> {
     }
 
     public Optional<Long> getIdSkillByLanguageAndLevel(String language, String level) {
-
-
-
-        getIdSkillByLanguageAndLevelSt.setString( 1, "%" + language + "%");
-        getIdSkillByLanguageAndLevelSt.setString( 2, "%" + level + "%");
-        long skillId;
-        try(ResultSet rs = getIdSkillByLanguageAndLevelSt.executeQuery()) {
-            rs.next();
-            skillId = rs.getLong("skill_id");
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_ID_BY_LANGUAGE_NAME)) {
+            statement.setString( 1, "%" + language + "%");
+            statement.setString( 2, "%" + level + "%");
+            ResultSet resultSet = statement.executeQuery();
+            long id = resultSet.getLong("skill_id");
+            return Optional.ofNullable(id);
         }
-        Optional<Long> id = Optional.empty();
-        return id;
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return Optional.empty();
     }
 
 }

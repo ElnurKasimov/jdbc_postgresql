@@ -19,6 +19,9 @@ public class CompanyDto {
         this.rating=rating;
     }
 
+    public CompanyDto (String company_name) {
+        this.company_name=company_name;
+    }
     public CompanyDto () {
     }
 

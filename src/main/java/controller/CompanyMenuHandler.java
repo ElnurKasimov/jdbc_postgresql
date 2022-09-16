@@ -72,8 +72,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
 
     private  void addCompanyToDb() {
         CompanyDto newCompanyDto = companyService.createCompany();
-        List<String> result = companyService.save(newCompanyDto);
-        Output.getInstance().print(result);
+        companyService.save(newCompanyDto);
     }
 
 

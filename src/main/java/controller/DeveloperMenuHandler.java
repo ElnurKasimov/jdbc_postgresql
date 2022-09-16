@@ -116,10 +116,13 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         int salary = Integer.parseInt(sc.nextLine());
         System.out.print("\tCompany where he works: ");
         String companyName = sc.nextLine();
-        // TODO
-        // refactor field  of Developer from  company_id  to CompanyDto
-        // thus  -  from getIdByName to findByName
-        CompanyDto companyDto = companyService.findByName(companyName);
+
+
+        CompanyDto companyDto = companyService.findByName(companyName).orElseGet(() -> {
+            System.out.println("Unfortunately, there is no company with such name in the database. " +
+                    "Please create the conpany.");
+            return companyService.save(companyService.createCompany());
+        });
 
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyDto, salary);
 
@@ -153,9 +156,8 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
                  if yes - return id the pair
             */
 
-                 skillService.getIdSkillByLanguageAndLevel(language, level);
+            long skillId = skillService.getIdSkillByLanguageAndLevel(language, level);
 
-                 skillService.save(skillDto);
 
             skills.add(skillDto);
             System.out.print("One more language? (yes/no) : ");

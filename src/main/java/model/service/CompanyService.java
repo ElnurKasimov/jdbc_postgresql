@@ -4,6 +4,7 @@ import model.dao.CompanyDao;
 import model.dto.CompanyDto;
 import model.service.converter.CompanyConverter;
 import model.storage.CompanyStorage;
+import view.Output;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public  CompanyService (CompanyStorage companyStorage, CompanyConverter companyC
 }
 
 
-public List<String> save (CompanyDto companyDto) {
+public CompanyDto save (CompanyDto companyDto) {
     List<String> result = new ArrayList<>();
     Optional<CompanyDao> companyFromDb = companyStorage.findByName(companyDto.getCompany_name());
     if (companyFromDb.isPresent()) {
@@ -30,7 +31,8 @@ public List<String> save (CompanyDto companyDto) {
         companyStorage.save(companyConverter.to(companyDto));
         result.add("\tCompany " + companyDto.getCompany_name() + " successfully added to the database");
     };
-    return result;
+    Output.getInstance().print(result);
+    return companyDto;
 }
 
     public String  validateByName(CompanyDto companyDto, CompanyDto companyFromDb) {
@@ -71,4 +73,5 @@ public List<String> save (CompanyDto companyDto) {
             return companyConverter.from(companyStorage.save(companyConverter.to(newCompanyDto))).getCompany_id();
         }
     }
+
 }

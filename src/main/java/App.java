@@ -84,7 +84,7 @@ public class App {
             projectConverter = new ProjectConverter();
             projectConverterIdName = new ProjectConverterIdName();
             projectService = new ProjectService(projectStorage, projectConverter, developerConverter);
-            developerStorage = new DeveloperStorage(manager);
+            developerStorage = new DeveloperStorage(manager, companyStorage);
             developerService = new DeveloperService(developerStorage, developerConverter);
             developerConverter = new DeveloperConverter(companyConverter, projectConverter, skillConverter);
         } catch (SQLException e) {
