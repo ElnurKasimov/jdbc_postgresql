@@ -56,7 +56,7 @@ public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter d
 
     public String validateByName(DeveloperDto developerDto, DeveloperDto developerFromDb) {
         if ( (developerDto.getAge() == developerFromDb.getAge()) &&
-             (developerDto.getCompany_id() == developerFromDb.getCompany_id() ) &&
+             (developerDto.getCompanyDto().getCompany_name().equals(developerFromDb.getCompanyDto().getCompany_name() ) ) &&
              (developerDto.getSalary() == developerFromDb.getSalary()) ) {
             return "\tDeveloper " + developerDto.getLastName() + " " +
                     developerDto.getFirstName() + " successfully added to the database";

@@ -117,29 +117,13 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         System.out.print("\tCompany where he works: ");
         String companyName = sc.nextLine();
 
+        CompanyDto checkedCompanyDto = companyService.checkByName(companyName);
+        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
 
-        CompanyDto companyDto = companyService.findByName(companyName).orElseGet(() -> {
-            System.out.println("Unfortunately, there is no company with such name in the database. " +
-                    "Please create the conpany.");
-            return companyService.save(companyService.createCompany());
-        });
+        ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName);
 
-        DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, companyDto, salary);
 
-        System.out.print("\tThis company develops such projects : ");
-        List<ProjectDto> projectDtoList = projectService.getCompanyProjects(companyName);
-        for (ProjectDto projectDto : projectDtoList) {
-            System.out.print(projectDto.getProject_name() + ", ");
-        }
-        long projectId;
-        String projectName;
-        while(true) {
-            System.out.print("\n\tPlease choose one the developers participate in : ");
-            projectName = sc.nextLine();
-            projectId = projectService.getIdByName(projectName);
-            if(projectId != 0) break;
-        }
-        ProjectDto projectDto = new ProjectDto(projectId,projectName);
+
 
         Set<SkillDto> skills = new HashSet<>();
         while(true) {

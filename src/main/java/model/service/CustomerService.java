@@ -1,6 +1,8 @@
 package model.service;
 
+import model.dao.CompanyDao;
 import model.dao.CustomerDao;
+import model.dto.CompanyDto;
 import model.dto.CustomerDto;
 import model.service.converter.CustomerConverter;
 import model.storage.CustomerStorage;
@@ -39,4 +41,8 @@ public  CustomerService (CustomerStorage customerStorage, CustomerConverter cust
         } else return "\tCustomer successfully added to the database";
     }
 
+    public Optional<CustomerDto> findByName(String name) {
+        Optional<CustomerDao> customerDaoFromDb = customerStorage.findByName(name);
+        return customerDaoFromDb.map(customerDao -> customerConverter.from(customerDao));
+    }
 }

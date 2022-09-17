@@ -2,6 +2,7 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
+import model.dao.CustomerDao;
 import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class ProjectStorage implements Storage<ProjectDao> {
@@ -47,6 +49,16 @@ public class ProjectStorage implements Storage<ProjectDao> {
 
     @Override
     public Optional<ProjectDao> findByName(String name) {
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+           ProjectDao projectDao = mapProjectDao(resultSet);
+            return Optional.ofNullable(projectDao);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
         return Optional.empty();
     }
 
@@ -60,9 +72,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
                     projectDao.setProject_id(rs.getLong("project_id"));
                     projectDao.setProject_name(rs.getString("project_name"));
                     projectDao.setCost(rs.getInt("cost"));
-                    projectDao.setStart_date(LocalDate.parse(rs.getString("start_date"),
-                            DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                    projectDaoList.add(projectDao);
+                    projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
                 }
             }
         catch (SQLException exception) {
@@ -101,8 +112,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
                 projectDao.setProject_id(rs.getLong("project_id"));
                 projectDao.setProject_name(rs.getString("project_name"));
                 projectDao.setCost(rs.getInt("cost"));
-                projectDao.setStart_date(LocalDate.parse(rs.getString("start_date"),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
                 companyProjectList.add(projectDao);
             }
         }
@@ -137,5 +148,19 @@ public class ProjectStorage implements Storage<ProjectDao> {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-    };
+    }
+
+
+
+    private ProjectDao mapProjectDao(ResultSet resultSet) throws SQLException {
+        ProjectDao projectDao = null;
+        while (resultSet.next()) {
+            projectDao = new ProjectDao();
+            projectDao.setProject_id(resultSet.getLong("project_id"));
+            projectDao.setCompanyDao(resultSet.getString("customer_name"));
+            projectDao.setCustomerDao();
+            projectDao.setReputation(CustomerDao.Reputation.valueOf(resultSet.getString("reputation")));
+        }
+        return customerDao;
+    }
 }
