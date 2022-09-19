@@ -14,6 +14,7 @@ public class CustomerStorage implements Storage<CustomerDao> {
 
     private final String GET_ALL_INFO = "SELECT * FROM customer";
     private final String FIND_BY_NAME = "SELECT * FROM customer WHERE  customer_name  LIKE  ?";
+    private final String FIND_BY_ID = "SELECT * FROM customer WHERE customer_id = ?";
     private final String INSERT = "INSERT INTO customer(customer_name, reputation) VALUES (?, ?)";
 
     public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
@@ -45,7 +46,17 @@ public class CustomerStorage implements Storage<CustomerDao> {
 
     @Override
     public Optional<CustomerDao> findById(long id) {
-        return null;
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            CustomerDao customerDao = mapCustomerDao(resultSet);
+            return Optional.ofNullable(customerDao);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override

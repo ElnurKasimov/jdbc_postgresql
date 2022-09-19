@@ -32,7 +32,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
             choiceProjects = menuService.get("Projects").makeChoice();
             switch (choiceProjects) {
                 case 1:
-                    getAllNames();
+                    Output.getInstance().print(projectService.getAllProjects());
                     break;
                 case 2:
                     System.out.print("Введите название проекта : ");
@@ -57,7 +57,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
                     //projectDaoService.getProjectsListInSpecialFormat();
                     break;
                 case 6:
-                    addProject();
+                    projectService.save( projectService.createProject());
                     break;
                 case 7:
                     System.out.println("Для внесения изменения хоть в одно поле данных необходимо обновить все поля");
@@ -85,21 +85,6 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
         } while (choiceProjects != EXIT_FROM_PROJECT_MENU);
     }
 
-    public void getAllNames() {
-        List<ProjectDao> projectDaoList = projectStorage.findAll();
-        List<String> result = new ArrayList<>();
-        for (ProjectDao projectDao : projectDaoList) {
-            result.add(String.format("\t%d. %s, budget - %d, launched  %s",
-                    projectDao.getProject_id(),
-                    projectDao.getProject_name(),
-                    projectDao.getCost(),
-                    projectDao.getStart_date().toString()));
-        }
-        Output.getInstance().print(result);
-    }
 
-    private void addProject() {
-        projectService.createProject();
-        projectService.save( projectService.createProject());
-    }
+
 }

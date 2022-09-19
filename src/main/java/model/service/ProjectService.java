@@ -36,6 +36,20 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
     this.customerService = customerService;
 }
 
+
+    public List<String> getAllProjects() {
+        List<ProjectDao> projectDaoList = projectStorage.findAll();
+        List<String> result = new ArrayList<>();
+        for (ProjectDao projectDao : projectDaoList) {
+            result.add(String.format("\t%d. %s, budget - %d, launched  %s",
+                    projectDao.getProject_id(),
+                    projectDao.getProject_name(),
+                    projectDao.getCost(),
+                    projectDao.getStart_date().toString()));
+        }
+        return result;
+    }
+
     public List<ProjectDto> getCompanyProjects(String companyName) {
         List<ProjectDto> projects = new ArrayList<>();
         List<ProjectDao> projectDaoList = projectStorage.getCompanyProjects(companyName);
@@ -64,15 +78,17 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
         for (ProjectDto projectDto : projectDtoList) {
             System.out.print(projectDto.getProject_name() + ", ");
         }
+        System.out.println();
         if (projectDtoList.isEmpty()) {
-            System.out.println("There is no project in the company. Please create the one.");
+            System.out.println("\nThere is no project in the company. Please create the one.");
             ProjectDto newProjectDto = createProject();
             newProjectDto = save(newProjectDto);
+            System.out.println("Company " + companyName + " develops project " + newProjectDto.getProject_name());
         }
         long projectId;
         String projectName;
         while(true) {
-            System.out.print("\n\tPlease choose one the developers participate in : ");
+            System.out.print("\tPlease enter project name the developers participate in : ");
             Scanner sc = new Scanner(System.in);
             projectName = sc.nextLine();
             projectId = getIdByName(projectName);

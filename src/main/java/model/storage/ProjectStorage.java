@@ -31,7 +31,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
      "INSERT INTO project_developer(project_id, developer_id) VALUES (?, ?)";
     private final String FIND_BY_NAME = "SELECT * FROM project WHERE project_name  LIKE  ?";
     private final String FIND_BY_ID = "SELECT * FROM project WHERE project_id = ?";
-    private final String INSERT = "INSERT INTO project(project_name, company_id, customer_id, cost, star_date) VALUES (?, ?, ?, ?, ?)";
+    private final String INSERT = "INSERT INTO project(project_name, company_id, customer_id, cost, start_date) VALUES (?, ?, ?, ?, ?)";
 
 
 
@@ -50,7 +50,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
             statement.setLong(2, entity.getCompanyDao().getCompany_id());
             statement.setLong(3, entity.getCustomerDao().getCustomer_id());
             statement.setInt(4, entity.getCost());
-            statement.setString(5,  entity.getStart_date().toString());
+            statement.setDate(5,  entity.getStart_date());
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -99,6 +99,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
                     projectDao.setCost(rs.getInt("cost"));
                     projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
                             DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+                    projectDaoList.add(projectDao);
                 }
             }
         catch (SQLException exception) {
@@ -136,6 +137,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
                 ProjectDao projectDao = new ProjectDao();
                 projectDao.setProject_id(rs.getLong("project_id"));
                 projectDao.setProject_name(rs.getString("project_name"));
+                projectDao.setCompanyDao(companyStorage.findById(rs.getLong("company_id")).get());
+                projectDao.setCustomerDao(customerStorage.findById(rs.getLong("customer_id")).get());
                 projectDao.setCost(rs.getInt("cost"));
                 projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd"))));

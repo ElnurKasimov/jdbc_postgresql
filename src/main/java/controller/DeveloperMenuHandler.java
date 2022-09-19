@@ -121,7 +121,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
 
         ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName); // project with id already
-
+        newDeveloperDto.setProjectDto(checkedProjectDto);
 
 
 /*
@@ -152,10 +152,10 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
 
 
 
-        newDeveloperDto = developerService.save(newDeveloperDto);
-       // newDeveloperDto.setSkills(skills);
-        newDeveloperDto.setProjectDto(checkedProjectDto);
 
+       // newDeveloperDto.setSkills(skills);
+
+        newDeveloperDto = developerService.save(newDeveloperDto);
 
 
         projectService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);

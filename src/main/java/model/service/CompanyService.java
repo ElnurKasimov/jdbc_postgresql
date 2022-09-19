@@ -40,7 +40,7 @@ public CompanyDto save (CompanyDto companyDto) {
             return String.format("\tCompany with name '%s' already exist with different " +
                     "rating '%s'. Please enter correct data",
                     companyDto.getCompany_name(), companyFromDb.getRating().toString());
-        } else return "\tCompany successfully added to the database";
+        } else return "";
     }
 
     public Optional<CompanyDto> findById(long id) {
