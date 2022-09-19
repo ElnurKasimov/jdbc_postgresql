@@ -12,6 +12,8 @@ import model.service.converter.ProjectConverterIdName;
 import model.storage.ProjectStorage;
 import view.Output;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -67,7 +69,6 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
             ProjectDto newProjectDto = createProject();
             newProjectDto = save(newProjectDto);
         }
-
         long projectId;
         String projectName;
         while(true) {
@@ -84,7 +85,7 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
 
     public ProjectDto createProject() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("\tEnter name of the project");
+        System.out.print("\tEnter name of the project : ");
         String projectName = sc.nextLine();
         CompanyDto companyDto = null;
         CustomerDto customerDto = null;
@@ -135,12 +136,15 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
 
 
     public String validateByName(ProjectDto projectDto, ProjectDto projectFromDb) {
-        if ( (developerDto.getAge() == developerFromDb.getAge()) &&
-                (developerDto.getCompany_id() == developerFromDb.getCompany_id() ) &&
-                (developerDto.getSalary() == developerFromDb.getSalary()) ) {
-            return "\tDeveloper " + developerDto.getLastName() + " " +
-                    developerDto.getFirstName() + " successfully added to the database";
-        } else return   String.format("\tDeveloper with name '%s %s ' already exist with different another data." +
-                " Please enter correct data", developerDto.getLastName(), developerDto.getFirstName());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dateFromProjectDto = dateFormat.format(projectDto.getStart_date());
+        String dateFromProjectFromDb = dateFormat.format(projectFromDb.getStart_date());
+        if ( (projectDto.getCompanyDto().getCompany_name().equals(projectFromDb.getCompanyDto().getCompany_name())) &&
+              (projectDto.getCustomerDto().getCustomer_name().equals(projectFromDb.getCustomerDto().getCustomer_name())) &&
+               (projectDto.getCost() == projectFromDb.getCost() ) &&
+               (dateFromProjectDto.equals(dateFromProjectFromDb)) ) {
+            return "\tProject " + projectDto.getProject_name() + " successfully added to the database";
+        } else return   String.format("\tProject with name '%s ' already exist with different another data." +
+                " Please enter correct data", projectDto.getProject_name());
     }
 }

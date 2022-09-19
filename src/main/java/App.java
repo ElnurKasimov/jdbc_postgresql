@@ -80,7 +80,7 @@ public class App {
             customerStorage = new CustomerStorage(manager);
             customerConverter = new CustomerConverter();
             customerService = new CustomerService(customerStorage, customerConverter);
-            projectStorage = new ProjectStorage(manager);
+            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage);
             projectConverter = new ProjectConverter(companyConverter, customerConverter);
            // projectConverterIdName = new ProjectConverterIdName();
             projectService = new ProjectService(projectStorage, projectConverter, developerConverter,

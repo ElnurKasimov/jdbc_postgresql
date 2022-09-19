@@ -42,5 +42,5 @@ public SkillService(SkillStorage skillStorage) {
         return skillDto;
     }
 
-    public SkillDto findById(long)
+    //public SkillDto findById(long)
 }

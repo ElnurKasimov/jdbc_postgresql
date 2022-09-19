@@ -57,10 +57,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
                     //projectDaoService.getProjectsListInSpecialFormat();
                     break;
                 case 6:
-                    System.out.print("Введите название проекта : ");
-                    Scanner sc26 = new Scanner(System.in);
-                    String projectNameInput6 = sc26.nextLine();
-                    // int add = projectDaoService.addProject(projectNameInput6);
+                    addProject();
                     break;
                 case 7:
                     System.out.println("Для внесения изменения хоть в одно поле данных необходимо обновить все поля");
@@ -102,6 +99,7 @@ public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectS
     }
 
     private void addProject() {
+        projectService.createProject();
         projectService.save( projectService.createProject());
     }
 }

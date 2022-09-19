@@ -120,11 +120,11 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         CompanyDto checkedCompanyDto = companyService.checkByName(companyName);
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
 
-        ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName);
+        ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName); // project with id already
 
 
 
-
+/*
         Set<SkillDto> skills = new HashSet<>();
         while(true) {
             System.out.print("\tLanguage the developer operated : ");
@@ -138,7 +138,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
              1.  check is this pair exist in DB
                  if  not - add this pair  to  table Skill and return id the pair
                  if yes - return id the pair
-            */
+
 
             long skillId = skillService.getIdSkillByLanguageAndLevel(language, level);
 
@@ -148,17 +148,17 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
             String anotherLanguage = sc.nextLine();
             if(anotherLanguage.equalsIgnoreCase("no")) break;
         }
-
+*/
 
 
 
         newDeveloperDto = developerService.save(newDeveloperDto);
-        newDeveloperDto.setSkills(skills);
-        newDeveloperDto.setProjectDto(projectDto);
+       // newDeveloperDto.setSkills(skills);
+        newDeveloperDto.setProjectDto(checkedProjectDto);
 
 
 
-        projectService.saveProjectDeveloperRelation(projectDto,newDeveloperDto);
+        projectService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);
 
 
 

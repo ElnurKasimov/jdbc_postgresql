@@ -8,6 +8,7 @@ import model.dao.ProjectDao;
 
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class ProjectStorage implements Storage<ProjectDao> {
 
     public DatabaseManagerConnector manager;
+    private CompanyStorage companyStorage;
+    private CustomerStorage customerStorage;
 
     private final String GET_ALL_INFO = "SELECT * FROM project";
     private final String GET_COMPANY_PROJECTS =
@@ -26,20 +29,42 @@ public class ProjectStorage implements Storage<ProjectDao> {
      "SELECT project_id FROM project WHERE project_name LIKE ?";
     private final String INSERT_PROJECT_DEVELOPER =
      "INSERT INTO project_developer(project_id, developer_id) VALUES (?, ?)";
+    private final String FIND_BY_NAME = "SELECT * FROM project WHERE project_name  LIKE  ?";
+    private final String FIND_BY_ID = "SELECT * FROM project WHERE project_id = ?";
+    private final String INSERT = "INSERT INTO project(project_name, company_id, customer_id, cost, star_date) VALUES (?, ?, ?, ?, ?)";
 
 
 
-
-
-    public ProjectStorage (DatabaseManagerConnector manager) throws SQLException {
+    public ProjectStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
+                                             CustomerStorage customerStorage) throws SQLException {
         this.manager = manager;
+        this.companyStorage = companyStorage;
+        this.customerStorage = customerStorage;
     }
-
-
 
     @Override
     public ProjectDao save(ProjectDao entity) {
-        return null;
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, entity.getProject_name());
+            statement.setLong(2, entity.getCompanyDao().getCompany_id());
+            statement.setLong(3, entity.getCustomerDao().getCustomer_id());
+            statement.setInt(4, entity.getCost());
+            statement.setString(5,  entity.getStart_date().toString());
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    entity.setProject_id(generatedKeys.getInt(1));
+                }
+                else {
+                    throw new SQLException("Project saving was interrupted, ID has not been obtained.");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("The project was not created");
+        }
+        return entity;
     }
 
     @Override
@@ -157,10 +182,15 @@ public class ProjectStorage implements Storage<ProjectDao> {
         while (resultSet.next()) {
             projectDao = new ProjectDao();
             projectDao.setProject_id(resultSet.getLong("project_id"));
-            projectDao.setCompanyDao(resultSet.getString("customer_name"));
-            projectDao.setCustomerDao();
-            projectDao.setReputation(CustomerDao.Reputation.valueOf(resultSet.getString("reputation")));
+            projectDao.setProject_name(resultSet.getString("project_name"));
+            CompanyDao companyDao = companyStorage.findById(resultSet.getLong("company-id")).get();
+            projectDao.setCompanyDao(companyDao);
+            CustomerDao customerDao = customerStorage.findById(resultSet.getLong("customer_id")).get();
+            projectDao.setCustomerDao(customerDao);
+            projectDao.setCost(resultSet.getInt("cost"));
+            projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(resultSet.getString("start_date"),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
         }
-        return customerDao;
+        return projectDao;
     }
 }
