@@ -73,7 +73,7 @@ public class App {
         try {
             skillStorage = new SkillStorage(manager);
             skillConverter = new SkillConverter();
-            skillService = new SkillService(skillStorage);
+            skillService = new SkillService(skillStorage, skillConverter);
             companyStorage = new CompanyStorage(manager);
             companyConverter = new CompanyConverter();
             companyService = new CompanyService(companyStorage, companyConverter);

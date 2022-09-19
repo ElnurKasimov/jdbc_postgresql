@@ -2,6 +2,7 @@ package model.service;
 
 import model.dao.CompanyDao;
 import model.dao.ProjectDao;
+import model.dao.SkillDao;
 import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
@@ -23,14 +24,15 @@ public class SkillService {
     private SkillConverter skillConverter;
 
 
-public SkillService(SkillStorage skillStorage) {
+public SkillService(SkillStorage skillStorage,SkillConverter skillConverter) {
+
     this.skillStorage = skillStorage;
+    this.skillConverter = skillConverter;
 }
 
-    public long getIdSkillByLanguageAndLevel(String language, String level) {
-        Optional<Long> id = skillStorage.getIdSkillByLanguageAndLevel(language, level);
-        SkillDto skillDto = new SkillDto(language, level);
-        return id.orElseGet(() -> save(skillDto).getSkill_id());
+    public SkillDto findByLanguageAndLevel(String language, String level) {
+        Optional<SkillDao> skillDao = skillStorage.findByName(language, level);
+        return skillConverter.from(skillDao.orElseGet(() -> skillStorage.save(new SkillDao(language, level))));
     };
 
     public SkillDto save (SkillDto skillDto) {

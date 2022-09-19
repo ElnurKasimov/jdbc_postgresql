@@ -116,47 +116,27 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         int salary = Integer.parseInt(sc.nextLine());
         System.out.print("\tCompany where he works: ");
         String companyName = sc.nextLine();
-
-        CompanyDto checkedCompanyDto = companyService.checkByName(companyName);
+        CompanyDto checkedCompanyDto = companyService.checkByName(companyName); //company with ID already
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
-
         ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName); // project with id already
         newDeveloperDto.setProjectDto(checkedProjectDto);
 
-
-/*
         Set<SkillDto> skills = new HashSet<>();
         while(true) {
-            System.out.print("\tLanguage the developer operated : ");
+            System.out.print("\tLanguage the developer operated (Java, JS, C++, PHP) : ");
             String language = sc.nextLine();
-            if (language.equals("")) language = sc.nextLine();
             System.out.print("\tLevel knowledge of the language (junior, middle, senior) : ");
             String level = sc.nextLine();
-
-            //todo
-            /*{
-             1.  check is this pair exist in DB
-                 if  not - add this pair  to  table Skill and return id the pair
-                 if yes - return id the pair
-
-
-            long skillId = skillService.getIdSkillByLanguageAndLevel(language, level);
-
-
+            SkillDto skillDto = skillService.findByLanguageAndLevel(language, level);
             skills.add(skillDto);
             System.out.print("One more language? (yes/no) : ");
             String anotherLanguage = sc.nextLine();
             if(anotherLanguage.equalsIgnoreCase("no")) break;
         }
-*/
 
-
-
-
-       // newDeveloperDto.setSkills(skills);
+        newDeveloperDto.setSkills(skills);
 
         newDeveloperDto = developerService.save(newDeveloperDto);
-
 
         projectService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);
 

@@ -19,6 +19,7 @@ public class SkillStorage implements Storage<SkillDao> {
 
     private final String GET_ID_BY_LANGUAGE_NAME = "SELECT skill_id FROM skills WHERE language LIKE ? AND level LIKE ?";
     private final String INSERT = "INSERT INTO skill(language, level) VALUES (?, ?)";
+    private final String FIND_BY_NAME = "SELECT * FROM skill WHERE language LIKE ? and level LIKE ? ";
 
 
     public SkillStorage(DatabaseManagerConnector manager) throws SQLException {
@@ -56,7 +57,20 @@ public class SkillStorage implements Storage<SkillDao> {
     public Optional<SkillDao> findByName(String name) {
         return Optional.empty();
     }
-
+    public Optional<SkillDao> findByName(String language, String level) {
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
+            statement.setString(1, language);
+            statement.setString(2, level);
+            ResultSet resultSet = statement.executeQuery();
+            SkillDao skillDao = mapSkillDao(resultSet);
+            return Optional.ofNullable(skillDao);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return Optional.empty();
+    }
     @Override
     public List<SkillDao> findAll() {
         return null;
@@ -94,6 +108,17 @@ public class SkillStorage implements Storage<SkillDao> {
             exception.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    private SkillDao mapSkillDao(ResultSet resultSet) throws SQLException {
+        SkillDao skillDao = null;
+        while (resultSet.next()) {
+            skillDao = new SkillDao();
+            skillDao.setSkill_id(resultSet.getLong("skill_id"));
+            skillDao.setLanguage(resultSet.getString("language"));
+            skillDao.setLevel(resultSet.getString("level"));
+        }
+        return skillDao;
     }
 
 }
