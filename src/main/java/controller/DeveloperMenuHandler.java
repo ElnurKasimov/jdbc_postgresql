@@ -9,7 +9,6 @@ import model.service.*;
 import model.storage.DeveloperStorage;
 import view.Output;
 
-import java.sql.ResultSet;
 import java.util.*;
 
 
@@ -20,19 +19,21 @@ public class DeveloperMenuHandler {
     private CompanyService companyService;
     private ProjectService projectService;
     private SkillService skillService;
+    private RelationService relationService;
     private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
 public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage developerStorage,
                              MenuService menuService, CompanyService companyService,
-                             ProjectService projectService, SkillService skillService) {
+                             ProjectService projectService, SkillService skillService,
+                             RelationService relationService) {
     this.developerService = developerService;
     this.developerStorage = developerStorage;
     this.menuService = menuService;
     this.companyService = companyService;
     this.projectService = projectService;
     this.skillService = skillService;
+    this.relationService = relationService;
 }
-
 
     public void launch() {
         int choiceDevelopers;
@@ -118,12 +119,13 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         String companyName = sc.nextLine();
         CompanyDto checkedCompanyDto = companyService.checkByName(companyName); //company with ID already
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
-        ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName); // project with id already
-        newDeveloperDto.setProjectDto(checkedProjectDto);
 
+        ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName); // project with id already
+
+        newDeveloperDto.setProjectDto(checkedProjectDto);
         Set<SkillDto> skills = new HashSet<>();
         while(true) {
-            System.out.print("\tLanguage the developer operated (Java, JS, C++, PHP) : ");
+            System.out.print("\tLanguage the developer operated  : ");
             String language = sc.nextLine();
             System.out.print("\tLevel knowledge of the language (junior, middle, senior) : ");
             String level = sc.nextLine();
@@ -133,17 +135,12 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
             String anotherLanguage = sc.nextLine();
             if(anotherLanguage.equalsIgnoreCase("no")) break;
         }
-
         newDeveloperDto.setSkills(skills);
-
-        newDeveloperDto = developerService.save(newDeveloperDto);
-
-        projectService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);
-
-
-
+        newDeveloperDto = developerService.save(newDeveloperDto); // to get developer with id and all other field
+        relationService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);
+        for (SkillDto skillDto : skills) {
+            relationService.saveDeveloperSkillRelation(newDeveloperDto, skillDto);
+        }
     }
-
-
 
 }

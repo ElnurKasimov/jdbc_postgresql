@@ -29,15 +29,6 @@ public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter d
     this.developerConverter = developerConverter;
 }
 
-
-/*
-    public List<String> getAllNames() {
-        List<String> result = new ArrayList<>();
-    return result;
-    }
-
- */
-
     public DeveloperDto save (DeveloperDto developerDto) {
         List<String> result = new ArrayList<>();
         Optional<DeveloperDao> developerFromDb =

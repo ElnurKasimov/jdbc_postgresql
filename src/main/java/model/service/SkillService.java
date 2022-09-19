@@ -1,17 +1,8 @@
 package model.service;
 
-import model.dao.CompanyDao;
-import model.dao.ProjectDao;
 import model.dao.SkillDao;
-import model.dto.CompanyDto;
-import model.dto.DeveloperDto;
-import model.dto.ProjectDto;
 import model.dto.SkillDto;
-import model.service.converter.DeveloperConverter;
-import model.service.converter.ProjectConverter;
-import model.service.converter.ProjectConverterIdName;
 import model.service.converter.SkillConverter;
-import model.storage.ProjectStorage;
 import model.storage.SkillStorage;
 import view.Output;
 

@@ -62,25 +62,11 @@ public CompanyDto save (CompanyDto companyDto) {
         return new CompanyDto(newCompanyName, CompanyDto.Rating.valueOf(newCompanyRating));
     }
 
- /*
-    public long getIdByName (String name) {
-        long id;
-        Optional<CompanyDto> checkedCompany = findByName(name);
-        if(checkedCompany.isPresent()) {return checkedCompany.get().getCompany_id();}
-        else {
-            System.out.println(" According to the fact that there is no company with such name in the database," +
-                    "please enter full information about this company.");
-            CompanyDto newCompanyDto = createCompany();
-            return companyConverter.from(companyStorage.save(companyConverter.to(newCompanyDto))).getCompany_id();
-        }
-    }
-*/
-
     public CompanyDto checkByName (String name) {
         CompanyDto companyDto = findByName(name).orElseGet(() -> {
             System.out.println("Unfortunately, there is no company with such name in the database. " +
                     "Please create the company.");
-           return createCompany();
+           return createCompany(); // without id
         });
         return  save(companyDto);
     }

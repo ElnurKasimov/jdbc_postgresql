@@ -1,14 +1,10 @@
 package model.service;
 
-import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
 import model.dto.CompanyDto;
 import model.dto.CustomerDto;
-import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
-import model.service.converter.DeveloperConverter;
 import model.service.converter.ProjectConverter;
-import model.service.converter.ProjectConverterIdName;
 import model.storage.ProjectStorage;
 import view.Output;
 
@@ -21,17 +17,14 @@ import java.util.*;
 public class ProjectService {
     private ProjectStorage projectStorage;
     private ProjectConverter projectConverter;
-    private ProjectConverterIdName projectConverterIdName;
-    private DeveloperConverter developerConverter;
     private CompanyService companyService;
     private CustomerService customerService;
 
 
 public ProjectService (ProjectStorage projectStorage, ProjectConverter projectConverter,
-                       DeveloperConverter developerConverter, CompanyService companyService, CustomerService customerService) {
+                       CompanyService companyService, CustomerService customerService) {
     this.projectStorage = projectStorage;
     this.projectConverter = projectConverter;
-    this.developerConverter = developerConverter;
     this.companyService = companyService;
     this.customerService = customerService;
 }
@@ -66,37 +59,34 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
         });
     }
 
-    public void saveProjectDeveloperRelation(ProjectDto projectDto, DeveloperDto developerDto) {
-        projectStorage.saveProjectDeveloperRelation(
-                projectConverter.to(projectDto), developerConverter.to(developerDto));
-
-    };
-
     public ProjectDto checkByCompanyName(String companyName) {
-        System.out.print("\tThis company develops such projects : ");
+        System.out.println("\tThis company develops such projects : ");
         List<ProjectDto> projectDtoList = getCompanyProjects(companyName);
         for (ProjectDto projectDto : projectDtoList) {
-            System.out.print(projectDto.getProject_name() + ", ");
+            System.out.print(projectDto.getProject_name() + ",\n");
         }
-        System.out.println();
         if (projectDtoList.isEmpty()) {
             System.out.println("\nThere is no project in the company. Please create the one.");
-            ProjectDto newProjectDto = createProject();
-            newProjectDto = save(newProjectDto);
+            ProjectDto newProjectDto;
+            do {
+                newProjectDto = createProject();
+                newProjectDto = save(newProjectDto);
+            } while (newProjectDto.getProject_id() == 0 );
             System.out.println("Company " + companyName + " develops project " + newProjectDto.getProject_name());
         }
-        long projectId;
+        ProjectDto selectedProject;
         String projectName;
         while(true) {
             System.out.print("\tPlease enter project name the developers participate in : ");
             Scanner sc = new Scanner(System.in);
             projectName = sc.nextLine();
-            projectId = getIdByName(projectName);
-            if(projectId == 0) {
-                System.out.println("\tPlease enter correct data");
-            } else {break;}
+            Optional<ProjectDao> projectDaoFromDb = projectStorage.findByName(projectName);
+            if(projectDaoFromDb.isPresent()) {
+                selectedProject =  projectConverter.from(projectDaoFromDb.get());
+                break;
+            } else {System.out.println("\tThere is no such project. Please enter correct data");}
         }
-        return  new ProjectDto(projectId,projectName);
+        return  selectedProject;
     }
 
     public ProjectDto createProject() {
@@ -136,31 +126,34 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
     }
 
     public ProjectDto save (ProjectDto projectDto) {
-        List<String> result = new ArrayList<>();
+        List<String> stringList = new ArrayList<>();
         Optional<ProjectDao> projectFromDb =
                 projectStorage.findByName(projectDto.getProject_name());
-        ProjectDao savedProjectWithId = new ProjectDao();
+        ProjectDto result  = new ProjectDto();
         if (projectFromDb.isPresent()) {
-            result.add(validateByName(projectDto, projectConverter.from(projectFromDb.get())));
-        } else {
-            savedProjectWithId = projectStorage.save(projectConverter.to(projectDto));
-            result.add("\tProject " + projectDto.getProject_name() + " successfully added to the database");
+            if (validateByName(projectDto, projectConverter.from(projectFromDb.get()))) {
+                result = projectConverter.from(projectFromDb.get()); // with id
+            } else {
+               stringList.add(String.format("\tProject with name '%s ' already exist with different another data." +
+                    " Please enter correct data", projectDto.getProject_name()));
+               result = projectDto; // without id
+            }
+            } else {
+            stringList.add("\tProject " + projectDto.getProject_name() + " successfully added to the database");
+            result  = projectConverter.from(projectStorage.save(projectConverter.to(projectDto))); // with id
         }
-        Output.getInstance().print(result);
-        return projectConverter.from(savedProjectWithId);
+        Output.getInstance().print(stringList);
+        return result;
     }
 
 
-    public String validateByName(ProjectDto projectDto, ProjectDto projectFromDb) {
+    public boolean validateByName(ProjectDto projectDto, ProjectDto projectFromDb) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String dateFromProjectDto = dateFormat.format(projectDto.getStart_date());
         String dateFromProjectFromDb = dateFormat.format(projectFromDb.getStart_date());
-        if ( (projectDto.getCompanyDto().getCompany_name().equals(projectFromDb.getCompanyDto().getCompany_name())) &&
+        return  (projectDto.getCompanyDto().getCompany_name().equals(projectFromDb.getCompanyDto().getCompany_name())) &&
               (projectDto.getCustomerDto().getCustomer_name().equals(projectFromDb.getCustomerDto().getCustomer_name())) &&
                (projectDto.getCost() == projectFromDb.getCost() ) &&
-               (dateFromProjectDto.equals(dateFromProjectFromDb)) ) {
-            return "\tProject " + projectDto.getProject_name() + " successfully added to the database";
-        } else return   String.format("\tProject with name '%s ' already exist with different another data." +
-                " Please enter correct data", projectDto.getProject_name());
+               (dateFromProjectDto.equals(dateFromProjectFromDb)) ;
     }
 }

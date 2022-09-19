@@ -186,7 +186,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
             projectDao = new ProjectDao();
             projectDao.setProject_id(resultSet.getLong("project_id"));
             projectDao.setProject_name(resultSet.getString("project_name"));
-            CompanyDao companyDao = companyStorage.findById(resultSet.getLong("company-id")).get();
+            CompanyDao companyDao = companyStorage.findById(resultSet.getLong("company_id")).get();
             projectDao.setCompanyDao(companyDao);
             CustomerDao customerDao = customerStorage.findById(resultSet.getLong("customer_id")).get();
             projectDao.setCustomerDao(customerDao);

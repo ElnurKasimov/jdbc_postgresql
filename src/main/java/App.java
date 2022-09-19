@@ -25,11 +25,11 @@ public class App {
     private static ProjectStorage projectStorage;
     private static ProjectService projectService;
     private static ProjectConverter projectConverter;
-    private static ProjectConverterIdName projectConverterIdName;
-
     private static SkillService skillService;
     private  static SkillStorage skillStorage;
     private static SkillConverter skillConverter;
+    private static RelationStorage relationStorage;
+    private static RelationService relationService;
     private static final int EXIT_FROM_MAIN_MENU = 5;
 
     public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class App {
             switch (choice) {
                 case 1:
                     new DeveloperMenuHandler(developerService, developerStorage, menuService,
-                            companyService, projectService, skillService).launch();
+                            companyService, projectService, skillService,  relationService).launch();
                     break;
                 case 2:
                     new ProjectMenuHandler(projectService, projectStorage, menuService).launch();
@@ -82,12 +82,13 @@ public class App {
             customerService = new CustomerService(customerStorage, customerConverter);
             projectStorage = new ProjectStorage(manager, companyStorage, customerStorage);
             projectConverter = new ProjectConverter(companyConverter, customerConverter);
-           // projectConverterIdName = new ProjectConverterIdName();
-            projectService = new ProjectService(projectStorage, projectConverter, developerConverter,
+            projectService = new ProjectService(projectStorage, projectConverter,
                                            companyService, customerService);
             developerStorage = new DeveloperStorage(manager, companyStorage);
-            developerService = new DeveloperService(developerStorage, developerConverter);
             developerConverter = new DeveloperConverter(companyConverter, projectConverter, skillConverter);
+            developerService = new DeveloperService(developerStorage, developerConverter);
+            relationStorage = new RelationStorage(manager);
+            relationService = new RelationService(projectConverter, developerConverter, skillConverter, relationStorage);
         } catch (SQLException e) {
             e.printStackTrace();
         }
