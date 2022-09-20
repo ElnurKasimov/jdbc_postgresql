@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class SkillStorage implements Storage<SkillDao> {
 
@@ -72,7 +73,7 @@ public class SkillStorage implements Storage<SkillDao> {
         return Optional.empty();
     }
     @Override
-    public List<SkillDao> findAll() {
+    public List<Optional<SkillDao>> findAll() {
         return null;
     }
 
@@ -109,6 +110,13 @@ public class SkillStorage implements Storage<SkillDao> {
         }
         return Optional.empty();
     }
+
+    public Set<SkillDao> getSkillsByDeveloperId(long developer_id) {
+        
+    }
+
+
+
 
     private SkillDao mapSkillDao(ResultSet resultSet) throws SQLException {
         SkillDao skillDao = null;

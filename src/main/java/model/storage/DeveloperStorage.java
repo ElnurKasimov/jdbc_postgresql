@@ -14,17 +14,22 @@ import java.util.Optional;
 
 @Data
 public class DeveloperStorage implements Storage<DeveloperDao>{
-    public DatabaseManagerConnector manager;
-    public CompanyStorage companyStorage;
+    private DatabaseManagerConnector manager;
+    private CompanyStorage companyStorage;
+    private SkillStorage skillStorage;
+    private ProjectStorage projectStorage;
 
     private final String GET_ALL_INFO = "SELECT * FROM developer";
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
     private final String INSERT = "INSERT INTO developer(lastName, firstName, age, company_id, salary) VALUES (?, ?, ?, ?, ?)";
 
 
-    public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage) throws SQLException {
+    public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
+                             SkillStorage skillStorage, ProjectStorage projectStorage) {
         this.manager = manager;
         this.companyStorage = companyStorage;
+        this.skillStorage = skillStorage;
+        this.projectStorage = projectStorage;
     }
 
     @Override
@@ -79,8 +84,9 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
     @Override
-    public List<DeveloperDao> findAll() {
-        List<DeveloperDao> developerDaoList = new ArrayList<>();
+    public List<Optional<DeveloperDao>>
+    findAll() {
+        List<Optional<DeveloperDao>> developerDaoList = new ArrayList<>();
         try (Connection connection = manager.getConnection();
             ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
@@ -93,7 +99,9 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                     developerDao.setAge(rs.getInt("age"));
                     developerDao.setCompanyDao(companyStorage.findById(rs.getInt("company_id")).get());
                     developerDao.setSalary(rs.getInt("salary"));
-                    developerDaoList.add(developerDao);
+                    developerDao.setSkills(skillStorage.getSkillsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Skill>
+                    developerDao.setProjectDao(projectStorage.findProjectsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Project>
+                    developerDaoList.add(Optional.ofNullable(developerDao));
                 }
             }
         catch (SQLException exception) {

@@ -6,6 +6,8 @@ import model.dto.CompanyDto;
 import model.dto.CustomerDto;
 import model.service.converter.CustomerConverter;
 import model.storage.CustomerStorage;
+import view.Output;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,4 +47,16 @@ public  CustomerService (CustomerStorage customerStorage, CustomerConverter cust
         Optional<CustomerDao> customerDaoFromDb = customerStorage.findByName(name);
         return customerDaoFromDb.map(customerDao -> customerConverter.from(customerDao));
     }
+
+    public void findAllCustomers() {
+        List<String> result = new ArrayList<>();
+        for (Optional<CustomerDao> customerDao : customerStorage.findAll()) {
+            customerDao.ifPresent(dao -> result.add(String.format("\t%d. %s, rating -  %s",
+                    dao.getCustomer_id(),
+                    dao.getCustomer_name(),
+                    dao.getReputation())));
+        }
+        Output.getInstance().print(result);
+    }
+
 }

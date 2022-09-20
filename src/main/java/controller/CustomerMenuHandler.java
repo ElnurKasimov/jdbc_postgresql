@@ -32,7 +32,7 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
             choiceCustomers = menuService.get("Customers").makeChoice();
             switch (choiceCustomers) {
                 case 1:
-                    getAllNames();
+                    customerService.findAllCustomers();
                     break;
                 case 2:
                     createCustomer();
@@ -55,17 +55,6 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
                     break;
             }
         } while (choiceCustomers != EXIT_FROM_CUSTOMER_MENU);
-    }
-    public void getAllNames() {
-        List<CustomerDao> customerDaoList = customerStorage.findAll();
-        List<String> result = new ArrayList<>();
-        for (CustomerDao customerDao : customerDaoList) {
-            result.add(String.format("\t%d. %s, reputation -  %s",
-                    customerDao.getCustomer_id(),
-                    customerDao.getCustomer_name(),
-                    customerDao.getReputation()));
-        }
-        Output.getInstance().print(result);
     }
 
     private  void createCustomer() {

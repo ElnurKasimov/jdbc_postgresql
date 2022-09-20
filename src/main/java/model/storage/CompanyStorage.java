@@ -2,6 +2,7 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
+import view.Output;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -76,8 +77,8 @@ public class CompanyStorage implements Storage<CompanyDao> {
     }
 
     @Override
-    public List<CompanyDao> findAll() {
-        List<CompanyDao> companyDaoList = new ArrayList<>();
+    public List<Optional<CompanyDao>> findAll() {
+        List<Optional<CompanyDao>> companyDaoList = new ArrayList<>();
         try (Connection connection = manager.getConnection();
             ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
@@ -85,7 +86,7 @@ public class CompanyStorage implements Storage<CompanyDao> {
                     companyDao.setCompany_id(rs.getLong("company_id"));
                     companyDao.setCompany_name(rs.getString("company_name"));
                     companyDao.setRating(CompanyDao.Rating.valueOf(rs.getString("rating")));
-                    companyDaoList.add(companyDao);
+                    companyDaoList.add(Optional.ofNullable(companyDao));
                 }
             }
         catch (SQLException exception) {

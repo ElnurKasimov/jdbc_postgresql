@@ -75,8 +75,8 @@ public class CustomerStorage implements Storage<CustomerDao> {
     }
 
     @Override
-    public List<CustomerDao> findAll() {
-        List<CustomerDao> customerDaoList = new ArrayList<>();
+    public List<Optional<CustomerDao>> findAll() {
+        List<Optional<CustomerDao>> customerDaoList = new ArrayList<>();
         try (Connection connection = manager.getConnection();
             ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
@@ -84,7 +84,7 @@ public class CustomerStorage implements Storage<CustomerDao> {
                     customerDao.setCustomer_id(rs.getLong("customer_id"));
                     customerDao.setCustomer_name(rs.getString("customer_name"));
                     customerDao.setReputation(CustomerDao.Reputation.valueOf(rs.getString("reputation")));
-                    customerDaoList.add(customerDao);
+                    customerDaoList.add(Optional.ofNullable(customerDao));
                 }
             }
         catch (SQLException exception) {

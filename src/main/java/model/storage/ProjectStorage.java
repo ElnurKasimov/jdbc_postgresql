@@ -88,8 +88,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
     }
 
     @Override
-    public List<ProjectDao> findAll() {
-        List<ProjectDao> projectDaoList = new ArrayList<>();
+    public List<Optional<ProjectDao>> findAll() {
+        List<Optional<ProjectDao>> projectDaoList = new ArrayList<>();
         try (Connection connection = manager.getConnection();
             ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
                 while (rs.next()) {
@@ -99,7 +99,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
                     projectDao.setCost(rs.getInt("cost"));
                     projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
                             DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
-                    projectDaoList.add(projectDao);
+                    projectDaoList.add(Optional.ofNullable(projectDao));
                 }
             }
         catch (SQLException exception) {

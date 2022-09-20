@@ -7,7 +7,7 @@ public interface Storage <T> {
     T save (T entity);
     Optional<T> findById (long id);
     Optional<T>  findByName (String name);
-    List<T> findAll();
+    List<Optional<T>> findAll();
     boolean isExist(long id);
     boolean isExist(String name);
     T update (T entity);

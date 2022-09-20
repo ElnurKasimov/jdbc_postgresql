@@ -42,7 +42,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
             choiceDevelopers = menuService.get("Developers").makeChoice();
             switch (choiceDevelopers) {
                 case 1:
-                    getAllNames();
+                    developerService.findAllDevelopers();
                     break;
                 case 2:
                     System.out.print("\tВведите фамилию : ");
@@ -92,18 +92,6 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         } while (choiceDevelopers != EXIT_FROM_DEVELOPER_MENU);
     }
 
-    public void getAllNames() {
-        List<DeveloperDao> developerDaoList = developerStorage.findAll();
-        List<String> result = new ArrayList<>();
-        for (DeveloperDao developerDao : developerDaoList) {
-            result.add(String.format("\t%d. %s %s, age %d, salary %d",
-                    developerDao.getDeveloper_id(),
-                    developerDao.getLastName(), developerDao.getFirstName(),
-                    developerDao.getAge(), developerDao.getSalary()));
-        }
-        Output.getInstance().print(result);
-    }
-
     private void createDeveloper() {
         System.out.println("\tEnter, please, such data for developer.");
         Scanner sc = new Scanner(System.in);
@@ -136,7 +124,7 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
             if(anotherLanguage.equalsIgnoreCase("no")) break;
         }
         newDeveloperDto.setSkills(skills);
-        newDeveloperDto = developerService.save(newDeveloperDto); // to get developer with id and all other field
+        newDeveloperDto = developerService.save(newDeveloperDto); // to get developer with id and all others field
         relationService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);
         for (SkillDto skillDto : skills) {
             relationService.saveDeveloperSkillRelation(newDeveloperDto, skillDto);

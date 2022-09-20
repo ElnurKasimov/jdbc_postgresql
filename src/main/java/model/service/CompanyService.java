@@ -43,6 +43,17 @@ public CompanyDto save (CompanyDto companyDto) {
         } else return "";
     }
 
+
+    public void findAllCompanies() {
+        List<String> result = new ArrayList<>();
+        for (Optional<CompanyDao> companyDao : companyStorage.findAll()) {
+            companyDao.ifPresent(dao -> result.add(String.format("\t%d. %s, rating -  %s",
+                    dao.getCompany_id(),
+                    dao.getCompany_name(),
+                    dao.getRating())));
+        }
+        Output.getInstance().print(result);
+    }
     public Optional<CompanyDto> findById(long id) {
     Optional<CompanyDao> companyDaoFromDb = companyStorage.findById(id);
     return companyDaoFromDb.map(companyDao -> companyConverter.from(companyDao));

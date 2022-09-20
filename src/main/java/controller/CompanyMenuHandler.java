@@ -32,7 +32,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
             choiceCompanies = menuService.get("Companies").makeChoice();
             switch (choiceCompanies) {
                 case 1:
-                    getAllNames();
+                    companyService.findAllCompanies();
                     break;
                 case 2:
                     addCompanyToDb();
@@ -58,17 +58,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         } while (choiceCompanies != EXIT_FROM_COMPANY_MENU);
     }
 
-    private  void getAllNames() {
-        List<CompanyDao> companyDaoList = companyStorage.findAll();
-        List<String> result = new ArrayList<>();
-        for (CompanyDao companyDao : companyDaoList) {
-            result.add(String.format("\t%d. %s, rating -  %s",
-                    companyDao.getCompany_id(),
-                    companyDao.getCompany_name(),
-                    companyDao.getRating()));
-        }
-        Output.getInstance().print(result);
-    }
+
 
     private  void addCompanyToDb() {
         CompanyDto newCompanyDto = companyService.createCompany();

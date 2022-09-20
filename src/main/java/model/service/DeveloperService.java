@@ -46,13 +46,25 @@ public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter d
     }
 
     public String validateByName(DeveloperDto developerDto, DeveloperDto developerFromDb) {
-        if ( (developerDto.getAge() == developerFromDb.getAge()) &&
-             (developerDto.getCompanyDto().getCompany_name().equals(developerFromDb.getCompanyDto().getCompany_name() ) ) &&
-             (developerDto.getSalary() == developerFromDb.getSalary()) ) {
+      if( (developerDto.getAge() == developerFromDb.getAge()) &&
+          (developerDto.getCompanyDto().getCompany_name().equals(developerFromDb.getCompanyDto().getCompany_name() ) )
+          && (developerDto.getSalary() == developerFromDb.getSalary()) ) {
             return "\tDeveloper " + developerDto.getLastName() + " " +
                     developerDto.getFirstName() + " successfully added to the database";
         } else return   String.format("\tDeveloper with name '%s %s ' already exist with different another data." +
                          " Please enter correct data", developerDto.getLastName(), developerDto.getFirstName());
+    }
+
+    public void findAllDevelopers() {
+        List<String> result = new ArrayList<>();
+        for (Optional<DeveloperDao> developerDao : developerStorage.findAll()) {
+            developerDao.ifPresent(dao -> result.add(String.format("\t%d. %s %s, works in company %s",
+                    dao.getDeveloper_id(),
+                    dao.getLastName(),
+                    dao.getFirstName(),
+                    dao.getCompanyDao().getCompany_name())));
+        }
+        Output.getInstance().print(result);
     }
 
 }

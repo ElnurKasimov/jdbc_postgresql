@@ -84,7 +84,7 @@ public class App {
             projectConverter = new ProjectConverter(companyConverter, customerConverter);
             projectService = new ProjectService(projectStorage, projectConverter,
                                            companyService, customerService);
-            developerStorage = new DeveloperStorage(manager, companyStorage);
+            developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage, projectStorage);
             developerConverter = new DeveloperConverter(companyConverter, projectConverter, skillConverter);
             developerService = new DeveloperService(developerStorage, developerConverter);
             relationStorage = new RelationStorage(manager);

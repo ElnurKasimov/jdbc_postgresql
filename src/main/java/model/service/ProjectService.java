@@ -31,14 +31,14 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
 
 
     public List<String> getAllProjects() {
-        List<ProjectDao> projectDaoList = projectStorage.findAll();
+        List<Optional<ProjectDao>> projectDaoList = projectStorage.findAll();
         List<String> result = new ArrayList<>();
-        for (ProjectDao projectDao : projectDaoList) {
-            result.add(String.format("\t%d. %s, budget - %d, launched  %s",
-                    projectDao.getProject_id(),
-                    projectDao.getProject_name(),
-                    projectDao.getCost(),
-                    projectDao.getStart_date().toString()));
+        for (Optional<ProjectDao> projectDao : projectDaoList) {
+            projectDao.ifPresent(dao -> result.add(String.format("\t%d. %s, budget - %d, launched  %s",
+                    dao.getProject_id(),
+                    dao.getProject_name(),
+                    dao.getCost(),
+                    dao.getStart_date().toString())));
         }
         return result;
     }
