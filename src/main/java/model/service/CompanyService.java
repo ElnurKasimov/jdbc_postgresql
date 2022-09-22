@@ -40,7 +40,7 @@ public CompanyDto save (CompanyDto companyDto) {
             return String.format("\tCompany with name '%s' already exist with different " +
                     "rating '%s'. Please enter correct data",
                     companyDto.getCompany_name(), companyFromDb.getRating().toString());
-        } else return "";
+        } else return "Ok. The company is present in the database";
     }
 
 
@@ -74,11 +74,7 @@ public CompanyDto save (CompanyDto companyDto) {
     }
 
     public CompanyDto checkByName (String name) {
-        CompanyDto companyDto = findByName(name).orElseGet(() -> {
-            System.out.println("Unfortunately, there is no company with such name in the database. " +
-                    "Please create the company.");
-           return createCompany(); // without id
-        });
+        CompanyDto companyDto = findByName(name).orElseGet(this::createCompany);  // without id
         return  save(companyDto);
     }
 

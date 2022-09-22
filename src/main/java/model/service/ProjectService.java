@@ -59,7 +59,7 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
         });
     }
 
-    public ProjectDto checkByCompanyName(String companyName) {
+    public Set<ProjectDto> checkByCompanyName(String companyName) {
         System.out.println("\tThis company develops such projects : ");
         List<ProjectDto> projectDtoList = getCompanyProjects(companyName);
         for (ProjectDto projectDto : projectDtoList) {
@@ -74,19 +74,21 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
             } while (newProjectDto.getProject_id() == 0 );
             System.out.println("Company " + companyName + " develops project " + newProjectDto.getProject_name());
         }
-        ProjectDto selectedProject;
-        String projectName;
+        Set<ProjectDto> projectsDto = new HashSet<>();
         while(true) {
             System.out.print("\tPlease enter project name the developers participate in : ");
             Scanner sc = new Scanner(System.in);
-            projectName = sc.nextLine();
+            String projectName = sc.nextLine();
             Optional<ProjectDao> projectDaoFromDb = projectStorage.findByName(projectName);
             if(projectDaoFromDb.isPresent()) {
-                selectedProject =  projectConverter.from(projectDaoFromDb.get());
-                break;
+                ProjectDto selectedProject =  projectConverter.from(projectDaoFromDb.get());
+                projectsDto.add(selectedProject);
+                System.out.print("One more project? (yes/no) : ");
+                String anotherLanguage = sc.nextLine();
+                if(anotherLanguage.equalsIgnoreCase("no")) break;
             } else {System.out.println("\tThere is no such project. Please enter correct data");}
         }
-        return  selectedProject;
+        return  projectsDto;
     }
 
     public ProjectDto createProject() {

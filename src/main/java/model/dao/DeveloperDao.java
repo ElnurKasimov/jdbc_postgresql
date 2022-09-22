@@ -14,17 +14,17 @@ public class DeveloperDao {
     private CompanyDao companyDao;
     private int salary;
     private Set<SkillDao> skills;
-    private ProjectDao projectDao;
+    private Set<ProjectDao> projectsDao;
 
     public DeveloperDao (String lastName, String firstName, int age, CompanyDao companyDao, int salary,
-                         Set<SkillDao> skills, ProjectDao projectDao) {
+                         Set<SkillDao> skills, Set<ProjectDao> projectsDao) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.age = age;
         this.companyDao = companyDao;
         this.salary=salary;
         this.skills = skills;
-        this.projectDao = projectDao;
+        this.projectsDao = projectsDao;
     }
 
      public DeveloperDao () {

@@ -84,8 +84,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
     @Override
-    public List<Optional<DeveloperDao>>
-    findAll() {
+    public List<Optional<DeveloperDao>> findAll() {
         List<Optional<DeveloperDao>> developerDaoList = new ArrayList<>();
         try (Connection connection = manager.getConnection();
             ResultSet rs = connection.prepareStatement(GET_ALL_INFO).executeQuery()) {
@@ -100,7 +99,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                     developerDao.setCompanyDao(companyStorage.findById(rs.getInt("company_id")).get());
                     developerDao.setSalary(rs.getInt("salary"));
                     developerDao.setSkills(skillStorage.getSkillsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Skill>
-                    developerDao.setProjectDao(projectStorage.findProjectsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Project>
+                   // developerDao.setProjectDao(projectStorage.findProjectsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Project>
                     developerDaoList.add(Optional.ofNullable(developerDao));
                 }
             }

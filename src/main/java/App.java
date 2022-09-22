@@ -42,11 +42,11 @@ public class App {
             choice = menuService.get("Main").makeChoice();
             switch (choice) {
                 case 1:
-                    new DeveloperMenuHandler(developerService, developerStorage, menuService,
+                    new DeveloperMenuHandler(developerService, menuService,
                             companyService, projectService, skillService,  relationService).launch();
                     break;
                 case 2:
-                    new ProjectMenuHandler(projectService, projectStorage, menuService).launch();
+                    new ProjectMenuHandler(projectService, menuService).launch();
                     break;
                 case 3:
                     new CompanyMenuHandler(companyService, companyStorage, menuService).launch();
@@ -81,11 +81,11 @@ public class App {
             customerConverter = new CustomerConverter();
             customerService = new CustomerService(customerStorage, customerConverter);
             projectStorage = new ProjectStorage(manager, companyStorage, customerStorage);
-            projectConverter = new ProjectConverter(companyConverter, customerConverter);
+            projectConverter = new ProjectConverter();
             projectService = new ProjectService(projectStorage, projectConverter,
                                            companyService, customerService);
             developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage, projectStorage);
-            developerConverter = new DeveloperConverter(companyConverter, projectConverter, skillConverter);
+            developerConverter = new DeveloperConverter();
             developerService = new DeveloperService(developerStorage, developerConverter);
             relationStorage = new RelationStorage(manager);
             relationService = new RelationService(projectConverter, developerConverter, skillConverter, relationStorage);

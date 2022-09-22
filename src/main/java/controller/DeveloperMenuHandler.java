@@ -14,7 +14,6 @@ import java.util.*;
 
 public class DeveloperMenuHandler {
     private DeveloperService developerService;
-    private DeveloperStorage developerStorage;
     private MenuService menuService;
     private CompanyService companyService;
     private ProjectService projectService;
@@ -22,18 +21,16 @@ public class DeveloperMenuHandler {
     private RelationService relationService;
     private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
-public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage developerStorage,
-                             MenuService menuService, CompanyService companyService,
-                             ProjectService projectService, SkillService skillService,
-                             RelationService relationService) {
-    this.developerService = developerService;
-    this.developerStorage = developerStorage;
-    this.menuService = menuService;
-    this.companyService = companyService;
-    this.projectService = projectService;
-    this.skillService = skillService;
-    this.relationService = relationService;
-}
+    public DeveloperMenuHandler(DeveloperService developerService, MenuService menuService,
+                                CompanyService companyService, ProjectService projectService,
+                                SkillService skillService, RelationService relationService) {
+        this.developerService = developerService;
+        this.menuService = menuService;
+        this.companyService = companyService;
+        this.projectService = projectService;
+        this.skillService = skillService;
+        this.relationService = relationService;
+    }
 
     public void launch() {
         int choiceDevelopers;
@@ -104,31 +101,43 @@ public DeveloperMenuHandler (DeveloperService developerService, DeveloperStorage
         System.out.print("\tSalary (only digits): ");
         int salary = Integer.parseInt(sc.nextLine());
         System.out.print("\tCompany where he works: ");
-        String companyName = sc.nextLine();
+        String companyName;
+        while (true) {
+            companyName = sc.nextLine();
+            if (companyService.findByName(companyName).isEmpty()) {
+                System.out.print("Unfortunately, there is no company with such name in the database. " +
+                        "Do You want to create it (yes/no) or ? : ");
+                String createOrNot = sc.nextLine();
+                if (createOrNot.equalsIgnoreCase("yes")) break;
+                System.out.print( "Enter correct company name : ");
+            } else { break;}
+        }
         CompanyDto checkedCompanyDto = companyService.checkByName(companyName); //company with ID already
+
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
+        Set<ProjectDto> projectsDto = new HashSet<>();
+        Set<ProjectDto> checkedProjectsDto = projectService.checkByCompanyName(companyName); // set<Project>  each with id already
 
-        ProjectDto checkedProjectDto = projectService.checkByCompanyName (companyName); // project with id already
+        newDeveloperDto.setProjectsDto(checkedProjectsDto);
 
-        newDeveloperDto.setProjectDto(checkedProjectDto);
-        Set<SkillDto> skills = new HashSet<>();
-        while(true) {
+        Set<SkillDto> skillsDto = new HashSet<>();
+        while (true) {
             System.out.print("\tLanguage the developer operated  : ");
             String language = sc.nextLine();
             System.out.print("\tLevel knowledge of the language (junior, middle, senior) : ");
             String level = sc.nextLine();
             SkillDto skillDto = skillService.findByLanguageAndLevel(language, level);
-            skills.add(skillDto);
+            skillsDto.add(skillDto);
             System.out.print("One more language? (yes/no) : ");
             String anotherLanguage = sc.nextLine();
-            if(anotherLanguage.equalsIgnoreCase("no")) break;
+            if (anotherLanguage.equalsIgnoreCase("no")) break;
         }
-        newDeveloperDto.setSkills(skills);
+        newDeveloperDto.setSkills(skillsDto);
         newDeveloperDto = developerService.save(newDeveloperDto); // to get developer with id and all others field
-        relationService.saveProjectDeveloperRelation(checkedProjectDto,newDeveloperDto);
-        for (SkillDto skillDto : skills) {
-            relationService.saveDeveloperSkillRelation(newDeveloperDto, skillDto);
-        }
+
+        relationService.saveProjectDeveloperRelation(checkedProjectsDto, newDeveloperDto);
+        relationService.saveDeveloperSkillRelation(newDeveloperDto, skillsDto);
+
     }
 
 }

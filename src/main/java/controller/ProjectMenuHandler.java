@@ -14,14 +14,11 @@ import java.util.Scanner;
 
 public class ProjectMenuHandler {
     private ProjectService projectService;
-    private ProjectStorage projectStorage;
     private MenuService menuService;
     private static final int EXIT_FROM_PROJECT_MENU = 9;
 
-public ProjectMenuHandler(ProjectService projectService, ProjectStorage projectStorage,
-                          MenuService menuService) {
+public ProjectMenuHandler(ProjectService projectService, MenuService menuService) {
     this.projectService = projectService;
-    this.projectStorage = projectStorage;
     this.menuService = menuService;
 }
 

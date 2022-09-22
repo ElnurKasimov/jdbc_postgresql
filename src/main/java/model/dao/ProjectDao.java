@@ -1,9 +1,11 @@
 package model.dao;
 
 import lombok.Data;
+import model.dto.DeveloperDto;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class ProjectDao {
@@ -11,15 +13,18 @@ public class ProjectDao {
     private String project_name;
     private CompanyDao companyDao;
     private CustomerDao customerDao;
-    public int cost;
+    private  int cost;
     private Date start_date;
+    private Set<DeveloperDao> developersDao;
 
-    public ProjectDao (String project_name,CompanyDao companyDao, CustomerDao customerDao, int cost, Date start_date) {
+    public ProjectDao (String project_name,CompanyDao companyDao, CustomerDao customerDao, int cost,
+                       Date start_date, Set<DeveloperDao> developersDao) {
         this.project_name = project_name;
         this.companyDao = companyDao;
         this.customerDao = customerDao;
         this.cost = cost;
         this.start_date = start_date;
+        this.developersDao = developersDao;
     }
 
     public ProjectDao () {

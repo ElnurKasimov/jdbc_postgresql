@@ -13,16 +13,17 @@ public class DeveloperDto {
     private CompanyDto companyDto;
     private  int salary;
     private Set<SkillDto> skills;
-    private ProjectDto projectDto;
+    private Set<ProjectDto> projectsDto;
 
-    public DeveloperDto(String lastName, String firstName, int age, CompanyDto companyDto, int salary, Set<SkillDto> skills, ProjectDto projectDto) {
+    public DeveloperDto(String lastName, String firstName, int age, CompanyDto companyDto, int salary, Set<SkillDto> skills,
+                        Set<ProjectDto> projectsDto) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.age = age;
         this.companyDto = companyDto;
         this.salary = salary;
         this.skills = skills;
-        this.projectDto = projectDto;
+        this.projectsDto = projectsDto;
     }
 
     public DeveloperDto(String lastName, String firstName, int age, CompanyDto companyDto, int salary, Set<SkillDto> skills) {

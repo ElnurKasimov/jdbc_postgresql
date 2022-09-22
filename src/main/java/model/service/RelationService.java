@@ -10,6 +10,10 @@ import model.service.converter.ProjectConverter;
 import model.service.converter.SkillConverter;
 import model.storage.RelationStorage;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
 public class RelationService {
     private ProjectConverter projectConverter;
     private DeveloperConverter developerConverter;
@@ -24,14 +28,18 @@ public RelationService(ProjectConverter projectConverter, DeveloperConverter dev
     this.relationStorage = relationStorage;
 }
 
-public void saveProjectDeveloperRelation (ProjectDto projectDto, DeveloperDto developerDto) {
-    relationStorage.saveProjectDeveloperRelation(
-        projectConverter.to(projectDto), developerConverter.to(developerDto));
-    }
+    public void saveProjectDeveloperRelation(Set<ProjectDto> projectsDto, DeveloperDto developerDto) {
+        relationStorage.saveProjectDeveloperRelation(
+                projectsDto.stream().map(projectConverter::to).collect(Collectors.toSet()),
+                developerConverter.to(developerDto)
+        );
+    };
 
-    public void saveDeveloperSkillRelation (DeveloperDto developerDto, SkillDto skillDto) {
+    public void saveDeveloperSkillRelation (DeveloperDto developerDto, Set<SkillDto> skillsDto) {
         relationStorage.saveDeveloperSkillRelation(
-                developerConverter.to(developerDto), skillConverter.to(skillDto));
+                developerConverter.to(developerDto),
+                skillsDto.stream().map(skillConverter::to).collect(Collectors.toSet())
+        );
     }
 
 }

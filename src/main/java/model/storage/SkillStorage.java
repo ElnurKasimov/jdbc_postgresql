@@ -9,10 +9,7 @@ import model.dao.SkillDao;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class SkillStorage implements Storage<SkillDao> {
 
@@ -112,7 +109,8 @@ public class SkillStorage implements Storage<SkillDao> {
     }
 
     public Set<SkillDao> getSkillsByDeveloperId(long developer_id) {
-        
+        Set<SkillDao> result = new HashSet<>();
+        return result;
     }
 
 
