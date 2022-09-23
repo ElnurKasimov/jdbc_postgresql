@@ -72,23 +72,22 @@ public class App {
         menuService = new MenuService();
         try {
             skillStorage = new SkillStorage(manager);
-            skillConverter = new SkillConverter();
-            skillService = new SkillService(skillStorage, skillConverter);
+            //skillConverter = new SkillConverter();
+            skillService = new SkillService(skillStorage);
             companyStorage = new CompanyStorage(manager);
-            companyConverter = new CompanyConverter();
+            //companyConverter = new CompanyConverter();
             companyService = new CompanyService(companyStorage, companyConverter);
             customerStorage = new CustomerStorage(manager);
-            customerConverter = new CustomerConverter();
-            customerService = new CustomerService(customerStorage, customerConverter);
-            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage);
-            projectConverter = new ProjectConverter();
-            projectService = new ProjectService(projectStorage, projectConverter,
-                                           companyService, customerService);
-            developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage, projectStorage);
-            developerConverter = new DeveloperConverter();
-            developerService = new DeveloperService(developerStorage, developerConverter);
+            //customerConverter = new CustomerConverter();
+            customerService = new CustomerService(customerStorage);
+            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage, developerStorage);
+            //projectConverter = new ProjectConverter();
+            projectService = new ProjectService(projectStorage, companyService, customerService);
+            developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage);
+            //developerConverter = new DeveloperConverter();
+            developerService = new DeveloperService(developerStorage, projectStorage, skillStorage);
             relationStorage = new RelationStorage(manager);
-            relationService = new RelationService(projectConverter, developerConverter, skillConverter, relationStorage);
+            relationService = new RelationService(relationStorage);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -1,32 +1,27 @@
 package model.service;
 
-import lombok.Data;
-import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
-import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
-import model.service.converter.CompanyConverter;
 import model.service.converter.DeveloperConverter;
-import model.storage.CompanyStorage;
 import model.storage.DeveloperStorage;
+import model.storage.ProjectStorage;
+import model.storage.SkillStorage;
 import view.Output;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 public class DeveloperService {
     private DeveloperStorage developerStorage;
-    private DeveloperConverter developerConverter;
-    private CompanyService companyService;
-    private CompanyStorage companyStorage;
-    private CompanyConverter companyConverter;
+    private ProjectStorage projectStorage;
+    private SkillStorage skillStorage;
 
-
-public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter developerConverter) {
+public DeveloperService (DeveloperStorage developerStorage, ProjectStorage projectStorage,
+                SkillStorage skillstorage) {
     this.developerStorage = developerStorage;
-    this.developerConverter = developerConverter;
+    this.projectStorage = projectStorage;
+    this.skillStorage = skillstorage;
 }
 
     public DeveloperDto save (DeveloperDto developerDto) {
@@ -35,14 +30,14 @@ public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter d
                 developerStorage.findByName(developerDto.getLastName(), developerDto.getFirstName());
         DeveloperDao savedDeveloperWithId = new DeveloperDao();
         if(developerFromDb.isPresent()) {
-            result.add(validateByName(developerDto, developerConverter.from(developerFromDb.get())));
+            result.add(validateByName(developerDto, DeveloperConverter.from(developerFromDb.get())));
         } else {
-            savedDeveloperWithId = developerStorage.save(developerConverter.to(developerDto));
+            savedDeveloperWithId = developerStorage.save(DeveloperConverter.to(developerDto));
             result.add("\tDeveloper " + developerDto.getLastName() + " " +
                     developerDto.getFirstName() + " successfully added to the database");
         };
         Output.getInstance().print(result);
-        return developerConverter.from(savedDeveloperWithId);
+        return DeveloperConverter.from(savedDeveloperWithId);
     }
 
     public String validateByName(DeveloperDto developerDto, DeveloperDto developerFromDb) {
@@ -67,5 +62,34 @@ public DeveloperService (DeveloperStorage developerStorage, DeveloperConverter d
         Output.getInstance().print(result);
     }
 
+    public void getInfoByName(String lastName, String firstName) {
+        List<String> result = new ArrayList<>();
+        DeveloperDto developerDto = DeveloperConverter.from(developerStorage.findByName(lastName, firstName).get());
+        result.add(String.format("\t\tDeveloper  %s %s  :", developerDto.getLastName(), developerDto.getFirstName()));
+        result.add("\t\t\tAge : " + developerDto.getAge() + ",");
+        result.add(String.format("\t\t\tWorks in company %s, with salary %d",
+                             developerDto.getCompanyDto().getCompany_name(), developerDto.getSalary()));
+        StringBuilder projectsName = new StringBuilder();
+        projectsName.append("\t\t\tTakes participation in such projects :");
+        List<String> projectsList = projectStorage.getProjectsNameByDeveloperId(developerDto.getDeveloper_id());
+        for ( String project : projectsList) {
+            projectsName.append(" " + project + ",");
+        }
+        projectsName.deleteCharAt(projectsName.length()-1);
+        result.add(projectsName.toString());
+        StringBuilder skillsName = new StringBuilder();
+        skillsName.append("\t\t\tHas skill set :");
+        List<String> skillsList =  skillStorage.getSkillSetByDeveloperId(developerDto.getDeveloper_id());
+        for ( String skill : skillsList) {
+            skillsName.append(" " + skill + ",");
+        }
+        skillsName.deleteCharAt(skillsName.length()-1);
+        result.add(skillsName.toString());
+        Output.getInstance().print(result);
+    };
+
+    public boolean isExist(String lastName, String firstName) {
+        return developerStorage.isExist(lastName, firstName);
+    }
 }
 

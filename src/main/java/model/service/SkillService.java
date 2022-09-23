@@ -12,23 +12,19 @@ import java.util.Optional;
 
 public class SkillService {
     private SkillStorage skillStorage;
-    private SkillConverter skillConverter;
 
-
-public SkillService(SkillStorage skillStorage,SkillConverter skillConverter) {
-
+public SkillService(SkillStorage skillStorage) {
     this.skillStorage = skillStorage;
-    this.skillConverter = skillConverter;
 }
 
     public SkillDto findByLanguageAndLevel(String language, String level) {
         Optional<SkillDao> skillDao = skillStorage.findByName(language, level);
-        return skillConverter.from(skillDao.orElseGet(() -> skillStorage.save(new SkillDao(language, level))));
+        return SkillConverter.from(skillDao.orElseGet(() -> skillStorage.save(new SkillDao(language, level))));
     };
 
     public SkillDto save (SkillDto skillDto) {
         List<String> result = new ArrayList<>();
-        skillDto = skillConverter.from(skillStorage.save(skillConverter.to(skillDto)));
+        skillDto = SkillConverter.from(skillStorage.save(SkillConverter.to(skillDto)));
         result.add(String.format("\tSkill %s - %s successfully added to the database",
                 skillDto.getLanguage(), skillDto.getLevel()));
         Output.getInstance().print(result);

@@ -5,7 +5,6 @@ import model.dto.CompanyDto;
 
 public class CompanyConverter{
 
-    //@Override
     public static CompanyDto from(CompanyDao entity) {
         CompanyDto companyDto = new CompanyDto();
         companyDto.setCompany_id(entity.getCompany_id());
@@ -14,7 +13,6 @@ public class CompanyConverter{
         return companyDto;
     }
 
-    //@Override
     public static CompanyDao to(CompanyDto entity) {
         CompanyDao companyDao = new CompanyDao();
         companyDao.setCompany_id(entity.getCompany_id());

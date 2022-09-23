@@ -58,8 +58,6 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         } while (choiceCompanies != EXIT_FROM_COMPANY_MENU);
     }
 
-
-
     private  void addCompanyToDb() {
         CompanyDto newCompanyDto = companyService.createCompany();
         companyService.save(newCompanyDto);

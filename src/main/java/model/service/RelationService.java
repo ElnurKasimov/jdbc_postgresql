@@ -15,17 +15,10 @@ import java.util.stream.Collectors;
 
 
 public class RelationService {
-    //private ProjectConverter projectConverter;
-    //private DeveloperConverter developerConverter;
-    //private SkillConverter skillConverter;
     private RelationStorage relationStorage;
 
-public RelationService(ProjectConverter projectConverter, DeveloperConverter developerConverter,
-                       SkillConverter skillConverter, RelationStorage relationStorage) {
-  ///  this.projectConverter = projectConverter;
-   // this.developerConverter = developerConverter;
-   // this.skillConverter = skillConverter;
-   // this.relationStorage = relationStorage;
+public RelationService(RelationStorage relationStorage) {
+    this.relationStorage = relationStorage;
 }
 
     public void saveProjectDeveloperRelation(Set<ProjectDto> projectsDto, DeveloperDto developerDto) {

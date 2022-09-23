@@ -17,7 +17,6 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     private DatabaseManagerConnector manager;
     private CompanyStorage companyStorage;
     private SkillStorage skillStorage;
-    private ProjectStorage projectStorage;
 
     private final String GET_ALL_INFO = "SELECT * FROM developer";
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
@@ -25,11 +24,10 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
 
 
     public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
-                             SkillStorage skillStorage, ProjectStorage projectStorage) {
+                             SkillStorage skillStorage) {
         this.manager = manager;
         this.companyStorage = companyStorage;
         this.skillStorage = skillStorage;
-        this.projectStorage = projectStorage;
     }
 
     @Override
@@ -98,8 +96,6 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                     developerDao.setAge(rs.getInt("age"));
                     developerDao.setCompanyDao(companyStorage.findById(rs.getInt("company_id")).get());
                     developerDao.setSalary(rs.getInt("salary"));
-                    developerDao.setSkills(skillStorage.getSkillsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Skill>
-                   // developerDao.setProjectDao(projectStorage.findProjectsByDeveloperId(rs.getLong("developer_id"))); // here has to be set<Project>
                     developerDaoList.add(Optional.ofNullable(developerDao));
                 }
             }
@@ -112,6 +108,10 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     @Override
     public boolean isExist(long id) {
         return false;
+    }
+
+    public boolean isExist(String lastName, String firstName) {
+        return findByName(lastName, firstName).isPresent();
     }
 
     @Override

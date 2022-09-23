@@ -16,17 +16,6 @@ public class ProjectDto {
     private CustomerDto customerDto;
     private  int cost;
     private Date start_date;
-    private Set<DeveloperDto> developersDto;
-
-    public ProjectDto (String project_name, CompanyDto companyDto, CustomerDto customerDto, int cost,
-                       Date start_date, Set<DeveloperDto> developersDto) {
-        this.project_name = project_name;
-        this.companyDto = companyDto;
-        this.customerDto =  customerDto;
-        this.cost = cost;
-        this.start_date = start_date;
-        this.developersDto = developersDto;
-    }
 
     public ProjectDto (String project_name, CompanyDto companyDto, CustomerDto customerDto, int cost,
                        Date start_date) {

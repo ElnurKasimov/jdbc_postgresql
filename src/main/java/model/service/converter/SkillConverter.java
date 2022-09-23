@@ -7,7 +7,6 @@ import model.dto.SkillDto;
 
 public class SkillConverter{
 
- // @Override
     public static SkillDto from(SkillDao entity) {
         SkillDto  skillDto = new SkillDto();
         skillDto.setSkill_id(entity.getSkill_id());
@@ -16,7 +15,6 @@ public class SkillConverter{
         return skillDto;
     }
 
-    // @Override
     public static SkillDao to(SkillDto entity) {
         SkillDao  skillDao = new SkillDao();
         skillDao.setSkill_id(entity.getSkill_id());

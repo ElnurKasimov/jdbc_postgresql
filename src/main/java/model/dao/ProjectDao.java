@@ -15,16 +15,14 @@ public class ProjectDao {
     private CustomerDao customerDao;
     private  int cost;
     private Date start_date;
-    private Set<DeveloperDao> developersDao;
 
     public ProjectDao (String project_name,CompanyDao companyDao, CustomerDao customerDao, int cost,
-                       Date start_date, Set<DeveloperDao> developersDao) {
+                       Date start_date) {
         this.project_name = project_name;
         this.companyDao = companyDao;
         this.customerDao = customerDao;
         this.cost = cost;
         this.start_date = start_date;
-        this.developersDao = developersDao;
     }
 
     public ProjectDao () {

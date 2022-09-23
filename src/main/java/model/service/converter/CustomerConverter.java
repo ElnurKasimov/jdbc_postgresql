@@ -5,7 +5,6 @@ import model.dto.CustomerDto;
 
 public class CustomerConverter {
 
-    //@Override
     public static CustomerDto from(CustomerDao entity) {
         CustomerDto customerDto = new CustomerDto();
         customerDto.setCustomer_id(entity.getCustomer_id());
@@ -14,7 +13,6 @@ public class CustomerConverter {
         return customerDto;
     }
 
-   // @Override
     public static CustomerDao to(CustomerDto entity) {
         CustomerDao customerDao = new CustomerDao();
         customerDao.setCustomer_id(entity.getCustomer_id());

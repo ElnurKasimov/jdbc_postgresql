@@ -18,6 +18,10 @@ public class SkillStorage implements Storage<SkillDao> {
     private final String GET_ID_BY_LANGUAGE_NAME = "SELECT skill_id FROM skills WHERE language LIKE ? AND level LIKE ?";
     private final String INSERT = "INSERT INTO skill(language, level) VALUES (?, ?)";
     private final String FIND_BY_NAME = "SELECT * FROM skill WHERE language LIKE ? and level LIKE ? ";
+    private final String GET_SKILLS_BY_DEVELOPER_ID =
+     "SELECT  language, level FROM developer JOIN developer_skill ON developer_skill.developer_id = developer.developer_id " +
+     "JOIN skill ON skill.skill_id = developer_skill.skill_id WHERE developer.developer_id = ?";
+
 
 
     public SkillStorage(DatabaseManagerConnector manager) throws SQLException {
@@ -108,10 +112,22 @@ public class SkillStorage implements Storage<SkillDao> {
         return Optional.empty();
     }
 
-    public Set<SkillDao> getSkillsByDeveloperId(long developer_id) {
-        Set<SkillDao> result = new HashSet<>();
-        return result;
+    public List<String> getSkillSetByDeveloperId(long id) {
+        List<String> skills = new ArrayList<>();
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_SKILLS_BY_DEVELOPER_ID)) {
+            statement.setLong(1, id);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                skills.add("( " +rs.getString("language") + " - " + rs.getString("level") + " )");
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return skills;
     }
+
 
 
 

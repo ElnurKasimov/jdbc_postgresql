@@ -16,15 +16,13 @@ import java.util.*;
 
 public class ProjectService {
     private ProjectStorage projectStorage;
-    private ProjectConverter projectConverter;
     private CompanyService companyService;
     private CustomerService customerService;
 
 
-public ProjectService (ProjectStorage projectStorage, ProjectConverter projectConverter,
+public ProjectService (ProjectStorage projectStorage,
                        CompanyService companyService, CustomerService customerService) {
     this.projectStorage = projectStorage;
-    this.projectConverter = projectConverter;
     this.companyService = companyService;
     this.customerService = customerService;
 }
@@ -47,7 +45,7 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
         List<ProjectDto> projects = new ArrayList<>();
         List<ProjectDao> projectDaoList = projectStorage.getCompanyProjects(companyName);
         for (ProjectDao projectDao : projectDaoList) {
-            projects.add(projectConverter.from(projectDao));
+            projects.add(ProjectConverter.from(projectDao));
         }
         return projects;
     };
@@ -81,7 +79,7 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
             String projectName = sc.nextLine();
             Optional<ProjectDao> projectDaoFromDb = projectStorage.findByName(projectName);
             if(projectDaoFromDb.isPresent()) {
-                ProjectDto selectedProject =  projectConverter.from(projectDaoFromDb.get());
+                ProjectDto selectedProject =  ProjectConverter.from(projectDaoFromDb.get());
                 projectsDto.add(selectedProject);
                 System.out.print("One more project? (yes/no) : ");
                 String anotherLanguage = sc.nextLine();
@@ -108,7 +106,7 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
             }
         }
         while (true) {
-            System.out.print("\tEnter customer name which ordered the development of the project: : ");
+            System.out.print("\tEnter customer name which ordered the development of the project : ");
             String customer = sc.nextLine();
             if (customerService.findByName(customer).isPresent()) {
                 customerDto = customerService.findByName(customer).get();
@@ -133,8 +131,8 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
                 projectStorage.findByName(projectDto.getProject_name());
         ProjectDto result  = new ProjectDto();
         if (projectFromDb.isPresent()) {
-            if (validateByName(projectDto, projectConverter.from(projectFromDb.get()))) {
-                result = projectConverter.from(projectFromDb.get()); // with id
+            if (validateByName(projectDto, ProjectConverter.from(projectFromDb.get()))) {
+                result = ProjectConverter.from(projectFromDb.get()); // with id
             } else {
                stringList.add(String.format("\tProject with name '%s ' already exist with different another data." +
                     " Please enter correct data", projectDto.getProject_name()));
@@ -142,7 +140,7 @@ public ProjectService (ProjectStorage projectStorage, ProjectConverter projectCo
             }
             } else {
             stringList.add("\tProject " + projectDto.getProject_name() + " successfully added to the database");
-            result  = projectConverter.from(projectStorage.save(projectConverter.to(projectDto))); // with id
+            result  = ProjectConverter.from(projectStorage.save(ProjectConverter.to(projectDto))); // with id
         }
         Output.getInstance().print(stringList);
         return result;

@@ -1,8 +1,6 @@
 package model.service;
 
-import model.dao.CompanyDao;
 import model.dao.CustomerDao;
-import model.dto.CompanyDto;
 import model.dto.CustomerDto;
 import model.service.converter.CustomerConverter;
 import model.storage.CustomerStorage;
@@ -14,12 +12,11 @@ import java.util.Optional;
 
 public class CustomerService {
     private CustomerStorage customerStorage;
-    private CustomerConverter customerConverter;
 
 
-public  CustomerService (CustomerStorage customerStorage, CustomerConverter customerConverter) {
+
+public  CustomerService (CustomerStorage customerStorage) {
     this.customerStorage = customerStorage;
-    this.customerConverter = customerConverter;
 }
 
 
@@ -27,9 +24,9 @@ public  CustomerService (CustomerStorage customerStorage, CustomerConverter cust
         List<String> result = new ArrayList<>();
         Optional<CustomerDao> customerFromDb = customerStorage.findByName(customerDto.getCustomer_name());
         if (customerFromDb.isPresent()) {
-            result.add(validateByName(customerDto, customerConverter.from(customerFromDb.get())));
+            result.add(validateByName(customerDto, CustomerConverter.from(customerFromDb.get())));
         } else {
-            customerStorage.save(customerConverter.to(customerDto));
+            customerStorage.save(CustomerConverter.to(customerDto));
             result.add("\tCustomer successfully added to the database");
         };
         return result;
@@ -45,7 +42,7 @@ public  CustomerService (CustomerStorage customerStorage, CustomerConverter cust
 
     public Optional<CustomerDto> findByName(String name) {
         Optional<CustomerDao> customerDaoFromDb = customerStorage.findByName(name);
-        return customerDaoFromDb.map(customerDao -> customerConverter.from(customerDao));
+        return customerDaoFromDb.map(customerDao -> CustomerConverter.from(customerDao));
     }
 
     public void findAllCustomers() {

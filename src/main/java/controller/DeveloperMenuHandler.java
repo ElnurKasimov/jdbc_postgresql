@@ -42,12 +42,7 @@ public class DeveloperMenuHandler {
                     developerService.findAllDevelopers();
                     break;
                 case 2:
-                    System.out.print("\tВведите фамилию : ");
-                    Scanner sc12 = new Scanner(System.in);
-                    String lastNameInput2 = sc12.nextLine();
-                    System.out.print("\tВведите имя : ");
-                    String firstNameInput2 = sc12.nextLine();
-                    //developerDaoService.getInfoByName(lastNameInput2, firstNameInput2);
+                    getAdditionalInfoByName();
                     break;
                 case 3:
                     //developerDaoService.getQuantityJavaDevelopers();
@@ -113,13 +108,8 @@ public class DeveloperMenuHandler {
             } else { break;}
         }
         CompanyDto checkedCompanyDto = companyService.checkByName(companyName); //company with ID already
-
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
-        Set<ProjectDto> projectsDto = new HashSet<>();
         Set<ProjectDto> checkedProjectsDto = projectService.checkByCompanyName(companyName); // set<Project>  each with id already
-
-        newDeveloperDto.setProjectsDto(checkedProjectsDto);
-
         Set<SkillDto> skillsDto = new HashSet<>();
         while (true) {
             System.out.print("\tLanguage the developer operated  : ");
@@ -132,12 +122,23 @@ public class DeveloperMenuHandler {
             String anotherLanguage = sc.nextLine();
             if (anotherLanguage.equalsIgnoreCase("no")) break;
         }
-        newDeveloperDto.setSkills(skillsDto);
         newDeveloperDto = developerService.save(newDeveloperDto); // to get developer with id and all others field
-
         relationService.saveProjectDeveloperRelation(checkedProjectsDto, newDeveloperDto);
         relationService.saveDeveloperSkillRelation(newDeveloperDto, skillsDto);
-
     }
 
+    void getAdditionalInfoByName() {
+        while (true) {
+            System.out.print("\tEnter last name : ");
+            Scanner sc = new Scanner(System.in);
+            String lastName = sc.nextLine();
+            System.out.print("\tEnter first name : ");
+            String firstName = sc.nextLine();
+            if (developerService.isExist(lastName, firstName)) {
+                developerService.getInfoByName(lastName, firstName);
+                break;
+            }
+            System.out.println("There is no such developer in the database. Please enter correct data");
+        }
+    }
 }
