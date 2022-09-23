@@ -5,10 +5,10 @@ import model.dao.SkillDao;
 import model.dto.CompanyDto;
 import model.dto.SkillDto;
 
-public class SkillConverter implements Converter<SkillDto, SkillDao>{
+public class SkillConverter{
 
-    @Override
-    public SkillDto from(SkillDao entity) {
+ // @Override
+    public static SkillDto from(SkillDao entity) {
         SkillDto  skillDto = new SkillDto();
         skillDto.setSkill_id(entity.getSkill_id());
         skillDto.setLanguage(entity.getLanguage());
@@ -16,8 +16,8 @@ public class SkillConverter implements Converter<SkillDto, SkillDao>{
         return skillDto;
     }
 
-    @Override
-    public SkillDao to(SkillDto entity) {
+    // @Override
+    public static SkillDao to(SkillDto entity) {
         SkillDao  skillDao = new SkillDao();
         skillDao.setSkill_id(entity.getSkill_id());
         skillDao.setLanguage(entity.getLanguage());

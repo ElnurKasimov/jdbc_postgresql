@@ -141,6 +141,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
                 projectDao.setCustomerDao(customerStorage.findById(rs.getLong("customer_id")).get());
                 projectDao.setCost(rs.getInt("cost"));
                 projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
+                projectDao.setDevelopersDao();
                         DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
                 companyProjectList.add(projectDao);
             }
