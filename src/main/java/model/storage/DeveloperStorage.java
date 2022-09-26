@@ -8,9 +8,7 @@ import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 public class DeveloperStorage implements Storage<DeveloperDao>{
@@ -21,7 +19,14 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     private final String GET_ALL_INFO = "SELECT * FROM developer";
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
     private final String INSERT = "INSERT INTO developer(lastName, firstName, age, company_id, salary) VALUES (?, ?, ?, ?, ?)";
-
+    private final String GET_QUANTITY_JAVA_DEVELOPERS =
+            "SELECT COUNT(language) AS quantityLanguageDevelopers FROM developer " +
+            "JOIN developer_skill ON developer.developer_id = developer_skill.developer_id " +
+            "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE language = 'Java'";
+    private final String GET_LIST_MIDDLE_DEVELOPERS =
+            "SELECT lastName, firstName, language FROM developer JOIN developer_skill " +
+            "ON developer.developer_id = developer_skill.developer_id " +
+            "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE level = 'middle'";
 
     public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                              SkillStorage skillStorage) {
@@ -126,6 +131,39 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
 
     @Override
     public void delete(DeveloperDao entity) {
+    }
+
+    public int getQuantityJavaDevelopers () {
+        int quantity=0;
+        try (Connection connection = manager.getConnection();
+            ResultSet rs = connection.prepareStatement(GET_QUANTITY_JAVA_DEVELOPERS).executeQuery()) {
+            while (rs.next()) {
+                quantity = rs.getInt("quantityLanguageDevelopers");
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return quantity;
+    }
+
+
+    public List<String> getListNamesOfMiddleDevelopers() {
+        List<String> developersNames = new ArrayList<>();
+        try (Connection connection = manager.getConnection();
+            ResultSet rs = connection.prepareStatement(GET_LIST_MIDDLE_DEVELOPERS).executeQuery()) {
+            while (rs.next()) {
+                String lastName = rs.getString("lastname");
+                String firstName = rs.getString("firstname");
+                String language = rs.getString("language");
+                developersNames.add(String.format("%s %s - language - %s",
+                        lastName, firstName, language));
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return developersNames;
     }
 
     private DeveloperDao mapDeveloperDao(ResultSet resultSet) throws SQLException {

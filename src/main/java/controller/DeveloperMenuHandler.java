@@ -1,13 +1,10 @@
 package controller;
 
-import model.dao.DeveloperDao;
 import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
 import model.dto.SkillDto;
 import model.service.*;
-import model.storage.DeveloperStorage;
-import view.Output;
 
 import java.util.*;
 
@@ -48,7 +45,7 @@ public class DeveloperMenuHandler {
                     developerService.getQuantityJavaDevelopers();
                     break;
                 case 4:
-                    //developerDaoService.getListMiddleDevelopers();
+                    developerService.getListNamesOfMiddleDevelopers();
                     break;
                 case 5:
                     createDeveloper();

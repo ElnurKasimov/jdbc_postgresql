@@ -90,9 +90,19 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectStorage proje
         return developerStorage.isExist(lastName, firstName);
     }
 
-    public Set<DeveloperDto> getQuantityJavaDevelopers() {
-        Set<DeveloperDto> developerDtoSet = new HashSet<>();
-        return developerDtoSet;
+    public void getQuantityJavaDevelopers() {
+        List<String> result = new ArrayList<>();
+        result.add(String.format("\t\tIn all projects participate %d Java-developers",
+                developerStorage.getQuantityJavaDevelopers()));
+        Output.getInstance().print(result);
     }
+
+    public void getListNamesOfMiddleDevelopers() {
+        List<String> result = new ArrayList<>();
+        result.add("\tThere are such middle-developer in the database : ");
+        developerStorage.getListNamesOfMiddleDevelopers().stream().forEach(name -> result.add("\t\t" + name + ","));
+        Output.getInstance().print(result);
+    };
+
 }
 

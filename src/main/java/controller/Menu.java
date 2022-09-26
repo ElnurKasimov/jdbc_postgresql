@@ -17,8 +17,8 @@ public class Menu {
     }
 
     public void printMenu () {
-        if(name.equals("Main")) {System.out.println("\tYou can manage  such tables in the DB :");}
-        else {System.out.println("\tYou can operate such data in the table:");}
+        if(name.equals("Main")) {System.out.println("You can manage  such tables in the DB :");}
+        else {System.out.println("You can operate such data in the table:");}
         for (Map.Entry<Integer, String> element : contentMenu.entrySet()) {
             System.out.println(element.getKey() + " - " + element.getValue());
         }
