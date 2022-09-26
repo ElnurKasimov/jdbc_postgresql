@@ -45,7 +45,7 @@ public class DeveloperMenuHandler {
                     getAdditionalInfoByName();
                     break;
                 case 3:
-                    //developerDaoService.getQuantityJavaDevelopers();
+                    developerService.getQuantityJavaDevelopers();
                     break;
                 case 4:
                     //developerDaoService.getListMiddleDevelopers();

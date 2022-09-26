@@ -8,9 +8,7 @@ import model.storage.ProjectStorage;
 import model.storage.SkillStorage;
 import view.Output;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DeveloperService {
     private DeveloperStorage developerStorage;
@@ -90,6 +88,11 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectStorage proje
 
     public boolean isExist(String lastName, String firstName) {
         return developerStorage.isExist(lastName, firstName);
+    }
+
+    public Set<DeveloperDto> getQuantityJavaDevelopers() {
+        Set<DeveloperDto> developerDtoSet = new HashSet<>();
+        return developerDtoSet;
     }
 }
 
