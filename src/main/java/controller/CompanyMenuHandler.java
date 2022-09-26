@@ -1,29 +1,31 @@
 package controller;
 
-import model.dao.CompanyDao;
-import model.dto.CompanyDto;
-import model.service.CompanyService;
-import model.storage.CompanyStorage;
-import view.Output;
 
-import java.util.ArrayList;
+import model.dto.CompanyDto;
+import model.dto.ProjectDto;
+import model.service.CompanyService;
+import model.service.DeveloperService;
+import model.service.ProjectService;
+
 import java.util.List;
 import java.util.Scanner;
 
 
 public class CompanyMenuHandler {
     private CompanyService companyService;
-    private CompanyStorage companyStorage;
+    private ProjectService projectService;
+    private DeveloperService developerService;
+
     private MenuService menuService;
     private static final int EXIT_FROM_COMPANY_MENU = 4;
 
-public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyStorage,
-                           MenuService menuService) {
+public CompanyMenuHandler(CompanyService companyService, MenuService menuService,
+            ProjectService projectService, DeveloperService developerService) {
     this.companyService = companyService;
-    this.companyStorage = companyStorage;
     this.menuService = menuService;
+    this.projectService = projectService;
+    this.developerService = developerService;
 }
-
 
     public void launch() {
         int choiceCompanies;
@@ -38,21 +40,7 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
                     addCompanyToDb();
                     break;
                 case 3:
-                    System.out.print("Внесите название компании, которую вы хотите удалить :");
-                    Scanner sc33 = new Scanner(System.in);
-                    String nameInput3 = sc33.nextLine();
-                                /*ArrayList<String> companyProjects = new CompanyDaoService(Storage.getInstance().getConnection()).getCompanyProjects(nameInput3);
-                                if (companyProjects.size() == 0) {
-                                  companyDaoService.deleteCompany(nameInput3);
-                                    break;}
-                                System.out.println("\tЭта компания разрабатывает следующие проекты:");
-                                for (String project : companyProjects) {
-                                    System.out.println("\t\t- " + project + ", в котором задействованы следующие разработчики:");
-                                    new ProjectDaoService(Storage.getInstance().getConnection()).getListDevelopers(project);
-                                }
-                                System.out.println("Для того, чтобы удалить эту компанию - внесите ссответствующие изменения в таблицы developers, projects");
-
-                                 */
+                    deleteCompany();
                     break;
             }
         } while (choiceCompanies != EXIT_FROM_COMPANY_MENU);
@@ -63,5 +51,29 @@ public CompanyMenuHandler(CompanyService companyService, CompanyStorage companyS
         companyService.save(newCompanyDto);
     }
 
-
+    private void deleteCompany() {
+        System.out.print("Enter name of the company to delete : ");
+        Scanner sc = new Scanner(System.in);
+        String name = null;
+        while (true) {
+            name = sc.nextLine();
+            if (companyService.findByName(name).isEmpty()) {
+                System.out.print("Unfortunately, there is no company with such name in the database.  Please enter correct company name :");
+            } else {
+                break;
+            }
+        }
+        List<ProjectDto> projectDtoList = projectService.getCompanyProjects(name);
+        if (!projectDtoList.isEmpty()) {
+            System.out.println("\tThe company cannot be deleted because it has such projects with respectively involved developers :");
+            projectDtoList.forEach(projectDto -> {
+                System.out.println("\t " + projectDto.getProject_name() + " : ");
+                developerService.getDevelopersNamesByProjectName(projectDto.getProject_name()).
+                        forEach(developerName -> System.out.println("\t\t" + developerName));
+            });
+            System.out.println("For deleting the company at first delete these developers and these projects in the appropriate sections of the database.");
+        } else {
+            companyService.deleteCompany(name);
+        }
+    }
 }

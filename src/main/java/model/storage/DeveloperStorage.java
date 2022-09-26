@@ -1,11 +1,8 @@
 package model.storage;
 
 import lombok.Data;
-import lombok.Getter;
 import model.config.DatabaseManagerConnector;
-import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
-import model.dao.ProjectDao;
 
 import java.sql.*;
 import java.util.*;
@@ -27,6 +24,11 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
             "SELECT lastName, firstName, language FROM developer JOIN developer_skill " +
             "ON developer.developer_id = developer_skill.developer_id " +
             "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE level = 'middle'";
+    private final String GET_PROJECT_DEVELOPERS =
+            "SELECT lastname, firstname FROM project " +
+            "JOIN project_developer ON project_developer.project_id = project.project_id " +
+            "JOIN developer ON developer.developer_id = project_developer.developer_id " +
+            "WHERE project_name LIKE ?";
 
     public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                              SkillStorage skillStorage) {
@@ -158,6 +160,24 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                 String language = rs.getString("language");
                 developersNames.add(String.format("%s %s - language - %s",
                         lastName, firstName, language));
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return developersNames;
+    }
+
+    public List<String> getDevelopersNamesByProjectName(String projectName) {
+        List<String> developersNames = new ArrayList<>();
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_PROJECT_DEVELOPERS)){
+            statement.setString(1, projectName);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                String lastName = rs.getString("lastname");
+                String firstName = rs.getString("firstname");
+                developersNames.add(String.format("%s %s,", lastName, firstName));
             }
         }
         catch (SQLException exception) {

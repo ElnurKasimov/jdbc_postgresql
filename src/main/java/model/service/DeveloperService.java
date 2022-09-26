@@ -9,6 +9,7 @@ import model.storage.SkillStorage;
 import view.Output;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DeveloperService {
     private DeveloperStorage developerStorage;
@@ -100,9 +101,12 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectStorage proje
     public void getListNamesOfMiddleDevelopers() {
         List<String> result = new ArrayList<>();
         result.add("\tThere are such middle-developer in the database : ");
-        developerStorage.getListNamesOfMiddleDevelopers().stream().forEach(name -> result.add("\t\t" + name + ","));
+        developerStorage.getListNamesOfMiddleDevelopers().forEach(name -> result.add("\t\t" + name + ","));
         Output.getInstance().print(result);
     };
 
+        public List<String> getDevelopersNamesByProjectName(String projectName) {
+            return developerStorage.getDevelopersNamesByProjectName(projectName);
+        }
 }
 

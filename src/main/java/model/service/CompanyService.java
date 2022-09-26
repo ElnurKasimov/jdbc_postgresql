@@ -2,8 +2,10 @@ package model.service;
 
 import model.dao.CompanyDao;
 import model.dto.CompanyDto;
+import model.dto.ProjectDto;
 import model.service.converter.CompanyConverter;
 import model.storage.CompanyStorage;
+import model.storage.ProjectStorage;
 import view.Output;
 
 import java.util.ArrayList;
@@ -14,11 +16,9 @@ import java.util.Scanner;
 
 public class CompanyService {
     private CompanyStorage companyStorage;
-    private CompanyConverter companyConverter;
 
-public  CompanyService (CompanyStorage companyStorage, CompanyConverter companyConverter) {
+public  CompanyService (CompanyStorage companyStorage) {
     this.companyStorage = companyStorage;
-    this.companyConverter = companyConverter;
 }
 
 
@@ -26,9 +26,9 @@ public CompanyDto save (CompanyDto companyDto) {
     List<String> result = new ArrayList<>();
     Optional<CompanyDao> companyFromDb = companyStorage.findByName(companyDto.getCompany_name());
     if (companyFromDb.isPresent()) {
-        result.add(validateByName(companyDto, companyConverter.from(companyFromDb.get())));
+        result.add(validateByName(companyDto, CompanyConverter.from(companyFromDb.get())));
     } else {
-        companyStorage.save(companyConverter.to(companyDto));
+        companyStorage.save(CompanyConverter.to(companyDto));
         result.add("\tCompany " + companyDto.getCompany_name() + " successfully added to the database");
     };
     Output.getInstance().print(result);
@@ -56,12 +56,12 @@ public CompanyDto save (CompanyDto companyDto) {
     }
     public Optional<CompanyDto> findById(long id) {
     Optional<CompanyDao> companyDaoFromDb = companyStorage.findById(id);
-    return companyDaoFromDb.map(companyDao -> companyConverter.from(companyDao));
+    return companyDaoFromDb.map(CompanyConverter::from);
     }
 
     public Optional<CompanyDto> findByName(String name) {
         Optional<CompanyDao> companyDaoFromDb = companyStorage.findByName(name);
-        return companyDaoFromDb.map(companyDao -> companyConverter.from(companyDao));
+        return companyDaoFromDb.map(CompanyConverter::from);
     }
 
     public CompanyDto createCompany() {
@@ -74,8 +74,14 @@ public CompanyDto save (CompanyDto companyDto) {
     }
 
     public CompanyDto checkByName (String name) {
-        CompanyDto companyDto = findByName(name).orElseGet(this::createCompany);  // without id
+        CompanyDto companyDto = findByName(name).orElseGet(this::createCompany);
         return  save(companyDto);
     }
 
+    public void deleteCompany (String name) {
+        List<String> result = new ArrayList<>();
+        companyStorage.delete(companyStorage.findByName(name).get());
+        result.add("Company " + name + " successfully deleted from the database");
+        Output.getInstance().print(result);
+    }
 }

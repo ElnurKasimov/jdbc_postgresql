@@ -16,6 +16,7 @@ public class CompanyStorage implements Storage<CompanyDao> {
     private final String FIND_BY_NAME = "SELECT * FROM company WHERE company_name  LIKE  ?";
     private final String FIND_BY_ID = "SELECT * FROM company WHERE company_id = ?";
     private final String INSERT = "INSERT INTO company(company_name, rating) VALUES (?, ?)";
+    private  final String DELETE = "DELETE FROM company WHERE company_name LIKE  ?";
 
 
     public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
@@ -112,7 +113,14 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
     @Override
     public void delete(CompanyDao entity) {
-
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE)) {
+            statement.setString(1, entity.getCompany_name());
+            statement.executeUpdate();
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     private CompanyDao mapCompanyDao(ResultSet resultSet) throws SQLException {
