@@ -65,7 +65,7 @@ public CompanyMenuHandler(CompanyService companyService, MenuService menuService
         }
         List<ProjectDto> projectDtoList = projectService.getCompanyProjects(name);
         if (!projectDtoList.isEmpty()) {
-            System.out.println("\tThe company cannot be deleted because it has such projects with respectively involved developers :");
+            System.out.println("\tThe company cannot be deleted because it develop such projects with respectively involved developers :");
             projectDtoList.forEach(projectDto -> {
                 System.out.println("\t " + projectDto.getProject_name() + " : ");
                 developerService.getDevelopersNamesByProjectName(projectDto.getProject_name()).

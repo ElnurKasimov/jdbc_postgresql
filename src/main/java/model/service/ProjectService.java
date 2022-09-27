@@ -50,6 +50,15 @@ public ProjectService (ProjectStorage projectStorage,
         return projects;
     };
 
+    public List<ProjectDto> getCustomerProjects(String customerName) {
+        List<ProjectDto> projects = new ArrayList<>();
+        List<ProjectDao> projectDaoList = projectStorage.getCustomerProjects(customerName);
+        for (ProjectDao projectDao : projectDaoList) {
+            projects.add(ProjectConverter.from(projectDao));
+        }
+        return projects;
+    };
+
     public long getIdByName (String name){
         return  projectStorage.getIdByName(name).orElseGet(() -> {
             System.out.print( "There is no project with such name. Please enter correct data");

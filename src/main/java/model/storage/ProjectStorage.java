@@ -24,6 +24,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
     private final String GET_ALL_INFO = "SELECT * FROM project";
     private final String GET_COMPANY_PROJECTS =
      "SELECT * FROM project JOIN company ON project.company_id = company.company_id WHERE company_name LIKE ?";
+    private final String GET_CUSTOMER_PROJECTS =
+            "SELECT * FROM project JOIN customer ON project.customer_id = customer.customer_id WHERE customer_name LIKE ?";
     private final String GET_ID_BY_NAME =
      "SELECT project_id FROM project WHERE project_name LIKE ?";
     private final String INSERT_PROJECT_DEVELOPER =
@@ -47,7 +49,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
     @Override
     public ProjectDao save(ProjectDao entity) {
         try (Connection connection = manager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)){
+            PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)){
             statement.setString(1, entity.getProject_name());
             statement.setLong(2, entity.getCompanyDao().getCompany_id());
             statement.setLong(3, entity.getCustomerDao().getCustomer_id());
@@ -153,6 +155,29 @@ public class ProjectStorage implements Storage<ProjectDao> {
         return companyProjectList;
     }
 
+    public List<ProjectDao> getCustomerProjects (String customerName) {
+        List<ProjectDao> customerProjectList = new ArrayList<>();
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_CUSTOMER_PROJECTS)) {
+            statement.setString(1, customerName);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                ProjectDao projectDao = new ProjectDao();
+                projectDao.setProject_id(rs.getLong("project_id"));
+                projectDao.setProject_name(rs.getString("project_name"));
+                projectDao.setCompanyDao(companyStorage.findById(rs.getLong("company_id")).get());
+                projectDao.setCustomerDao(customerStorage.findById(rs.getLong("customer_id")).get());
+                projectDao.setCost(rs.getInt("cost"));
+                projectDao.setStart_date(java.sql.Date.valueOf(LocalDate.parse(rs.getString("start_date"),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+                customerProjectList.add(projectDao);
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return customerProjectList;
+    }
     public Optional<Long> getIdByName (String name) {
         Optional<Long> id = Optional.empty();
         try (Connection connection = manager.getConnection();

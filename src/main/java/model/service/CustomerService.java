@@ -42,7 +42,7 @@ public  CustomerService (CustomerStorage customerStorage) {
 
     public Optional<CustomerDto> findByName(String name) {
         Optional<CustomerDao> customerDaoFromDb = customerStorage.findByName(name);
-        return customerDaoFromDb.map(customerDao -> CustomerConverter.from(customerDao));
+        return customerDaoFromDb.map(CustomerConverter::from);
     }
 
     public void findAllCustomers() {

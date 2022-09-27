@@ -3,7 +3,11 @@ package controller;
 import model.dao.CustomerDao;
 import model.dto.CompanyDto;
 import model.dto.CustomerDto;
+import model.dto.ProjectDto;
+import model.service.CompanyService;
 import model.service.CustomerService;
+import model.service.DeveloperService;
+import model.service.ProjectService;
 import model.storage.CustomerStorage;
 import view.Output;
 
@@ -14,15 +18,19 @@ import java.util.Scanner;
 
 public class CustomerMenuHandler {
     private CustomerService customerService;
-    private CustomerStorage customerStorage;
+    private ProjectService projectService;
     private MenuService menuService;
+    private DeveloperService developerService;
+    private CompanyService companyService;
     private static final int EXIT_FROM_CUSTOMER_MENU = 4;
 
-public CustomerMenuHandler(CustomerService customerService, CustomerStorage customerStorage,
-                            MenuService menuService) {
+public CustomerMenuHandler(CustomerService customerService, ProjectService projectService,
+                            MenuService menuService, DeveloperService developerService, CompanyService companyService) {
     this.customerService = customerService;
-    this.customerStorage = customerStorage;
+    this.projectService = projectService;
     this.menuService = menuService;
+    this.developerService = developerService;
+    this.companyService = companyService;
 }
 
     public void launch() {
@@ -66,5 +74,31 @@ public CustomerMenuHandler(CustomerService customerService, CustomerStorage cust
         CustomerDto newCustomerDto = new CustomerDto(newCustomerName, CustomerDto.Reputation.valueOf(newCustomerReputation));
         List<String> result = customerService.save(newCustomerDto);
         Output.getInstance().print(result);
+    }
+
+    private void deleteCustomer() {
+        System.out.print("Enter name of the customer to delete : ");
+        Scanner sc = new Scanner(System.in);
+        String name = null;
+        while (true) {
+            name = sc.nextLine();
+            if (customerService.findByName(name).isEmpty()) {
+                System.out.print("Unfortunately, there is no customer with such name in the database.  Please enter correct company name :");
+            } else {
+                break;
+            }
+        }
+        List<ProjectDto> projectDtoList = projectService.getCustomerProjects(name);
+        if (!projectDtoList.isEmpty()) {
+            System.out.println("\tThe customer cannot be deleted because it ordered such projects with respectively involved developers :");
+            projectDtoList.forEach(projectDto -> {
+                System.out.println("\t " + projectDto.getProject_name() + " : ");
+                developerService.getDevelopersNamesByProjectName(projectDto.getProject_name()).
+                        forEach(developerName -> System.out.println("\t\t" + developerName));
+            });
+            System.out.println("For deleting the customer at first delete these developers and these projects in the appropriate sections of the database.");
+        } else {
+            companyService.deleteCompany(name);
+        }
     }
 }

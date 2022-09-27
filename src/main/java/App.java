@@ -47,7 +47,8 @@ public class App {
                     new CompanyMenuHandler(companyService, menuService, projectService, developerService).launch();
                     break;
                 case 4:
-                    new CustomerMenuHandler(customerService, customerStorage, menuService).launch();
+                    new CustomerMenuHandler(customerService, projectService,
+                            menuService,developerService, companyService).launch();
                     break;
             }
         } while (choice != EXIT_FROM_MAIN_MENU);
