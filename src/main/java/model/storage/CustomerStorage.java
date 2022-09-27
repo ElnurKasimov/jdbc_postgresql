@@ -16,6 +16,7 @@ public class CustomerStorage implements Storage<CustomerDao> {
     private final String FIND_BY_NAME = "SELECT * FROM customer WHERE  customer_name  LIKE  ?";
     private final String FIND_BY_ID = "SELECT * FROM customer WHERE customer_id = ?";
     private final String INSERT = "INSERT INTO customer(customer_name, reputation) VALUES (?, ?)";
+    private  final String DELETE = "DELETE FROM customer WHERE customer_name LIKE  ?";
 
     public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
@@ -110,7 +111,14 @@ public class CustomerStorage implements Storage<CustomerDao> {
 
     @Override
     public void delete(CustomerDao entity) {
-
+        try (Connection connection = manager.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(DELETE)) {
+                statement.setString(1, entity.getCustomer_name());
+                statement.executeUpdate();
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     private CustomerDao mapCustomerDao(ResultSet resultSet) throws SQLException {

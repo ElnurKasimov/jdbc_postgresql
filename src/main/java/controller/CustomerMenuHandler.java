@@ -46,20 +46,7 @@ public CustomerMenuHandler(CustomerService customerService, ProjectService proje
                     createCustomer();
                     break;
                 case 3:
-                    System.out.print("Внесите название заказчика, которого вы хотите удалить :");
-                    Scanner sc43 = new Scanner(System.in);
-                    String nameInput3 = sc43.nextLine();
-                               /* ArrayList<String> customerProjects = customerDaoService.getProjectsNames(nameInput3);
-                                if (customerProjects.size() == 0) {
-                                    customerDaoService.deleteCustomer(nameInput3);
-                                    break;}
-                                System.out.println("\tЭтот заказчик заказал следующие проекты:");
-                                for (String project : customerDaoService.getProjectsNames(nameInput3)) {
-                                    System.out.println("\t\t- " + project );
-                                }
-                                System.out.println("Для того, чтобы удалить этого заказчика - внесите ссответствующие изменения в таблицу projects");
-
-                                */
+                    deleteCustomer();
                     break;
             }
         } while (choiceCustomers != EXIT_FROM_CUSTOMER_MENU);
@@ -98,7 +85,7 @@ public CustomerMenuHandler(CustomerService customerService, ProjectService proje
             });
             System.out.println("For deleting the customer at first delete these developers and these projects in the appropriate sections of the database.");
         } else {
-            companyService.deleteCompany(name);
+            customerService.deleteCustomer(name);
         }
     }
 }

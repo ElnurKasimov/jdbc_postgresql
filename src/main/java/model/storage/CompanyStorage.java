@@ -18,12 +18,9 @@ public class CompanyStorage implements Storage<CompanyDao> {
     private final String INSERT = "INSERT INTO company(company_name, rating) VALUES (?, ?)";
     private  final String DELETE = "DELETE FROM company WHERE company_name LIKE  ?";
 
-
     public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
     }
-
-
 
     @Override
     public CompanyDao save(CompanyDao entity) {

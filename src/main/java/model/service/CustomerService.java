@@ -56,4 +56,11 @@ public  CustomerService (CustomerStorage customerStorage) {
         Output.getInstance().print(result);
     }
 
+    public void deleteCustomer (String name) {
+        List<String> result = new ArrayList<>();
+        customerStorage.delete(customerStorage.findByName(name).get());
+        result.add("Customer " + name + " successfully deleted from the database");
+        Output.getInstance().print(result);
+    }
+
 }
