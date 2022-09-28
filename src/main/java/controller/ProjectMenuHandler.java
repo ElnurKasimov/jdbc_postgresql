@@ -41,20 +41,7 @@ public ProjectMenuHandler(ProjectService projectService, MenuService menuService
                     projectService.save(projectService.createProject());
                     break;
                 case 7:
-                    System.out.println("Для внесения изменения хоть в одно поле данных необходимо обновить все поля");
-                    System.out.print("Введите название проекта, данные по которому вы планируете изменить: ");
-                    Scanner sc27 = new Scanner(System.in);
-                    String nameInput7 = sc27.nextLine();
-                    long idToDelete;
-                               /* try {
-                                    idToDelete = projectDaoService.getIdByName(nameInput7);
-                                }  catch (SQLException e) {
-                                    System.out.println("В базе данных такого проекта не существует. Вводите корректные данные.");
-                                    break;
-                                }
-                                 projectDaoService.deleteProject(idToDelete);
-                                int update = projectDaoService.addProject(nameInput7);
-                                */
+                    projectService.updateProject();
                     break;
                 case 8:
                     System.out.print("Внесите название проекта, которого вы хотите удалить :");

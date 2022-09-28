@@ -19,7 +19,7 @@ public class ContentMenuFiller {
                 contentMenu.put(3, "a special question - get quantity of  all Java - developers");
                 contentMenu.put(4, "a special question - get list of all  middle - developers");
                 contentMenu.put(5, "add a developer to the database");
-                contentMenu.put(6, "amend data of a developer");
+                contentMenu.put(6, "update data of a developer");
                 contentMenu.put(7, "delete a developer from the database");
                 contentMenu.put(8, "return in the previous menu");
                 break;
@@ -30,7 +30,7 @@ public class ContentMenuFiller {
                 contentMenu.put(4, "a special question -  project expenses (a sum of salaries all its developers)");
                 contentMenu.put(5, "a special question -  get a list of projects in a special format");
                 contentMenu.put(6, "add a project to the database");
-                contentMenu.put(7, "amend data of a project");
+                contentMenu.put(7, "update data of a project");
                 contentMenu.put(8, "delete a project from the database");
                 contentMenu.put(9, "return in the previous menu");
                 break;

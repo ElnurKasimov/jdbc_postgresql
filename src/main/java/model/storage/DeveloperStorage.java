@@ -130,9 +130,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
     @Override
-    public DeveloperDao update(DeveloperDao entity) {
-        return null;
-    }
+    public void update(DeveloperDao entity) {}
 
     @Override
     public void delete(DeveloperDao entity) {

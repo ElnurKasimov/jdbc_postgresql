@@ -104,9 +104,7 @@ public class CompanyStorage implements Storage<CompanyDao> {
     }
 
     @Override
-    public CompanyDao update(CompanyDao entity) {
-        return null;
-    }
+    public void update(CompanyDao entity) {}
 
     @Override
     public void delete(CompanyDao entity) {

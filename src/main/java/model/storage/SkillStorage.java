@@ -89,9 +89,7 @@ public class SkillStorage implements Storage<SkillDao> {
     }
 
     @Override
-    public SkillDao update(SkillDao entity) {
-        return null;
-    }
+    public void update(SkillDao entity) {}
 
     @Override
     public void delete(SkillDao entity) {

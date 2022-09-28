@@ -11,6 +11,7 @@ import model.storage.DeveloperStorage;
 import model.storage.ProjectStorage;
 import view.Output;
 
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -213,4 +214,70 @@ public ProjectService (ProjectStorage projectStorage, DeveloperStorage developer
         }
         Output.getInstance().print(result);
     }
+
+    public void updateProject() {
+        Scanner sc = new Scanner(System.in);
+        ProjectDto currentProjectDto = null;
+        String newProjectName;
+        while (true) {
+            System.out.print("\tEnter name of the project You want to update: ");
+            newProjectName = sc.nextLine();
+            Optional<ProjectDao> currentProjectDao = projectStorage.findByName(newProjectName);
+            if(currentProjectDao.isPresent()) {
+                currentProjectDto = ProjectConverter.from(currentProjectDao.get());
+                break;
+            }
+            System.out.println("There is no such project in the database. Please enter correct data");
+        }
+        CompanyDto newCompanyDto = null;
+        CustomerDto newCustomerDto = null;
+        while (true) {
+            System.out.print("\tEnter new company name which develops the project or just click 'Enter' if this field will not be changed : ");
+            String newCompanyName = sc.nextLine();
+            if(newCompanyName.equals("")) {
+                newCompanyDto = currentProjectDto.getCompanyDto();
+                break;
+            }
+            if (companyService.findByName(newCompanyName).isPresent()) {
+                newCompanyDto = companyService.findByName(newCompanyName).get();
+                break;
+            }
+            System.out.println("There is no company with such name. Please enter correct one.");
+        }
+        while (true) {
+            System.out.print("\tEnter new customer name which ordered the development of the project or just click 'Enter' if this field will not be changed : ");
+            String newCustomerName = sc.nextLine();
+            if (newCustomerName.equals("")) {
+                newCustomerDto = currentProjectDto.getCustomerDto();
+                break;
+            }
+            if (customerService.findByName(newCustomerName).isPresent()) {
+                newCustomerDto = customerService.findByName(newCustomerName).get();
+                break;
+            }
+            System.out.println("There is no customer with such name. Please enter correct one.");
+        }
+        System.out.print("\tBudget of the project (only digits) or just click 'Enter' if this field will not be changed : ");
+        String costString = sc.nextLine();
+        int newCost;
+        if(costString.equals("")) {
+            newCost = currentProjectDto.getCost();
+        } else {
+            newCost = Integer.parseInt(costString);
+        }
+        System.out.print("\tStart date of the project (in format yyyy-mm-dd) or just click 'Enter' if this field will not be changed : ");
+        String newStartDateString = sc.nextLine();
+        java.sql.Date newStartSqlDate;
+        if( newStartDateString.equals("")) {
+            newStartSqlDate = currentProjectDto.getStart_date();
+        } else {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+            LocalDate newStartLocalDate = LocalDate.parse(newStartDateString, dtf);
+            newStartSqlDate = java.sql.Date.valueOf(newStartLocalDate);
+        }
+        ProjectDto projectDtoToUpdate = new ProjectDto(newProjectName, newCompanyDto, newCustomerDto, newCost, newStartSqlDate);
+        projectStorage.update(ProjectConverter.to(projectDtoToUpdate));
+    }
+
+
 }

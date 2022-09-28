@@ -10,7 +10,7 @@ public interface Storage <T> {
     List<Optional<T>> findAll();
     boolean isExist(long id);
     boolean isExist(String name);
-    T update (T entity);
+    void update (T entity);
     void delete(T entity);
 
 }

@@ -105,9 +105,7 @@ public class CustomerStorage implements Storage<CustomerDao> {
     }
 
     @Override
-    public CustomerDao update(CustomerDao entity) {
-        return null;
-    }
+    public void update(CustomerDao entity) {}
 
     @Override
     public void delete(CustomerDao entity) {
