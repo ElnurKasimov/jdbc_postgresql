@@ -72,10 +72,10 @@ public class App {
             companyService = new CompanyService(companyStorage);
             customerStorage = new CustomerStorage(manager);
             customerService = new CustomerService(customerStorage);
-            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage, developerStorage);
-            projectService = new ProjectService(projectStorage, companyService, customerService);
             developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage);
+            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage, developerStorage);
             developerService = new DeveloperService(developerStorage, projectStorage, skillStorage);
+            projectService = new ProjectService(projectStorage, developerStorage,companyService, customerService);
             relationStorage = new RelationStorage(manager);
             relationService = new RelationService(relationStorage);
         } catch (SQLException e) {

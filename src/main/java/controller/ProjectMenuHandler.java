@@ -1,14 +1,8 @@
 package controller;
 
-import model.dao.ProjectDao;
-import model.dto.DeveloperDto;
-import model.dto.ProjectDto;
 import model.service.ProjectService;
-import model.storage.ProjectStorage;
 import view.Output;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 
@@ -32,29 +26,19 @@ public ProjectMenuHandler(ProjectService projectService, MenuService menuService
                     Output.getInstance().print(projectService.getAllProjects());
                     break;
                 case 2:
-                    System.out.print("Введите название проекта : ");
-                    Scanner sc22 = new Scanner(System.in);
-                    String projectNameInput2 = sc22.nextLine();
-                    //projectDaoService.getInfoByName(projectNameInput2);
+                    getAdditionalInfoByName();
                     break;
                 case 3:
-                    System.out.print("Введите название проекта : ");
-                    Scanner sc23 = new Scanner(System.in);
-                    String projectNameInput3 = sc23.nextLine();
-                    System.out.println("\tВ проекте " + projectNameInput3 + " задействованы следующие разработчики: ");
-                    // projectDaoService.getListDevelopers(projectNameInput3);
+                    getDevelopersList();
                     break;
                 case 4:
-                    System.out.print("Введите название проекта : ");
-                    Scanner sc24 = new Scanner(System.in);
-                    String projectNameInput4 = sc24.nextLine();
-                    //  projectDaoService.getBudgetByProjectName(projectNameInput4);
+                    getProjectExpenses();
                     break;
                 case 5:
-                    //projectDaoService.getProjectsListInSpecialFormat();
+                    projectService.getProjectsListInSpecialFormat();
                     break;
                 case 6:
-                    projectService.save( projectService.createProject());
+                    projectService.save(projectService.createProject());
                     break;
                 case 7:
                     System.out.println("Для внесения изменения хоть в одно поле данных необходимо обновить все поля");
@@ -82,6 +66,43 @@ public ProjectMenuHandler(ProjectService projectService, MenuService menuService
         } while (choiceProjects != EXIT_FROM_PROJECT_MENU);
     }
 
+    private void getAdditionalInfoByName() {
+        while (true) {
+            System.out.print("\tEnter project name : ");
+            Scanner sc = new Scanner(System.in);
+            String projectName = sc.nextLine();
+            if (projectService.isExist(projectName)) {
+                projectService.getInfoByName(projectName);
+                break;
+            }
+            System.out.println("There is no such project in the database. Please enter correct data");
+        }
+    }
 
+    private void getDevelopersList () {
+        while (true) {
+            System.out.print("\tEnter project name : ");
+            Scanner sc = new Scanner(System.in);
+            String projectName = sc.nextLine();
+            if (projectService.isExist(projectName)) {
+                projectService.getDevelopersNamesByProjectName(projectName);
+                break;
+            }
+            System.out.println("There is no such project in the database. Please enter correct data");
+        }
+    }
+
+    private void getProjectExpenses() {
+        while (true) {
+            System.out.print("\tEnter project name : ");
+            Scanner sc = new Scanner(System.in);
+            String projectName = sc.nextLine();
+            if (projectService.isExist(projectName)) {
+                projectService.getProjectExpences(projectName);
+                break;
+            }
+            System.out.println("There is no such project in the database. Please enter correct data");
+        }
+    }
 
 }

@@ -28,8 +28,7 @@ public class ContentMenuFiller {
                 contentMenu.put(2, "get all project data by its name" );
                 contentMenu.put(3, "a special question -  get list of all developers in a certain project");
                 contentMenu.put(4, "a special question -  project expenses (a sum of salaries all its developers)");
-                contentMenu.put(5, "a special question -  get a list of projects in format:\n " +
-                        "\t\tstart date - project name - a quantity developers in this project");
+                contentMenu.put(5, "a special question -  get a list of projects in a special format");
                 contentMenu.put(6, "add a project to the database");
                 contentMenu.put(7, "amend data of a project");
                 contentMenu.put(8, "delete a project from the database");

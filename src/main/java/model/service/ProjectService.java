@@ -3,8 +3,11 @@ package model.service;
 import model.dao.ProjectDao;
 import model.dto.CompanyDto;
 import model.dto.CustomerDto;
+import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
+import model.service.converter.DeveloperConverter;
 import model.service.converter.ProjectConverter;
+import model.storage.DeveloperStorage;
 import model.storage.ProjectStorage;
 import view.Output;
 
@@ -16,18 +19,23 @@ import java.util.*;
 
 public class ProjectService {
     private ProjectStorage projectStorage;
+    private DeveloperStorage developerStorage;
     private CompanyService companyService;
     private CustomerService customerService;
 
 
-public ProjectService (ProjectStorage projectStorage,
+public ProjectService (ProjectStorage projectStorage, DeveloperStorage developerStorage,
                        CompanyService companyService, CustomerService customerService) {
     this.projectStorage = projectStorage;
+    this.developerStorage = developerStorage;
     this.companyService = companyService;
     this.customerService = customerService;
 }
 
 
+    public boolean isExist(String projectName) {
+        return projectStorage.isExist(projectName);
+    }
     public List<String> getAllProjects() {
         List<Optional<ProjectDao>> projectDaoList = projectStorage.findAll();
         List<String> result = new ArrayList<>();
@@ -164,5 +172,45 @@ public ProjectService (ProjectStorage projectStorage,
               (projectDto.getCustomerDto().getCustomer_name().equals(projectFromDb.getCustomerDto().getCustomer_name())) &&
                (projectDto.getCost() == projectFromDb.getCost() ) &&
                (dateFromProjectDto.equals(dateFromProjectFromDb)) ;
+    }
+
+    public void getInfoByName(String name) {
+        List<String> result = new ArrayList<>();
+        ProjectDto projectDto = ProjectConverter.from(projectStorage.findByName(name).get());
+        result.add(String.format("\t\tProject  %s  :", projectDto.getProject_name()));
+        result.add(String.format("\t\t\tis ordered by %s with budget %d,",
+                projectDto.getCustomerDto().getCustomer_name(), projectDto.getCost()));
+        result.add(String.format("\t\t\tis developed by %s from %s,",
+                projectDto.getCompanyDto().getCompany_name(), projectDto.getStart_date().toString()));
+        Output.getInstance().print(result);
+    };
+
+    public void getDevelopersNamesByProjectName(String name) {
+        List<String> result = new ArrayList<>();
+        result.add("\t\tSuch developers develop the project :");
+        developerStorage.getDevelopersNamesByProjectName(name).forEach(line -> result.add("\t\t\t" + line));
+        Output.getInstance().print(result);
+    };
+
+    public void getProjectExpences(String projectName) {
+        List<String> result = new ArrayList<>();
+        result.add("\t\tExpences of the project - " + projectStorage.getProjectExpences(projectName));
+        Output.getInstance().print(result);
+    };
+
+    public void getProjectsListInSpecialFormat() {
+        List<String> result = new ArrayList<>();
+        result.add("\tThe database contains such projects (start date - project name - a quantity developers in this project):");
+        if(projectStorage.findAll().isEmpty()) {
+            result.add("unfortunately, there is no projects in the database.");
+        } else {
+            projectStorage.findAll().forEach(projectDao ->
+                result.add(String.format("\t\t%s - %s - %d,",
+                  projectDao.get().getStart_date().toString(),
+                  projectDao.get().getProject_name(),
+                  developerStorage.getQuantityOfProjectDevelopers(projectDao.get().getProject_name())
+                )));
+        }
+        Output.getInstance().print(result);
     }
 }

@@ -29,7 +29,10 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
             "JOIN project_developer ON project_developer.project_id = project.project_id " +
             "JOIN developer ON developer.developer_id = project_developer.developer_id " +
             "WHERE project_name LIKE ?";
-
+    private final String GET_QUANTITY_PROJECT_DEVELOPERS =
+            "SELECT COUNT(developer_id) FROM project JOIN project_developer " +
+                    "ON project.project_id = project_developer.project_id " +
+                    " WHERE project_name  LIKE  ?";
     public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                              SkillStorage skillStorage) {
         this.manager = manager;
@@ -150,7 +153,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
 
-    public List<String> getListNamesOfMiddleDevelopers() {
+    public List<String> getNamesListOfMiddleDevelopers() {
         List<String> developersNames = new ArrayList<>();
         try (Connection connection = manager.getConnection();
             ResultSet rs = connection.prepareStatement(GET_LIST_MIDDLE_DEVELOPERS).executeQuery()) {
@@ -186,6 +189,21 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         return developersNames;
     }
 
+    public long getQuantityOfProjectDevelopers(String name) {
+        long quantity = 0;
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_QUANTITY_PROJECT_DEVELOPERS)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                quantity = rs.getLong("count");
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return quantity;
+    }
     private DeveloperDao mapDeveloperDao(ResultSet resultSet) throws SQLException {
         DeveloperDao developerDao = null;
         while (resultSet.next()) {

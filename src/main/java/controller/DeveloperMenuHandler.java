@@ -104,9 +104,9 @@ public class DeveloperMenuHandler {
                 System.out.print( "Enter correct company name : ");
             } else { break;}
         }
-        CompanyDto checkedCompanyDto = companyService.checkByName(companyName); //company with ID already
+        CompanyDto checkedCompanyDto = companyService.checkByName(companyName);
         DeveloperDto newDeveloperDto = new DeveloperDto(lastName, firstName, age, checkedCompanyDto, salary);
-        Set<ProjectDto> checkedProjectsDto = projectService.checkByCompanyName(companyName); // set<Project>  each with id already
+        Set<ProjectDto> checkedProjectsDto = projectService.checkByCompanyName(companyName);
         Set<SkillDto> skillsDto = new HashSet<>();
         while (true) {
             System.out.print("\tLanguage the developer operated  : ");
@@ -119,7 +119,7 @@ public class DeveloperMenuHandler {
             String anotherLanguage = sc.nextLine();
             if (anotherLanguage.equalsIgnoreCase("no")) break;
         }
-        newDeveloperDto = developerService.save(newDeveloperDto); // to get developer with id and all others field
+        newDeveloperDto = developerService.save(newDeveloperDto);
         relationService.saveProjectDeveloperRelation(checkedProjectsDto, newDeveloperDto);
         relationService.saveDeveloperSkillRelation(newDeveloperDto, skillsDto);
     }

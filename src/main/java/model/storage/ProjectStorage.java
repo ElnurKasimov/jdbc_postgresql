@@ -36,7 +36,11 @@ public class ProjectStorage implements Storage<ProjectDao> {
     private  final String  GET_PROJECTS_NAME_BY_DEVELOPER_ID =
     "SELECT  project_name FROM project JOIN   project_developer ON project_developer.project_id = project.project_id " +
     "JOIN developer ON developer.developer_id = project_developer.developer_id WHERE developer.developer_id = ?";
-
+    private final String GET_PROJECT_EXPENCES =
+            "SELECT SUM(salary) FROM project JOIN project_developer " +
+                    "ON project.project_id = project_developer.project_id " +
+                    "JOIN developer ON project_developer.developer_id = developer.developer_id " +
+                    " WHERE project_name  LIKE  ?";
 
     public ProjectStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                                              CustomerStorage customerStorage, DeveloperStorage developerStorage) throws SQLException {
@@ -82,7 +86,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
             PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
-           ProjectDao projectDao = mapProjectDao(resultSet);
+            ProjectDao projectDao = mapProjectDao(resultSet);
             return Optional.ofNullable(projectDao);
         }
         catch (SQLException exception) {
@@ -118,9 +122,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
     }
 
     @Override
-    public boolean isExist(String name) {
-        return false;
-    }
+    public boolean isExist(String name) {return findByName(name).isPresent();}
 
     @Override
     public ProjectDao update(ProjectDao entity) {
@@ -222,7 +224,21 @@ public class ProjectStorage implements Storage<ProjectDao> {
             ex.printStackTrace();
         }
     }
-
+    public long getProjectExpences(String name) {
+        long expences = 0;
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_PROJECT_EXPENCES)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                expences = rs.getLong("sum");
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return expences;
+    }
 
 
     private ProjectDao mapProjectDao(ResultSet resultSet) throws SQLException {
@@ -241,4 +257,5 @@ public class ProjectStorage implements Storage<ProjectDao> {
         }
         return projectDao;
     }
+
 }
