@@ -51,22 +51,7 @@ public class DeveloperMenuHandler {
                     createDeveloper();
                     break;
                 case 6:
-                    System.out.println("Для внесения изменения хоть в одно поле данных необходимо обновить все поля");
-                    System.out.println("Данные по какому разработчику вы планируете изменить?");
-                    Scanner sc16 = new Scanner(System.in);
-                    System.out.print("Введите фамилию : ");
-                    String lastNameInput6 = sc16.nextLine();
-                    System.out.print("Введите имя : ");
-                    String firstNameInput6 = sc16.nextLine();
-                    long idToDelete;
-                    //  try {
-                    // idToDelete = developerDaoService.getIdByName(lastNameInput6, firstNameInput6);
-                    //}  catch (SQLException e) {
-                    //     System.out.println("В базе данных такого разработчика не существует. Вводите корректные данные.");
-                    //    break;
-                    //}
-                    //developerDaoService.deleteDeveloper(idToDelete);
-                    //int update = developerDaoService.addDeveloper(lastNameInput6, firstNameInput6);
+                    developerService.updateDeveloper();
                     break;
                 case 7:
                     System.out.println("Внесите данные по разработчику, которого вы хотите удалить");
@@ -138,4 +123,5 @@ public class DeveloperMenuHandler {
             System.out.println("There is no such developer in the database. Please enter correct data");
         }
     }
+
 }

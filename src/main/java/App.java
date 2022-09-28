@@ -68,16 +68,16 @@ public class App {
         try {
             skillStorage = new SkillStorage(manager);
             skillService = new SkillService(skillStorage);
+            relationStorage = new RelationStorage(manager);
+            relationService = new RelationService(relationStorage);
             companyStorage = new CompanyStorage(manager);
             companyService = new CompanyService(companyStorage);
             customerStorage = new CustomerStorage(manager);
             customerService = new CustomerService(customerStorage);
             developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage);
             projectStorage = new ProjectStorage(manager, companyStorage, customerStorage, developerStorage);
-            developerService = new DeveloperService(developerStorage, projectStorage, skillStorage);
+            developerService = new DeveloperService(developerStorage, projectStorage, skillStorage, companyStorage);
             projectService = new ProjectService(projectStorage, developerStorage,companyService, customerService);
-            relationStorage = new RelationStorage(manager);
-            relationService = new RelationService(relationStorage);
         } catch (SQLException e) {
             e.printStackTrace();
         }

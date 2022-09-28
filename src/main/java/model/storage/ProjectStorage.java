@@ -224,7 +224,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
         }
         return projectNames;
     }
-    
+
     public void saveProjectDeveloperRelation(ProjectDao projectDao, DeveloperDao developerDao) {
         try (Connection connection = manager.getConnection();
             PreparedStatement statement = connection.prepareStatement(INSERT_PROJECT_DEVELOPER)){

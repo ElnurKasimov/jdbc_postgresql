@@ -33,6 +33,11 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
             "SELECT COUNT(developer_id) FROM project JOIN project_developer " +
                     "ON project.project_id = project_developer.project_id " +
                     " WHERE project_name  LIKE  ?";
+    private final String UPDATE =
+            "UPDATE developer SET age=?, salary=?, company_id=? WHERE lastName LIKE ? AND firstName LIKE ?";
+    private final String GET_ID_BY_NAME =
+            "SELECT developer_id FROM developer WHERE WHERE lastName LIKE ? AND firstName LIKE ?";
+
     public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                              SkillStorage skillStorage) {
         this.manager = manager;
@@ -130,10 +135,40 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
     @Override
-    public void update(DeveloperDao entity) {}
+    public void update(DeveloperDao entity) {
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            statement.setInt(1, entity.getAge());
+            statement.setInt(2, entity.getSalary());
+            statement.setLong(3, entity.getCompanyDao().getCompany_id());
+            statement.setString(4, entity.getLastName());
+            statement.setString(5, entity.getFirstName());
+            statement.executeUpdate();
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
 
     @Override
     public void delete(DeveloperDao entity) {
+    }
+
+    public long getIdByName(String lastName, String firstName) {
+        long id = 0;
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_ID_BY_NAME)) {
+            statement.setString(1, lastName);
+            statement.setString(2, firstName);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                id = rs.getLong("developer_id");
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return id;
     }
 
     public int getQuantityJavaDevelopers () {

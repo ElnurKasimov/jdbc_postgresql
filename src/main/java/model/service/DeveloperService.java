@@ -1,8 +1,15 @@
 package model.service;
 
+import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
+import model.dao.ProjectDao;
+import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
+import model.dto.ProjectDto;
+import model.dto.SkillDto;
+import model.service.converter.CompanyConverter;
 import model.service.converter.DeveloperConverter;
+import model.storage.CompanyStorage;
 import model.storage.DeveloperStorage;
 import model.storage.ProjectStorage;
 import model.storage.SkillStorage;
@@ -14,12 +21,14 @@ public class DeveloperService {
     private DeveloperStorage developerStorage;
     private ProjectStorage projectStorage;
     private SkillStorage skillStorage;
+    private CompanyStorage companyStorage;
 
 public DeveloperService (DeveloperStorage developerStorage, ProjectStorage projectStorage,
-                SkillStorage skillstorage) {
+                SkillStorage skillstorage, CompanyStorage companyStorage) {
     this.developerStorage = developerStorage;
     this.projectStorage = projectStorage;
     this.skillStorage = skillstorage;
+    this.companyStorage = companyStorage;
 }
 
     public DeveloperDto save (DeveloperDto developerDto) {
@@ -104,8 +113,107 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectStorage proje
         Output.getInstance().print(result);
     };
 
-        public List<String> getDevelopersNamesByProjectName(String projectName) {
-            return developerStorage.getDevelopersNamesByProjectName(projectName);
+    public List<String> getDevelopersNamesByProjectName(String projectName) {
+        return developerStorage.getDevelopersNamesByProjectName(projectName);
+    }
+
+    public void updateDeveloper() {
+        System.out.println("\tEnter, please,  data for developer You want to update.");
+        DeveloperDto developerDtoToUpdate;
+        String lastName;
+        String firstName;
+        Scanner sc = new Scanner(System.in);
+        while(true) {
+            System.out.print("\tLast name : ");
+            lastName = sc.nextLine();
+            System.out.print("\tFirst name : ");
+            firstName = sc.nextLine();
+            Optional<DeveloperDao> currentDeveloperDao = developerStorage.findByName(lastName, firstName);
+            if(currentDeveloperDao.isPresent()) {
+                developerDtoToUpdate = DeveloperConverter.from(currentDeveloperDao.get());
+                break;
+            }
+            System.out.println("There is no such developer in the database. Please enter correct data");
         }
+        System.out.print("\tEnter new age (only digits) or just click 'Enter' if this field will not be changed : ");
+        String newAgeString = sc.nextLine();
+        int newAge;
+        if(newAgeString.equals("")) {
+            newAge = developerDtoToUpdate.getAge();
+        } else {
+            newAge = Integer.parseInt(newAgeString);
+        }
+        System.out.print("\tEnter new salary(only digits) or just click 'Enter' if this field will not be changed : ");
+        String newSalaryString = sc.nextLine();
+        int newSalary;
+        if(newSalaryString.equals("")) {
+            newSalary = developerDtoToUpdate.getSalary();
+        } else {
+            newSalary = Integer.parseInt(newSalaryString);
+        }
+
+        CompanyDto newCompany;
+        System.out.print("\tEnter name of  new company where he works or just click 'Enter' if this field will not be changed: ");
+        String companyName;
+        
+        while (true) {
+            companyName = sc.nextLine();
+            Optional<CompanyDao> companyDaoFromDB = companyStorage.findByName(companyName);
+            if (companyDaoFromDB.isPresent()) {
+               newCompany = CompanyConverter.from(companyDaoFromDB.get());
+               break;
+            }
+            System.out.print("Unfortunately, there is no company with such name in the database.  Enter correct data or add such company to database.");
+        }
+        developerDtoToUpdate = new DeveloperDto(lastName, firstName, newAge, newCompany, newSalary);
+        developerStorage.update(DeveloperConverter.to(developerDtoToUpdate));
+
+
+
+
+
+        System.out.print("\tEnter name of  new project the developer participate  or just click 'Enter' if this field will not be changed: ");
+        String newProjectName;
+        long newProjectId;
+        while (true) {
+            newProjectName = sc.nextLine();
+            Optional<ProjectDao> projectDaoFromDB = projectStorage.findByName(newProjectName);
+            if (projectDaoFromDB.isPresent()) {
+                newProjectId = projectDaoFromDB.get().getProject_id();
+                break;
+            }
+            System.out.print("Unfortunately, there is no project with such name in the database.  Enter correct data or add such project to database.");
+        }
+
+
+       long developerDtoToUpdateId =  developerStorage.getIdByName(lastName, firstName);
+
+
+
+        //todo
+        long projectIdToDelete = projectStorage.
+        relationStorage.deleteProjectDeveloperRelation(developerDtoToUpdateId, projectIdToDelete);
+        relationStorage.saveProjectDeveloperRelation(developerDtoToUpdateId, newProjectId);
+
+
+        Set<SkillDto> skillsDto = new HashSet<>();
+        while (true) {
+            System.out.print("\tLanguage the developer operated  : ");
+            String language = sc.nextLine();
+            System.out.print("\tLevel knowledge of the language (junior, middle, senior) : ");
+            String level = sc.nextLine();
+            SkillDto skillDto = skillService.findByLanguageAndLevel(language, level);
+            skillsDto.add(skillDto);
+            System.out.print("One more language? (yes/no) : ");
+            String anotherLanguage = sc.nextLine();
+            if (anotherLanguage.equalsIgnoreCase("no")) break;
+        }
+
+
+        newDeveloperDto = developerService.save(newDeveloperDto);
+
+        relationService.saveDeveloperSkillRelation(newDeveloperDto, skillsDto);
+    }
+
 }
 

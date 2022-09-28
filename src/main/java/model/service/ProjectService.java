@@ -257,7 +257,7 @@ public ProjectService (ProjectStorage projectStorage, DeveloperStorage developer
             }
             System.out.println("There is no customer with such name. Please enter correct one.");
         }
-        System.out.print("\tBudget of the project (only digits) or just click 'Enter' if this field will not be changed : ");
+        System.out.print("\tEnter new budget of the project (only digits) or just click 'Enter' if this field will not be changed : ");
         String costString = sc.nextLine();
         int newCost;
         if(costString.equals("")) {
@@ -265,7 +265,7 @@ public ProjectService (ProjectStorage projectStorage, DeveloperStorage developer
         } else {
             newCost = Integer.parseInt(costString);
         }
-        System.out.print("\tStart date of the project (in format yyyy-mm-dd) or just click 'Enter' if this field will not be changed : ");
+        System.out.print("\tEnter new start date of the project (in format yyyy-mm-dd) or just click 'Enter' if this field will not be changed : ");
         String newStartDateString = sc.nextLine();
         java.sql.Date newStartSqlDate;
         if( newStartDateString.equals("")) {
