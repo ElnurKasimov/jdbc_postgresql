@@ -1,10 +1,8 @@
 package model.service;
 
-import model.dao.DeveloperDao;
 import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
 import model.dto.SkillDto;
-import model.service.converter.CompanyConverter;
 import model.service.converter.DeveloperConverter;
 import model.service.converter.ProjectConverter;
 import model.service.converter.SkillConverter;
@@ -21,18 +19,25 @@ public RelationService(RelationStorage relationStorage) {
     this.relationStorage = relationStorage;
 }
 
-    public void saveProjectDeveloperRelation(Set<ProjectDto> projectsDto, DeveloperDto developerDto) {
-        relationStorage.saveProjectDeveloperRelation(
+    public void saveProjectDeveloper(Set<ProjectDto> projectsDto, DeveloperDto developerDto) {
+        relationStorage.saveProjectDeveloper(
                 projectsDto.stream().map(ProjectConverter::to).collect(Collectors.toSet()),
                 DeveloperConverter.to(developerDto)
         );
     };
 
-    public void saveDeveloperSkillRelation (DeveloperDto developerDto, Set<SkillDto> skillsDto) {
-        relationStorage.saveDeveloperSkillRelation(
+    public void saveDeveloperSkill(DeveloperDto developerDto, Set<SkillDto> skillsDto) {
+        relationStorage.saveDeveloperSkill(
                 DeveloperConverter.to(developerDto),
                 skillsDto.stream().map(SkillConverter::to).collect(Collectors.toSet())
         );
     }
 
+    public void deleteAllProjectsOfDeveloper(DeveloperDto developerDto) {
+        relationStorage.deleteAllProjectsOfDeveloper(DeveloperConverter.to(developerDto));
+    }
+
+    public void deleteAllSkillsOfDeveloper(DeveloperDto developerDto) {
+        relationStorage.deleteAllSkillsOfDeveloper(DeveloperConverter.to(developerDto));
+    }
 }

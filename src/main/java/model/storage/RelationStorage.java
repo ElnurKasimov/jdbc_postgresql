@@ -2,8 +2,6 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.*;
-import model.dto.DeveloperDto;
-import model.dto.ProjectDto;
 
 import java.sql.*;
 import java.util.Set;
@@ -16,7 +14,7 @@ public class RelationStorage {
         this.manager = manager;
     }
 
-    public void saveProjectDeveloperRelation(Set<ProjectDao> projectsDao, DeveloperDao developerDao) {
+    public void saveProjectDeveloper(Set<ProjectDao> projectsDao, DeveloperDao developerDao) {
         StringBuilder insertSql = new StringBuilder();
         insertSql.append("INSERT INTO project_developer (project_id, developer_id)  VALUES ");
         for (ProjectDao projectDao : projectsDao) {
@@ -37,7 +35,7 @@ public class RelationStorage {
         }
     }
 
-    public void saveDeveloperSkillRelation(DeveloperDao developerDao, Set<SkillDao> skillsDao) {
+    public void saveDeveloperSkill(DeveloperDao developerDao, Set<SkillDao> skillsDao) {
         StringBuilder insertSql = new StringBuilder();
         insertSql.append("INSERT INTO developer_skill (developer_id, skill_id)  VALUES ");
         for (SkillDao skillDao : skillsDao) {
@@ -57,5 +55,29 @@ public class RelationStorage {
             throw new RuntimeException("Relation project_developer not created");
         }
     }
+
+    public void deleteAllProjectsOfDeveloper(DeveloperDao developerDao){
+        try (Connection connection = manager.getConnection();
+        PreparedStatement statement = connection.prepareStatement("DELETE FROM project_developer WHERE developer_id =?")){
+            statement.setLong(1, developerDao.getDeveloper_id());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Relations haven't been deleted from project_developer");
+        }
+    }
+
+    public void deleteAllSkillsOfDeveloper(DeveloperDao developerDao){
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM developer_skill WHERE developer_id =?")){
+            statement.setLong(1, developerDao.getDeveloper_id());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Relations haven't been deleted from developer_skill");
+        }
+    }
+
+
 
 }

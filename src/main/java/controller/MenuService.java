@@ -9,27 +9,21 @@ public class MenuService {
 
     public void create() {
         ContentMenuFiller fillerMenuContent = new ContentMenuFiller();
-
         Menu mainMenu = new Menu("Main");
         mainMenu.setContentMenu(fillerMenuContent.fill("Main"));
         elementsMenu.put("Main", mainMenu);
-
         Menu developersMenu = new Menu("Developers");
         developersMenu.setContentMenu(fillerMenuContent.fill("Developers"));
         elementsMenu.put("Developers", developersMenu);
-
         Menu projectsMenu = new Menu("Projects");
         projectsMenu.setContentMenu(fillerMenuContent.fill("Projects"));
         elementsMenu.put("Projects", projectsMenu);
-
         Menu companiesMenu = new Menu("Companies");
         companiesMenu.setContentMenu(fillerMenuContent.fill("Companies"));
         elementsMenu.put("Companies", companiesMenu);
-
         Menu customersMenu = new Menu("Customers");
         customersMenu.setContentMenu(fillerMenuContent.fill("Customers"));
         elementsMenu.put("Customers", customersMenu);
-
     }
 
     public Menu get (String name) {

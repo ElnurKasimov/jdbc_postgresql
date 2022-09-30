@@ -9,26 +9,29 @@ import model.dto.ProjectDto;
 import model.dto.SkillDto;
 import model.service.converter.CompanyConverter;
 import model.service.converter.DeveloperConverter;
-import model.storage.CompanyStorage;
-import model.storage.DeveloperStorage;
-import model.storage.ProjectStorage;
-import model.storage.SkillStorage;
+import model.storage.*;
 import view.Output;
 
 import java.util.*;
 
 public class DeveloperService {
     private DeveloperStorage developerStorage;
+    private ProjectService projectService;
     private ProjectStorage projectStorage;
     private SkillStorage skillStorage;
     private CompanyStorage companyStorage;
+    private RelationService relationService;
+    private SkillService skillService;
 
-public DeveloperService (DeveloperStorage developerStorage, ProjectStorage projectStorage,
-                SkillStorage skillstorage, CompanyStorage companyStorage) {
+public DeveloperService (DeveloperStorage developerStorage, ProjectService projectService, ProjectStorage projectStorage,
+                SkillStorage skillstorage, CompanyStorage companyStorage, RelationService relationService,  SkillService skillService) {
     this.developerStorage = developerStorage;
+    this.projectService = projectService;
     this.projectStorage = projectStorage;
     this.skillStorage = skillstorage;
     this.companyStorage = companyStorage;
+    this.relationService = relationService;
+    this.skillService = skillService;
 }
 
     public DeveloperDto save (DeveloperDto developerDto) {
@@ -151,68 +154,47 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectStorage proje
         } else {
             newSalary = Integer.parseInt(newSalaryString);
         }
-
         CompanyDto newCompany;
         System.out.print("\tEnter name of  new company where he works or just click 'Enter' if this field will not be changed: ");
         String companyName;
-        
         while (true) {
             companyName = sc.nextLine();
-            Optional<CompanyDao> companyDaoFromDB = companyStorage.findByName(companyName);
-            if (companyDaoFromDB.isPresent()) {
-               newCompany = CompanyConverter.from(companyDaoFromDB.get());
-               break;
+            if(companyName.equals("")) {
+                newCompany = developerDtoToUpdate.getCompanyDto();
+                break;
+            } else {
+                Optional<CompanyDao> companyDaoFromDB = companyStorage.findByName(companyName);
+                if (companyDaoFromDB.isPresent()) {
+                    newCompany = CompanyConverter.from(companyDaoFromDB.get());
+                    break;
+                }
             }
             System.out.print("Unfortunately, there is no company with such name in the database.  Enter correct data or add such company to database.");
         }
         developerDtoToUpdate = new DeveloperDto(lastName, firstName, newAge, newCompany, newSalary);
-        developerStorage.update(DeveloperConverter.to(developerDtoToUpdate));
+        DeveloperDto updatedDeveloperDto = DeveloperConverter.from(developerStorage.update(DeveloperConverter.to(developerDtoToUpdate)));
+        Set<ProjectDto> newProjectsDto = projectService.checkByCompanyName(newCompany.getCompany_name());
+        relationService.deleteAllProjectsOfDeveloper(updatedDeveloperDto);
+        relationService.saveProjectDeveloper(newProjectsDto, updatedDeveloperDto);
 
-
-
-
-
-        System.out.print("\tEnter name of  new project the developer participate  or just click 'Enter' if this field will not be changed: ");
-        String newProjectName;
-        long newProjectId;
-        while (true) {
-            newProjectName = sc.nextLine();
-            Optional<ProjectDao> projectDaoFromDB = projectStorage.findByName(newProjectName);
-            if (projectDaoFromDB.isPresent()) {
-                newProjectId = projectDaoFromDB.get().getProject_id();
-                break;
-            }
-            System.out.print("Unfortunately, there is no project with such name in the database.  Enter correct data or add such project to database.");
-        }
-
-
-       long developerDtoToUpdateId =  developerStorage.getIdByName(lastName, firstName);
-
-
-
-        //todo
-        long projectIdToDelete = projectStorage.
-        relationStorage.deleteProjectDeveloperRelation(developerDtoToUpdateId, projectIdToDelete);
-        relationStorage.saveProjectDeveloperRelation(developerDtoToUpdateId, newProjectId);
-
-
-        Set<SkillDto> skillsDto = new HashSet<>();
+        Set<SkillDto> newSkillsDto = new HashSet<>();
         while (true) {
             System.out.print("\tLanguage the developer operated  : ");
             String language = sc.nextLine();
             System.out.print("\tLevel knowledge of the language (junior, middle, senior) : ");
             String level = sc.nextLine();
             SkillDto skillDto = skillService.findByLanguageAndLevel(language, level);
-            skillsDto.add(skillDto);
+            newSkillsDto.add(skillDto);
             System.out.print("One more language? (yes/no) : ");
             String anotherLanguage = sc.nextLine();
             if (anotherLanguage.equalsIgnoreCase("no")) break;
         }
-
-
-        newDeveloperDto = developerService.save(newDeveloperDto);
-
-        relationService.saveDeveloperSkillRelation(newDeveloperDto, skillsDto);
+        relationService.deleteAllSkillsOfDeveloper(updatedDeveloperDto);
+        relationService.saveDeveloperSkill(updatedDeveloperDto, newSkillsDto);
+        List<String> result = new ArrayList<>();
+        result.add(String.format("Developer %s %s successfully updated.",
+                updatedDeveloperDto.getLastName(), updatedDeveloperDto.getFirstName()));
+        Output.getInstance().print(result);
     }
 
 }

@@ -34,7 +34,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
                     "ON project.project_id = project_developer.project_id " +
                     " WHERE project_name  LIKE  ?";
     private final String UPDATE =
-            "UPDATE developer SET age=?, salary=?, company_id=? WHERE lastName LIKE ? AND firstName LIKE ?";
+            "UPDATE developer SET age=?, salary=?, company_id=? WHERE lastName LIKE ? AND firstName LIKE ? RETURNING *";
     private final String GET_ID_BY_NAME =
             "SELECT developer_id FROM developer WHERE WHERE lastName LIKE ? AND firstName LIKE ?";
 
@@ -135,7 +135,8 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     }
 
     @Override
-    public void update(DeveloperDao entity) {
+    public DeveloperDao update(DeveloperDao entity) {
+        DeveloperDao developerDao=null;
         try (Connection connection = manager.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setInt(1, entity.getAge());
@@ -143,11 +144,13 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
             statement.setLong(3, entity.getCompanyDao().getCompany_id());
             statement.setString(4, entity.getLastName());
             statement.setString(5, entity.getFirstName());
-            statement.executeUpdate();
+            ResultSet resultSet = statement.executeQuery();
+            developerDao = mapDeveloperDao(resultSet);
         }
         catch (SQLException exception) {
             exception.printStackTrace();
         }
+        return developerDao;
     }
 
     @Override

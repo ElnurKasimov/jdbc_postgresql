@@ -1,21 +1,17 @@
 package controller;
 
-
 import model.dto.CompanyDto;
 import model.dto.ProjectDto;
 import model.service.CompanyService;
 import model.service.DeveloperService;
 import model.service.ProjectService;
-
 import java.util.List;
 import java.util.Scanner;
-
 
 public class CompanyMenuHandler {
     private CompanyService companyService;
     private ProjectService projectService;
     private DeveloperService developerService;
-
     private MenuService menuService;
     private static final int EXIT_FROM_COMPANY_MENU = 4;
 
@@ -76,4 +72,5 @@ public CompanyMenuHandler(CompanyService companyService, MenuService menuService
             companyService.deleteCompany(name);
         }
     }
+
 }

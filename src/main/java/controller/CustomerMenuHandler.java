@@ -1,36 +1,28 @@
 package controller;
 
-import model.dao.CustomerDao;
-import model.dto.CompanyDto;
 import model.dto.CustomerDto;
 import model.dto.ProjectDto;
 import model.service.CompanyService;
 import model.service.CustomerService;
 import model.service.DeveloperService;
 import model.service.ProjectService;
-import model.storage.CustomerStorage;
 import view.Output;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 
 public class CustomerMenuHandler {
     private CustomerService customerService;
     private ProjectService projectService;
     private MenuService menuService;
     private DeveloperService developerService;
-    private CompanyService companyService;
     private static final int EXIT_FROM_CUSTOMER_MENU = 4;
 
 public CustomerMenuHandler(CustomerService customerService, ProjectService projectService,
-                            MenuService menuService, DeveloperService developerService, CompanyService companyService) {
+                            MenuService menuService, DeveloperService developerService) {
     this.customerService = customerService;
     this.projectService = projectService;
     this.menuService = menuService;
     this.developerService = developerService;
-    this.companyService = companyService;
 }
 
     public void launch() {
@@ -88,4 +80,5 @@ public CustomerMenuHandler(CustomerService customerService, ProjectService proje
             customerService.deleteCustomer(name);
         }
     }
+
 }

@@ -48,7 +48,7 @@ public class App {
                     break;
                 case 4:
                     new CustomerMenuHandler(customerService, projectService,
-                            menuService,developerService, companyService).launch();
+                            menuService,developerService).launch();
                     break;
             }
         } while (choice != EXIT_FROM_MAIN_MENU);
@@ -76,8 +76,9 @@ public class App {
             customerService = new CustomerService(customerStorage);
             developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage);
             projectStorage = new ProjectStorage(manager, companyStorage, customerStorage, developerStorage);
-            developerService = new DeveloperService(developerStorage, projectStorage, skillStorage, companyStorage);
             projectService = new ProjectService(projectStorage, developerStorage,companyService, customerService);
+            developerService = new DeveloperService(developerStorage, projectService, projectStorage,
+                    skillStorage, companyStorage, relationService, skillService);
         } catch (SQLException e) {
             e.printStackTrace();
         }

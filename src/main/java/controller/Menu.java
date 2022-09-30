@@ -1,11 +1,9 @@
 package controller;
 
 import lombok.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-
 
 @Data
 public class Menu {
@@ -54,5 +52,5 @@ public class Menu {
             return result;
         }
     }
-}
 
+}

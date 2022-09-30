@@ -76,7 +76,7 @@ public ProjectService (ProjectStorage projectStorage, DeveloperStorage developer
     }
 
     public Set<ProjectDto> checkByCompanyName(String companyName) {
-        System.out.println("\tThis company develops such projects : ");
+        System.out.printf("\tCompany %s develops such projects : \n", companyName);
         List<ProjectDto> projectDtoList = getCompanyProjects(companyName);
         for (ProjectDto projectDto : projectDtoList) {
             System.out.print(projectDto.getProject_name() + ",\n");
@@ -276,7 +276,11 @@ public ProjectService (ProjectStorage projectStorage, DeveloperStorage developer
             newStartSqlDate = java.sql.Date.valueOf(newStartLocalDate);
         }
         ProjectDto projectDtoToUpdate = new ProjectDto(newProjectName, newCompanyDto, newCustomerDto, newCost, newStartSqlDate);
-        projectStorage.update(ProjectConverter.to(projectDtoToUpdate));
+        ProjectDto updatedProjectDto = ProjectConverter.from(projectStorage.update(ProjectConverter.to(projectDtoToUpdate)));
+        List<String> result = new ArrayList<>();
+        result.add(String.format("Developer %s successfully updated.", updatedProjectDto.getProject_name()));
+        Output.getInstance().print(result);
+
     }
 
 

@@ -42,7 +42,7 @@ public class ProjectStorage implements Storage<ProjectDao> {
                     "JOIN developer ON project_developer.developer_id = developer.developer_id " +
                     " WHERE project_name  LIKE  ?";
     private final String UPDATE =
-            "UPDATE project SET company_id=?, customer_id=?, cost=?, start_date=? WHERE project_name LIKE ?";
+            "UPDATE project SET company_id=?, customer_id=?, cost=?, start_date=? WHERE project_name LIKE ? RETURNING *";
 
     public ProjectStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                                              CustomerStorage customerStorage, DeveloperStorage developerStorage) throws SQLException {
@@ -127,7 +127,8 @@ public class ProjectStorage implements Storage<ProjectDao> {
     public boolean isExist(String name) {return findByName(name).isPresent();}
 
     @Override
-    public void update(ProjectDao entity) {
+    public ProjectDao update(ProjectDao entity) {
+        ProjectDao projectDao = null;
         try (Connection connection = manager.getConnection();
             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setLong(1, entity.getCompanyDao().getCompany_id());
@@ -135,11 +136,13 @@ public class ProjectStorage implements Storage<ProjectDao> {
             statement.setInt(3, entity.getCost());
             statement.setDate(4, entity.getStart_date());
             statement.setString(5, entity.getProject_name());
-            statement.executeUpdate();
+            ResultSet resultSet = statement.executeQuery();
+            projectDao = mapProjectDao(resultSet);
         }
         catch (SQLException exception) {
             exception.printStackTrace();
         }
+        return projectDao;
     }
 
     @Override

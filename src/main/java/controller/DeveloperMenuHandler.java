@@ -5,7 +5,6 @@ import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
 import model.dto.SkillDto;
 import model.service.*;
-
 import java.util.*;
 
 
@@ -105,8 +104,8 @@ public class DeveloperMenuHandler {
             if (anotherLanguage.equalsIgnoreCase("no")) break;
         }
         newDeveloperDto = developerService.save(newDeveloperDto);
-        relationService.saveProjectDeveloperRelation(checkedProjectsDto, newDeveloperDto);
-        relationService.saveDeveloperSkillRelation(newDeveloperDto, skillsDto);
+        relationService.saveProjectDeveloper(checkedProjectsDto, newDeveloperDto);
+        relationService.saveDeveloperSkill(newDeveloperDto, skillsDto);
     }
 
     void getAdditionalInfoByName() {
