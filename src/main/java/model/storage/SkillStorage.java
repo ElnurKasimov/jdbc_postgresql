@@ -1,28 +1,19 @@
 package model.storage;
 
 import model.config.DatabaseManagerConnector;
-import model.dao.CompanyDao;
-import model.dao.DeveloperDao;
-import model.dao.ProjectDao;
 import model.dao.SkillDao;
-
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class SkillStorage implements Storage<SkillDao> {
 
     public DatabaseManagerConnector manager;
 
-    private final String GET_ID_BY_LANGUAGE_NAME = "SELECT skill_id FROM skills WHERE language LIKE ? AND level LIKE ?";
     private final String INSERT = "INSERT INTO skill(language, level) VALUES (?, ?)";
     private final String FIND_BY_NAME = "SELECT * FROM skill WHERE language LIKE ? and level LIKE ? ";
     private final String GET_SKILLS_BY_DEVELOPER_ID =
      "SELECT  language, level FROM developer JOIN developer_skill ON developer_skill.developer_id = developer.developer_id " +
      "JOIN skill ON skill.skill_id = developer_skill.skill_id WHERE developer.developer_id = ?";
-
-
 
     public SkillStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
@@ -95,21 +86,6 @@ public class SkillStorage implements Storage<SkillDao> {
     public void delete(SkillDao entity) {
     }
 
-    public Optional<Long> getIdSkillByLanguageAndLevel(String language, String level) {
-        try(Connection connection = manager.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ID_BY_LANGUAGE_NAME)) {
-            statement.setString( 1, "%" + language + "%");
-            statement.setString( 2, "%" + level + "%");
-            ResultSet resultSet = statement.executeQuery();
-            long id = resultSet.getLong("skill_id");
-            return Optional.ofNullable(id);
-        }
-        catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
     public List<String> getSkillSetByDeveloperId(long id) {
         List<String> skills = new ArrayList<>();
         try (Connection connection = manager.getConnection();
@@ -125,10 +101,6 @@ public class SkillStorage implements Storage<SkillDao> {
         }
         return skills;
     }
-
-
-
-
 
     private SkillDao mapSkillDao(ResultSet resultSet) throws SQLException {
         SkillDao skillDao = null;

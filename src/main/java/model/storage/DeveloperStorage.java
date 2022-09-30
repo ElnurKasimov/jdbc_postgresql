@@ -3,7 +3,6 @@ package model.storage;
 import lombok.Data;
 import model.config.DatabaseManagerConnector;
 import model.dao.DeveloperDao;
-
 import java.sql.*;
 import java.util.*;
 
@@ -37,6 +36,7 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
             "UPDATE developer SET age=?, salary=?, company_id=? WHERE lastName LIKE ? AND firstName LIKE ? RETURNING *";
     private final String GET_ID_BY_NAME =
             "SELECT developer_id FROM developer WHERE WHERE lastName LIKE ? AND firstName LIKE ?";
+    private  final String DELETE = "DELETE FROM developer WHERE lastName LIKE ? AND firstName LIKE ?";
 
     public DeveloperStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
                              SkillStorage skillStorage) {
@@ -79,7 +79,6 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
    public Optional<DeveloperDao> findByName(String name) {
        return null;
    }
-
 
     public Optional<DeveloperDao> findByName(String lastName, String firstName) {
         try(Connection connection = manager.getConnection();
@@ -155,23 +154,15 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
 
     @Override
     public void delete(DeveloperDao entity) {
-    }
-
-    public long getIdByName(String lastName, String firstName) {
-        long id = 0;
         try (Connection connection = manager.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ID_BY_NAME)) {
-            statement.setString(1, lastName);
-            statement.setString(2, firstName);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                id = rs.getLong("developer_id");
-            }
+             PreparedStatement statement = connection.prepareStatement(DELETE)) {
+            statement.setString(1, entity.getLastName());
+            statement.setString(2, entity.getFirstName());
+            statement.executeUpdate();
         }
         catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return id;
     }
 
     public int getQuantityJavaDevelopers () {
@@ -187,7 +178,6 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         }
         return quantity;
     }
-
 
     public List<String> getNamesListOfMiddleDevelopers() {
         List<String> developersNames = new ArrayList<>();

@@ -53,13 +53,7 @@ public class DeveloperMenuHandler {
                     developerService.updateDeveloper();
                     break;
                 case 7:
-                    System.out.println("Внесите данные по разработчику, которого вы хотите удалить");
-                    Scanner sc17 = new Scanner(System.in);
-                    System.out.print("Введите фамилию : ");
-                    String lastNameInput7 = sc17.nextLine();
-                    System.out.print("Введите имя : ");
-                    String firstNameInput7 = sc17.nextLine();
-                    //developerDaoService.deleteDeveloper(lastNameInput7, firstNameInput7);
+                    developerService.deleteDeveloper();
                     break;
             }
         } while (choiceDevelopers != EXIT_FROM_DEVELOPER_MENU);

@@ -2,17 +2,13 @@ package model.service;
 
 import model.dao.CompanyDao;
 import model.dto.CompanyDto;
-import model.dto.ProjectDto;
 import model.service.converter.CompanyConverter;
 import model.storage.CompanyStorage;
-import model.storage.ProjectStorage;
 import view.Output;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-
 
 public class CompanyService {
     private CompanyStorage companyStorage;
@@ -20,7 +16,6 @@ public class CompanyService {
 public  CompanyService (CompanyStorage companyStorage) {
     this.companyStorage = companyStorage;
 }
-
 
 public CompanyDto save (CompanyDto companyDto) {
     List<String> result = new ArrayList<>();
@@ -42,7 +37,6 @@ public CompanyDto save (CompanyDto companyDto) {
                     companyDto.getCompany_name(), companyFromDb.getRating().toString());
         } else return "Ok. The company is present in the database";
     }
-
 
     public void findAllCompanies() {
         List<String> result = new ArrayList<>();
@@ -84,4 +78,5 @@ public CompanyDto save (CompanyDto companyDto) {
         result.add("Company " + name + " successfully deleted from the database");
         Output.getInstance().print(result);
     }
+
 }

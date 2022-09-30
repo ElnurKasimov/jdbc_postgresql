@@ -1,8 +1,6 @@
 package model.service.converter;
 
-import model.dao.CompanyDao;
 import model.dao.SkillDao;
-import model.dto.CompanyDto;
 import model.dto.SkillDto;
 
 public class SkillConverter{

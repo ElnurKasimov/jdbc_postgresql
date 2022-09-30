@@ -4,7 +4,6 @@ import model.config.DatabaseManagerConnector;
 import model.config.Migration;
 import model.config.PropertiesConfig;
 import model.service.*;
-import model.service.converter.*;
 import model.storage.*;
 
 import java.sql.SQLException;
@@ -29,7 +28,7 @@ public class App {
 
     public static void main(String[] args) {
         initDatabaseAndMigrations();
-        initAllServiceStorageConverterClasses();
+        initAllServiceAndStorageClasses();
         menuService.create();
         int choice;
         do {
@@ -63,7 +62,7 @@ public class App {
         new Migration(manager).initDb();
     }
 
-    private static void initAllServiceStorageConverterClasses() {
+    private static void initAllServiceAndStorageClasses() {
         menuService = new MenuService();
         try {
             skillStorage = new SkillStorage(manager);
@@ -75,8 +74,9 @@ public class App {
             customerStorage = new CustomerStorage(manager);
             customerService = new CustomerService(customerStorage);
             developerStorage = new DeveloperStorage(manager, companyStorage, skillStorage);
-            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage, developerStorage);
-            projectService = new ProjectService(projectStorage, developerStorage,companyService, customerService);
+            projectStorage = new ProjectStorage(manager, companyStorage, customerStorage);
+            projectService = new ProjectService(projectStorage, developerStorage,companyService,
+                    customerService, relationService);
             developerService = new DeveloperService(developerStorage, projectService, projectStorage,
                     skillStorage, companyStorage, relationService, skillService);
         } catch (SQLException e) {

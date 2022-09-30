@@ -2,7 +2,6 @@ package model.service;
 
 import model.dao.CompanyDao;
 import model.dao.DeveloperDao;
-import model.dao.ProjectDao;
 import model.dto.CompanyDto;
 import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
@@ -11,7 +10,6 @@ import model.service.converter.CompanyConverter;
 import model.service.converter.DeveloperConverter;
 import model.storage.*;
 import view.Output;
-
 import java.util.*;
 
 public class DeveloperService {
@@ -80,7 +78,7 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectService proje
         result.add(String.format("\t\t\tWorks in company %s, with salary %d",
                              developerDto.getCompanyDto().getCompany_name(), developerDto.getSalary()));
         StringBuilder projectsName = new StringBuilder();
-        projectsName.append("\t\t\tTakes participation in such projects :");
+        projectsName.append("\t\t\tParticipates in such projects :");
         List<String> projectsList = projectStorage.getProjectsNameByDeveloperId(developerDto.getDeveloper_id());
         for ( String project : projectsList) {
             projectsName.append(" " + project + ",");
@@ -176,7 +174,6 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectService proje
         Set<ProjectDto> newProjectsDto = projectService.checkByCompanyName(newCompany.getCompany_name());
         relationService.deleteAllProjectsOfDeveloper(updatedDeveloperDto);
         relationService.saveProjectDeveloper(newProjectsDto, updatedDeveloperDto);
-
         Set<SkillDto> newSkillsDto = new HashSet<>();
         while (true) {
             System.out.print("\tLanguage the developer operated  : ");
@@ -194,6 +191,33 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectService proje
         List<String> result = new ArrayList<>();
         result.add(String.format("Developer %s %s successfully updated.",
                 updatedDeveloperDto.getLastName(), updatedDeveloperDto.getFirstName()));
+        Output.getInstance().print(result);
+    }
+
+    public void deleteDeveloper() {
+        System.out.println("\tEnter, please,  data for developer You want to delete.");
+        DeveloperDto developerDtoToDelete;
+        String lastName;
+        String firstName;
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.print("\tLast name : ");
+            lastName = sc.nextLine();
+            System.out.print("\tFirst name : ");
+            firstName = sc.nextLine();
+            Optional<DeveloperDao> developerDaofromDb = developerStorage.findByName(lastName, firstName);
+            if (developerDaofromDb.isPresent()) {
+                developerDtoToDelete = DeveloperConverter.from(developerDaofromDb.get());
+                break;
+            }
+            System.out.println("There is no such developer in the database. Please enter correct data");
+        }
+        relationService.deleteDeveloperFromDeveloperSkill(developerDtoToDelete);
+        relationService.deleteDeveloperFromProjectDeveloper(developerDtoToDelete);
+        developerStorage.delete(DeveloperConverter.to(developerDtoToDelete));
+        List<String> result = new ArrayList<>();
+        result.add(String.format("Developer %s %s successfully deleted from the database.",
+                developerDtoToDelete.getLastName(), developerDtoToDelete.getFirstName()));
         Output.getInstance().print(result);
     }
 

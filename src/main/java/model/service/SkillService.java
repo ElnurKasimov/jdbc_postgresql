@@ -5,7 +5,6 @@ import model.dto.SkillDto;
 import model.service.converter.SkillConverter;
 import model.storage.SkillStorage;
 import view.Output;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +30,4 @@ public SkillService(SkillStorage skillStorage) {
         return skillDto;
     }
 
-    //public SkillDto findById(long)
 }

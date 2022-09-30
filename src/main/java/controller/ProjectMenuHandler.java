@@ -43,10 +43,7 @@ public ProjectMenuHandler(ProjectService projectService, MenuService menuService
                     projectService.updateProject();
                     break;
                 case 8:
-                    System.out.print("Внесите название проекта, которого вы хотите удалить :");
-                    Scanner sc28 = new Scanner(System.in);
-                    String nameInput8 = sc28.nextLine();
-                    // projectDaoService.deleteProject(nameInput8);
+                    projectService.deleteProject();
                     break;
             }
         } while (choiceProjects != EXIT_FROM_PROJECT_MENU);

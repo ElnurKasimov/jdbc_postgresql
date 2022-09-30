@@ -2,10 +2,8 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.*;
-
 import java.sql.*;
 import java.util.Set;
-
 
 public class RelationStorage {
     public DatabaseManagerConnector manager;
@@ -78,6 +76,37 @@ public class RelationStorage {
         }
     }
 
+    public void  deleteAllDevelopersOfProject(ProjectDao projectDao){
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM project_developer WHERE project_id =?")){
+            statement.setLong(1, projectDao.getProject_id());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Relations haven't been deleted from project_developer");
+        }
+    }
 
+    public void  deleteDeveloperFromProjectDeveloper(DeveloperDao developerDao){
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM project_developer WHERE developer_id =?")){
+            statement.setLong(1,developerDao.getDeveloper_id());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Relations haven't been deleted from project_developer");
+        }
+    }
+
+    public void  deleteDeveloperFromDeveloperSkill(DeveloperDao developerDao){
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM developer_skill WHERE developer_id =?")){
+            statement.setLong(1, developerDao.getDeveloper_id());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Relations haven't been deleted from developer_skill");
+        }
+    }
 
 }

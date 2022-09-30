@@ -2,8 +2,6 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
-import view.Output;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

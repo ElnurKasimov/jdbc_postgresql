@@ -1,9 +1,7 @@
 package model.storage;
 
 import model.config.DatabaseManagerConnector;
-import model.dao.CompanyDao;
 import model.dao.CustomerDao;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,6 @@ public class CustomerStorage implements Storage<CustomerDao> {
     public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
     }
-
 
     @Override
     public CustomerDao save(CustomerDao entity) {

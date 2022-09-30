@@ -5,8 +5,6 @@ import model.dao.CompanyDao;
 import model.dao.CustomerDao;
 import model.dao.DeveloperDao;
 import model.dao.ProjectDao;
-
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +17,6 @@ public class ProjectStorage implements Storage<ProjectDao> {
     public DatabaseManagerConnector manager;
     private CompanyStorage companyStorage;
     private CustomerStorage customerStorage;
-    private DeveloperStorage developerStorage;
 
     private final String GET_ALL_INFO = "SELECT * FROM project";
     private final String GET_COMPANY_PROJECTS =
@@ -43,13 +40,13 @@ public class ProjectStorage implements Storage<ProjectDao> {
                     " WHERE project_name  LIKE  ?";
     private final String UPDATE =
             "UPDATE project SET company_id=?, customer_id=?, cost=?, start_date=? WHERE project_name LIKE ? RETURNING *";
+    private  final String DELETE = "DELETE FROM project WHERE project_name LIKE  ?";
 
     public ProjectStorage (DatabaseManagerConnector manager, CompanyStorage companyStorage,
-                                             CustomerStorage customerStorage, DeveloperStorage developerStorage) throws SQLException {
+                                             CustomerStorage customerStorage) throws SQLException {
         this.manager = manager;
         this.companyStorage = companyStorage;
         this.customerStorage = customerStorage;
-        this.developerStorage = developerStorage;
     }
 
     @Override
@@ -147,6 +144,14 @@ public class ProjectStorage implements Storage<ProjectDao> {
 
     @Override
     public void delete(ProjectDao entity) {
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE)) {
+            statement.setString(1, entity.getProject_name());
+            statement.executeUpdate();
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     public List<ProjectDao> getCompanyProjects (String companyName) {
@@ -253,7 +258,6 @@ public class ProjectStorage implements Storage<ProjectDao> {
         }
         return expences;
     }
-
 
     private ProjectDao mapProjectDao(ResultSet resultSet) throws SQLException {
         ProjectDao projectDao = null;

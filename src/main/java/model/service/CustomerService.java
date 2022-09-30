@@ -5,15 +5,12 @@ import model.dto.CustomerDto;
 import model.service.converter.CustomerConverter;
 import model.storage.CustomerStorage;
 import view.Output;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class CustomerService {
     private CustomerStorage customerStorage;
-
-
 
 public  CustomerService (CustomerStorage customerStorage) {
     this.customerStorage = customerStorage;

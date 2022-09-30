@@ -8,7 +8,6 @@ public class Output {
     private Output() {
     }
 
-
     public static Output getInstance() { return INSTANCE;};
 
     public void print (List<String> result) {
