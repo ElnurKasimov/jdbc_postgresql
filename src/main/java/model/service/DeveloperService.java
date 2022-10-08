@@ -100,12 +100,12 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectService proje
         return developerStorage.isExist(lastName, firstName);
     }
 
-    public void getQuantityJavaDevelopers() {
+    public void getListNamesOfJavaDevelopers() {
         List<String> result = new ArrayList<>();
-        result.add(String.format("\t\tIn all projects participate %d Java-developers",
-                developerStorage.getQuantityJavaDevelopers()));
+        result.add("\tThere are such Java-developer in the database : ");
+        developerStorage.getNamesListOfJavaDevelopers().forEach(name -> result.add("\t\t" + name + ","));
         Output.getInstance().print(result);
-    }
+    };
 
     public void getListNamesOfMiddleDevelopers() {
         List<String> result = new ArrayList<>();

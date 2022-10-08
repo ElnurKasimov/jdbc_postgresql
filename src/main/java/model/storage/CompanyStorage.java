@@ -2,6 +2,8 @@ package model.storage;
 
 import model.config.DatabaseManagerConnector;
 import model.dao.CompanyDao;
+import model.dao.ProjectDao;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,8 @@ public class CompanyStorage implements Storage<CompanyDao> {
     private final String FIND_BY_NAME = "SELECT * FROM company WHERE company_name  LIKE  ?";
     private final String FIND_BY_ID = "SELECT * FROM company WHERE company_id = ?";
     private final String INSERT = "INSERT INTO company(company_name, rating) VALUES (?, ?)";
+    private final String UPDATE =
+            "UPDATE company SET rating=? WHERE company_name LIKE ? RETURNING *";
     private  final String DELETE = "DELETE FROM company WHERE company_name LIKE  ?";
 
     public CompanyStorage (DatabaseManagerConnector manager) throws SQLException {
@@ -103,7 +107,18 @@ public class CompanyStorage implements Storage<CompanyDao> {
 
     @Override
     public CompanyDao update(CompanyDao entity) {
-        return new CompanyDao();
+        CompanyDao companyDao = null;
+        try (Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            statement.setString(1, entity.getRating().toString());
+            statement.setString(2, entity.getCompany_name());
+            ResultSet resultSet = statement.executeQuery();
+            companyDao = mapCompanyDao(resultSet);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return companyDao;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class DeveloperMenuHandler {
                     getAdditionalInfoByName();
                     break;
                 case 3:
-                    developerService.getQuantityJavaDevelopers();
+                    developerService.getListNamesOfJavaDevelopers();
                     break;
                 case 4:
                     developerService.getListNamesOfMiddleDevelopers();

@@ -1,14 +1,18 @@
 package model.service;
 
 import model.dao.CompanyDao;
+import model.dao.ProjectDao;
 import model.dto.CompanyDto;
+import model.dto.CustomerDto;
+import model.dto.ProjectDto;
 import model.service.converter.CompanyConverter;
+import model.service.converter.ProjectConverter;
 import model.storage.CompanyStorage;
 import view.Output;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class CompanyService {
     private CompanyStorage companyStorage;
@@ -76,6 +80,29 @@ public CompanyDto save (CompanyDto companyDto) {
         List<String> result = new ArrayList<>();
         companyStorage.delete(companyStorage.findByName(name).get());
         result.add("Company " + name + " successfully deleted from the database");
+        Output.getInstance().print(result);
+    }
+
+    public void updateCompany() {
+        System.out.print("Enter name of the company to update : ");
+        Scanner sc = new Scanner(System.in);
+        CompanyDto companyDtoToUpdate = null;
+        while (true) {
+            String name = sc.nextLine();
+            Optional<CompanyDto>  companyDtoFromDb = findByName(name);
+            if (companyDtoFromDb.isEmpty()) {
+                System.out.print("Unfortunately, there is no company with such name in the database.  Please enter correct company name : ");
+            } else {
+                companyDtoToUpdate = companyDtoFromDb.get();
+                break;
+            }
+        }
+        System.out.print("Enter new rating for the company (high, middle, low) : ");
+        String newCompanyRating = sc.nextLine();
+        companyDtoToUpdate.setRating(CompanyDto.Rating.valueOf(newCompanyRating));
+        CompanyDto updatedCompanyDto = CompanyConverter.from(companyStorage.update(CompanyConverter.to(companyDtoToUpdate)));
+        List<String> result = new ArrayList<>();
+        result.add(String.format("Company %s successfully updated.", updatedCompanyDto.getCompany_name()));
         Output.getInstance().print(result);
     }
 

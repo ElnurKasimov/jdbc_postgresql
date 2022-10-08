@@ -13,7 +13,7 @@ public class CompanyMenuHandler {
     private ProjectService projectService;
     private DeveloperService developerService;
     private MenuService menuService;
-    private static final int EXIT_FROM_COMPANY_MENU = 4;
+    private static final int EXIT_FROM_COMPANY_MENU = 5;
 
 public CompanyMenuHandler(CompanyService companyService, MenuService menuService,
             ProjectService projectService, DeveloperService developerService) {
@@ -36,6 +36,9 @@ public CompanyMenuHandler(CompanyService companyService, MenuService menuService
                     addCompanyToDb();
                     break;
                 case 3:
+                    companyService.updateCompany();
+                    break;
+                case 4:
                     deleteCompany();
                     break;
             }

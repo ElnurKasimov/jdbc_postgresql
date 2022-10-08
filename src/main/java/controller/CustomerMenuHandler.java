@@ -14,7 +14,7 @@ public class CustomerMenuHandler {
     private ProjectService projectService;
     private MenuService menuService;
     private DeveloperService developerService;
-    private static final int EXIT_FROM_CUSTOMER_MENU = 4;
+    private static final int EXIT_FROM_CUSTOMER_MENU = 5;
 
 public CustomerMenuHandler(CustomerService customerService, ProjectService projectService,
                             MenuService menuService, DeveloperService developerService) {
@@ -37,6 +37,9 @@ public CustomerMenuHandler(CustomerService customerService, ProjectService proje
                     createCustomer();
                     break;
                 case 3:
+                    customerService.updateCustomer();
+                    break;
+                case 4:
                     deleteCustomer();
                     break;
             }

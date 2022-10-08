@@ -1,6 +1,7 @@
 package model.storage;
 
 import model.config.DatabaseManagerConnector;
+import model.dao.CompanyDao;
 import model.dao.CustomerDao;
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ public class CustomerStorage implements Storage<CustomerDao> {
     private final String FIND_BY_NAME = "SELECT * FROM customer WHERE  customer_name  LIKE  ?";
     private final String FIND_BY_ID = "SELECT * FROM customer WHERE customer_id = ?";
     private final String INSERT = "INSERT INTO customer(customer_name, reputation) VALUES (?, ?)";
+    private final String UPDATE =
+            "UPDATE customer SET reputation=? WHERE customer_name LIKE ? RETURNING *";
     private  final String DELETE = "DELETE FROM customer WHERE customer_name LIKE  ?";
 
     public CustomerStorage(DatabaseManagerConnector manager) throws SQLException {
@@ -102,7 +105,20 @@ public class CustomerStorage implements Storage<CustomerDao> {
     }
 
     @Override
-    public CustomerDao update(CustomerDao entity) {return new CustomerDao();}
+    public CustomerDao update(CustomerDao entity) {
+        CustomerDao customerDao = null;
+        try (Connection connection = manager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            statement.setString(1, entity.getReputation().toString());
+            statement.setString(2, entity.getCustomer_name());
+            ResultSet resultSet = statement.executeQuery();
+            customerDao = mapCustomerDao(resultSet);
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return customerDao;
+    }
 
     @Override
     public void delete(CustomerDao entity) {

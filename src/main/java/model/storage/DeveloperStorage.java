@@ -15,10 +15,12 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     private final String GET_ALL_INFO = "SELECT * FROM developer";
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
     private final String INSERT = "INSERT INTO developer(lastName, firstName, age, company_id, salary) VALUES (?, ?, ?, ?, ?)";
-    private final String GET_QUANTITY_JAVA_DEVELOPERS =
-            "SELECT COUNT(language) AS quantityLanguageDevelopers FROM developer " +
-            "JOIN developer_skill ON developer.developer_id = developer_skill.developer_id " +
-            "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE language = 'Java'";
+
+    private final String GET_LIST_JAVA_DEVELOPERS =
+            "SELECT lastName, firstName, level FROM developer JOIN developer_skill " +
+             "ON developer.developer_id = developer_skill.developer_id " +
+             "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE language = 'Java'";
+
     private final String GET_LIST_MIDDLE_DEVELOPERS =
             "SELECT lastName, firstName, language FROM developer JOIN developer_skill " +
             "ON developer.developer_id = developer_skill.developer_id " +
@@ -165,18 +167,22 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         }
     }
 
-    public int getQuantityJavaDevelopers () {
-        int quantity=0;
+    public List<String> getNamesListOfJavaDevelopers() {
+        List<String> developersNames = new ArrayList<>();
         try (Connection connection = manager.getConnection();
-            ResultSet rs = connection.prepareStatement(GET_QUANTITY_JAVA_DEVELOPERS).executeQuery()) {
+             ResultSet rs = connection.prepareStatement(GET_LIST_JAVA_DEVELOPERS).executeQuery()) {
             while (rs.next()) {
-                quantity = rs.getInt("quantityLanguageDevelopers");
+                String lastName = rs.getString("lastname");
+                String firstName = rs.getString("firstname");
+                String level = rs.getString("level");
+                developersNames.add(String.format("%s %s - level - %s",
+                        lastName, firstName, level));
             }
         }
         catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return quantity;
+        return developersNames;
     }
 
     public List<String> getNamesListOfMiddleDevelopers() {
