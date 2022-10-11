@@ -14,6 +14,8 @@ public class SkillStorage implements Storage<SkillDao> {
     private final String GET_SKILLS_BY_DEVELOPER_ID =
      "SELECT  language, level FROM developer JOIN developer_skill ON developer_skill.developer_id = developer.developer_id " +
      "JOIN skill ON skill.skill_id = developer_skill.skill_id WHERE developer.developer_id = ?";
+    private final String COUNT_BY_LANGUAGE = "SELECT COUNT(skill_id) FROM skill WHERE language LIKE ?";
+    private final String COUNT_BY_LEVEL = "SELECT COUNT(skill_id) FROM skill WHERE level LIKE ?";
 
     public SkillStorage(DatabaseManagerConnector manager) throws SQLException {
         this.manager = manager;
@@ -42,6 +44,11 @@ public class SkillStorage implements Storage<SkillDao> {
     }
 
     @Override
+    public boolean isExist(String name) {
+        return false;
+    }
+
+    @Override
     public Optional<SkillDao> findById(long id) {
         return Optional.empty();
     }
@@ -64,6 +71,39 @@ public class SkillStorage implements Storage<SkillDao> {
         }
         return Optional.empty();
     }
+    public long countByLanguage(String language) {
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(COUNT_BY_LANGUAGE)) {
+            statement.setString(1, language);
+            ResultSet rs = statement.executeQuery();
+            int quantity = 0;
+            while (rs.next()) {
+              quantity = rs.getInt("count");
+            }
+            return quantity;
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return 0;
+    }
+    public long countByLevel(String level) {
+        try(Connection connection = manager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(COUNT_BY_LEVEL)) {
+            statement.setString(1, level);
+            ResultSet rs = statement.executeQuery();
+            int quantity = 0;
+            while (rs.next()) {
+                quantity = rs.getInt("count");
+            }
+            return quantity;
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return 0;
+    }
+
     @Override
     public List<Optional<SkillDao>> findAll() {
         return null;
@@ -74,9 +114,12 @@ public class SkillStorage implements Storage<SkillDao> {
         return false;
     }
 
-    @Override
-    public boolean isExist(String name) {
-        return false;
+    public boolean isLanguageExist(String language) {
+        return countByLanguage(language) > 0;
+    }
+
+    public boolean isLevelExist(String language) {
+        return countByLevel(language) > 0;
     }
 
     @Override

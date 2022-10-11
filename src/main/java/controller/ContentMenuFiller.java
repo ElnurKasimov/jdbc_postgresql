@@ -16,8 +16,8 @@ public class ContentMenuFiller {
             case "Developers":
                 contentMenu.put(1, "get list of all developers");
                 contentMenu.put(2, "get all developer data by his name" );
-                contentMenu.put(3, "a special question - get list of  all Java - developers");
-                contentMenu.put(4, "a special question - get list of all  middle - developers");
+                contentMenu.put(3, "a special question - get list of  all developers which program in a certain language");
+                contentMenu.put(4, "a special question - get list of all developers which have a certain level");
                 contentMenu.put(5, "add a developer to the database");
                 contentMenu.put(6, "update data of a developer");
                 contentMenu.put(7, "delete a developer from the database");

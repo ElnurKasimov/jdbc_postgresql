@@ -16,15 +16,15 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
     private final String FIND_BY_NAME = "SELECT * FROM developer WHERE lastName LIKE ? and firstName LIKE ? ";
     private final String INSERT = "INSERT INTO developer(lastName, firstName, age, company_id, salary) VALUES (?, ?, ?, ?, ?)";
 
-    private final String GET_LIST_JAVA_DEVELOPERS =
+    private final String GET_LIST_LANGUAGE_DEVELOPERS =
             "SELECT lastName, firstName, level FROM developer JOIN developer_skill " +
              "ON developer.developer_id = developer_skill.developer_id " +
-             "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE language = 'Java'";
+             "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE language LIKE ?";
 
-    private final String GET_LIST_MIDDLE_DEVELOPERS =
+    private final String GET_LIST_LEVEL_DEVELOPERS =
             "SELECT lastName, firstName, language FROM developer JOIN developer_skill " +
-            "ON developer.developer_id = developer_skill.developer_id " +
-            "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE level = 'middle'";
+                    "ON developer.developer_id = developer_skill.developer_id " +
+                    "JOIN skill ON developer_skill.skill_id = skill.skill_id WHERE level LIKE ?";
     private final String GET_PROJECT_DEVELOPERS =
             "SELECT lastname, firstname FROM project " +
             "JOIN project_developer ON project_developer.project_id = project.project_id " +
@@ -167,10 +167,12 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         }
     }
 
-    public List<String> getNamesListOfJavaDevelopers() {
+    public List<String> getNamesListOfCertainLanguageDevelopers(String language) {
         List<String> developersNames = new ArrayList<>();
         try (Connection connection = manager.getConnection();
-             ResultSet rs = connection.prepareStatement(GET_LIST_JAVA_DEVELOPERS).executeQuery()) {
+            PreparedStatement statement = connection.prepareStatement(GET_LIST_LANGUAGE_DEVELOPERS)) {
+            statement.setString(1, language);
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 String lastName = rs.getString("lastname");
                 String firstName = rs.getString("firstname");
@@ -185,10 +187,12 @@ public class DeveloperStorage implements Storage<DeveloperDao>{
         return developersNames;
     }
 
-    public List<String> getNamesListOfMiddleDevelopers() {
+    public List<String> getNamesListOfCertainLevelDevelopers(String level) {
         List<String> developersNames = new ArrayList<>();
         try (Connection connection = manager.getConnection();
-            ResultSet rs = connection.prepareStatement(GET_LIST_MIDDLE_DEVELOPERS).executeQuery()) {
+             PreparedStatement statement = connection.prepareStatement(GET_LIST_LEVEL_DEVELOPERS)) {
+            statement.setString(1, level);
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 String lastName = rs.getString("lastname");
                 String firstName = rs.getString("firstname");

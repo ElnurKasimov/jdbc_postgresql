@@ -100,17 +100,17 @@ public DeveloperService (DeveloperStorage developerStorage, ProjectService proje
         return developerStorage.isExist(lastName, firstName);
     }
 
-    public void getListNamesOfJavaDevelopers() {
+    public void getListNamesDevelopersWithCertainLanguage(String language) {
         List<String> result = new ArrayList<>();
-        result.add("\tThere are such Java-developer in the database : ");
-        developerStorage.getNamesListOfJavaDevelopers().forEach(name -> result.add("\t\t" + name + ","));
+        result.add(String.format("\tThere are such developers who program in '%s' in the database : ", language));
+        developerStorage.getNamesListOfCertainLanguageDevelopers(language).forEach(name -> result.add("\t\t" + name + ","));
         Output.getInstance().print(result);
     };
 
-    public void getListNamesOfMiddleDevelopers() {
+    public void getListNamesDevelopersWithCertainLevel(String level) {
         List<String> result = new ArrayList<>();
-        result.add("\tThere are such middle-developer in the database : ");
-        developerStorage.getNamesListOfMiddleDevelopers().forEach(name -> result.add("\t\t" + name + ","));
+        result.add(String.format("\tThere are such developers who has '%s' position in the database: ", level));
+        developerStorage.getNamesListOfCertainLevelDevelopers(level).forEach(name -> result.add("\t\t" + name + ","));
         Output.getInstance().print(result);
     };
 

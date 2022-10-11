@@ -37,7 +37,7 @@ public class App {
             switch (choice) {
                 case 1:
                     new DeveloperMenuHandler(developerService, menuService,
-                            companyService, projectService, skillService,  relationService).launch();
+                            companyService, projectService, skillService, skillStorage, relationService).launch();
                     break;
                 case 2:
                     new ProjectMenuHandler(projectService, menuService).launch();

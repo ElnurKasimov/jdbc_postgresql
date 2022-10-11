@@ -5,6 +5,8 @@ import model.dto.DeveloperDto;
 import model.dto.ProjectDto;
 import model.dto.SkillDto;
 import model.service.*;
+import model.storage.SkillStorage;
+
 import java.util.*;
 
 
@@ -14,17 +16,19 @@ public class DeveloperMenuHandler {
     private CompanyService companyService;
     private ProjectService projectService;
     private SkillService skillService;
+    private SkillStorage skillStorage;
     private RelationService relationService;
     private static final int EXIT_FROM_DEVELOPER_MENU = 8;
 
     public DeveloperMenuHandler(DeveloperService developerService, MenuService menuService,
                                 CompanyService companyService, ProjectService projectService,
-                                SkillService skillService, RelationService relationService) {
+                                SkillService skillService, SkillStorage skillStorage,RelationService relationService) {
         this.developerService = developerService;
         this.menuService = menuService;
         this.companyService = companyService;
         this.projectService = projectService;
         this.skillService = skillService;
+        this.skillStorage = skillStorage;
         this.relationService = relationService;
     }
 
@@ -41,10 +45,10 @@ public class DeveloperMenuHandler {
                     getAdditionalInfoByName();
                     break;
                 case 3:
-                    developerService.getListNamesOfJavaDevelopers();
+                    getListNamesDevelopersWithCertainLanguage();
                     break;
                 case 4:
-                    developerService.getListNamesOfMiddleDevelopers();
+                    getListNamesDevelopersWithCertainLevel();
                     break;
                 case 5:
                     createDeveloper();
@@ -117,4 +121,29 @@ public class DeveloperMenuHandler {
         }
     }
 
+    void getListNamesDevelopersWithCertainLanguage() {
+        while (true) {
+            System.out.print("\tEnter language : ");
+            Scanner sc = new Scanner(System.in);
+            String language = sc.nextLine();
+            if (skillStorage.isLanguageExist(language)) {
+                developerService.getListNamesDevelopersWithCertainLanguage(language);
+                break;
+            }
+            System.out.println("There is no such skill in the database. Please enter correct data");
+        }
+    }
+
+    void getListNamesDevelopersWithCertainLevel() {
+        while (true) {
+            System.out.print("\tEnter level : ");
+            Scanner sc = new Scanner(System.in);
+            String level = sc.nextLine();
+            if (skillStorage.isLevelExist(level)) {
+                developerService.getListNamesDevelopersWithCertainLevel(level);
+                break;
+            }
+            System.out.println("There is no such skill in the database. Please enter correct data");
+        }
+    }
 }
