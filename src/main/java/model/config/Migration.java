@@ -15,11 +15,12 @@ public class Migration {
     public void initDb() {
         try {
             Connection connection = manager.getConnection();
-        Flyway flyway = Flyway
-                .configure()
-                .dataSource(manager.getUrl(), System.getenv("dbusername"), System.getenv("dbPassword"))
-                .load();
-        flyway.migrate();
+             Flyway flyway = Flyway
+                    .configure()
+                    .baselineOnMigrate(true)
+                     .dataSource(manager.getUrl(), System.getenv("dbusername"), System.getenv("dbPassword"))
+                    .load();
+            flyway.migrate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
